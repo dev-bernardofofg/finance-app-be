@@ -8,12 +8,28 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const execMigrations = async () => {
-  const filePath = path.join(__dirname, '01-init.sql')
-  const file = fs.readFileSync(filePath, 'utf8')
   const client = await pool.connect()
   try {
-    await client.query(file)
-    console.log('Migrations executed successfully')
+    // Lê todos os arquivos .sql e ordena por nome
+    const files = fs
+      .readdirSync(__dirname)
+      .filter((file) => file.endsWith('.sql'))
+      .sort()
+
+    console.log(`Found ${files.length} migration file(s)`)
+
+    for (const file of files) {
+      const filePath = path.join(__dirname, file)
+      const sql = fs.readFileSync(filePath, 'utf8')
+      console.log(`Executing migration: ${file}`)
+      await client.query(sql)
+      console.log(`✓ ${file} executed successfully`)
+    }
+
+    console.log('\nAll migrations executed successfully')
+  } catch (err) {
+    console.error('Migration error:', err)
+    throw err
   } finally {
     client.release()
   }
