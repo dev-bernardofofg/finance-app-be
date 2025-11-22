@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { PostgresCreateUserRepository } from '../repositories/postgres/create-user'
+import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email'
 
 interface CreateUserParams {
   first_name: string
@@ -12,6 +13,12 @@ interface CreateUserParams {
 export const CreateUserUseCase = {
   execute: async (createUserParams: CreateUserParams) => {
     // TODO: Verificar se o usuário já existe
+    const user = await PostgresGetUserByEmailRepository.execute({
+      email: createUserParams.email,
+    })
+    if (user) {
+      throw new Error('Usuário já cadastrado')
+    }
     // Gerar ID do usuário
     const userId = uuidv4()
     // Criptografar a senha

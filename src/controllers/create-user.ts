@@ -50,6 +50,12 @@ export const CreateUserController = {
       return responseHelper.created(res, user)
     } catch (error) {
       console.error('Erro ao criar usuário:', error)
+
+      // Verifica se é um erro conhecido (ex: email duplicado)
+      if (error instanceof Error && error.message === 'Usuário já cadastrado') {
+        return responseHelper.conflict(res, error.message)
+      }
+
       return responseHelper.internalServerError(res, 'Erro ao criar usuário')
     }
   },
