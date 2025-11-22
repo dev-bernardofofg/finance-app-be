@@ -50,7 +50,6 @@ export const CreateUserController = {
       return responseHelper.created(res, user)
     } catch (error) {
       console.error('Erro ao criar usuário:', error)
-
       return responseHelper.internalServerError(res, 'Erro ao criar usuário')
     }
   },
