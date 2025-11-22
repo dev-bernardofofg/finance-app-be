@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
+import { EmailAlreadyInUseError } from '../errors/user'
 import { PostgresCreateUserRepository } from '../repositories/postgres/create-user'
 import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email'
 
@@ -17,7 +18,7 @@ export const CreateUserUseCase = {
       email: createUserParams.email,
     })
     if (user) {
-      throw new Error('Usuário já cadastrado')
+      throw new EmailAlreadyInUseError(createUserParams.email)
     }
     // Gerar ID do usuário
     const userId = uuidv4()

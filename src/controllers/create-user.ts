@@ -1,5 +1,6 @@
 import { Request, Response } from 'express'
 import validator from 'validator'
+import { EmailAlreadyInUseError } from '../errors/user'
 import { CreateUserParams } from '../repositories/postgres/create-user'
 import { CreateUserUseCase } from '../use-cases/create-user'
 import { responseHelper } from './helpers'
@@ -52,8 +53,8 @@ export const CreateUserController = {
       console.error('Erro ao criar usuário:', error)
 
       // Verifica se é um erro conhecido (ex: email duplicado)
-      if (error instanceof Error && error.message === 'Usuário já cadastrado') {
-        return responseHelper.conflict(res, error.message)
+      if (error instanceof EmailAlreadyInUseError) {
+        return responseHelper.badRequest(res, error.message)
       }
 
       return responseHelper.internalServerError(res, 'Erro ao criar usuário')
