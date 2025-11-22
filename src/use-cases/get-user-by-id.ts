@@ -1,3 +1,4 @@
+import { UserNotFoundError } from '../errors/user'
 import {
   GetUserByIdParams,
   PostgresGetUserByIdRepository,
@@ -14,7 +15,7 @@ export const GetUserByIdUseCase = {
   execute: async ({ id }: GetUserByIdParams) => {
     const user = await PostgresGetUserByIdRepository.execute({ id })
     if (!user) {
-      throw new Error('Usuário não encontrado')
+      throw new UserNotFoundError(id)
     }
     return user as GetUserByIdResponse
   },

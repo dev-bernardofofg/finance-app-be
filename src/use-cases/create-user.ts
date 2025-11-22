@@ -13,7 +13,7 @@ interface CreateUserParams {
 
 export const CreateUserUseCase = {
   execute: async (createUserParams: CreateUserParams) => {
-    // TODO: Verificar se o usuário já existe
+    // Verificar se o usuário já existe
     const user = await PostgresGetUserByEmailRepository.execute({
       email: createUserParams.email,
     })
