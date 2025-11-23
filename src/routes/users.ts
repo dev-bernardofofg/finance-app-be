@@ -1,8 +1,10 @@
 import { Router } from 'express'
-import { CreateUserController } from '../controllers/create-user'
-import { GetUserByEmailController } from '../controllers/get-user-by-email'
-import { GetUserByIdController } from '../controllers/get-user-by-id'
-import { UpdateUserController } from '../controllers/update-user'
+import {
+  CreateUserController,
+  GetUserByEmailController,
+  GetUserByIdController,
+  UpdateUserController,
+} from '../controllers'
 
 export const usersRoutes = Router()
 
