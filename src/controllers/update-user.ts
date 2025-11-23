@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { EmailAlreadyInUseError, UserNotFoundError } from '../errors/user'
 import { UserFields } from '../repositories/postgres/update-user'
 import { UpdateUserUseCase } from '../use-cases/update-user'
-import { validatorHelpers } from '../utils/validators'
-import { responseHelper } from './helpers'
+import { responseHelper } from './helpers/http'
+import { validatorHelpers } from './helpers/validator'
 
 export const UpdateUserController = {
   execute: async (req: Request, res: Response) => {

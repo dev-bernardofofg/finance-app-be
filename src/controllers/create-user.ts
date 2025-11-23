@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { EmailAlreadyInUseError } from '../errors/user'
 import { CreateUserParams } from '../repositories/postgres/create-user'
 import { CreateUserUseCase } from '../use-cases/create-user'
-import { validatorHelpers } from '../utils/validators'
-import { responseHelper } from './helpers'
+import { responseHelper } from './helpers/http'
+import { validatorHelpers } from './helpers/validator'
 
 export const CreateUserController = {
   execute: async (req: Request, res: Response) => {

@@ -2,8 +2,8 @@ import { Request, Response } from 'express'
 import { UserNotFoundError } from '../errors/user'
 import { GetUserByIdParams } from '../repositories/postgres/get-user-by-id'
 import { GetUserByIdUseCase } from '../use-cases/get-user-by-id'
-import { validatorHelpers } from '../utils/validators'
-import { responseHelper } from './helpers'
+import { responseHelper } from './helpers/http'
+import { validatorHelpers } from './helpers/validator'
 
 export const GetUserByIdController = {
   execute: async (req: Request, res: Response) => {

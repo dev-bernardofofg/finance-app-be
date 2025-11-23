@@ -1,10 +1,10 @@
 import { Response } from 'express'
 import validator from 'validator'
-import { responseHelper } from '../../controllers/helpers'
+import { responseHelper } from './http'
 
 export const validatorHelpers = {
-  passwordIsValid: (password: string, res: Response) => {
-    validator.isStrongPassword(password, {
+  passwordIsValid: (password: string, res: Response): Response | null => {
+    const isValid = validator.isStrongPassword(password, {
       minLength: 6,
       minLowercase: 1,
       minUppercase: 1,
@@ -12,26 +12,34 @@ export const validatorHelpers = {
       minSymbols: 1,
     })
 
-    return responseHelper.badRequest(
-      res,
-      'A senha deve ter pelo menos 6 caracteres, uma letra maiúscula, uma letra minúscula, um número e um símbolo.',
-    )
+    if (!isValid) {
+      return responseHelper.badRequest(
+        res,
+        'A senha deve ter pelo menos 6 caracteres, uma letra maiúscula, uma letra minúscula, um número e um símbolo.',
+      )
+    }
+
+    return null
   },
-  emailIsValid: (email: string, res: Response) => {
+  emailIsValid: (email: string, res: Response): Response | null => {
     if (!validator.isEmail(email)) {
       return responseHelper.badRequest(
         res,
         'O email não é válido. Por favor, informe um email válido.',
       )
     }
+
+    return null
   },
-  idIsValid: (id: string, res: Response) => {
+  idIsValid: (id: string, res: Response): Response | null => {
     if (!validator.isUUID(id)) {
       return responseHelper.badRequest(
         res,
         'O ID não é válido. Por favor, informe um ID válido.',
       )
     }
+
+    return null
   },
   fieldsAreValid: (
     fields: string[],
