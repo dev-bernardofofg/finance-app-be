@@ -1,21 +1,25 @@
+import { UserNotFoundError } from '../errors/user'
 import {
   GetUserByEmailParams,
-  PostgresGetUserByEmailRepository,
+  IPostgresGetUserByEmailRepository,
 } from '../repositories/postgres/get-user-by-email'
+import { UserResponse } from '../types/user'
 
-export interface GetUserByEmailResponse {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
+export interface IGetUserByEmailUseCase {
+  execute(params: GetUserByEmailParams): Promise<UserResponse>
 }
 
-export const GetUserByEmailUseCase = {
-  execute: async ({ email }: GetUserByEmailParams) => {
-    const user = await PostgresGetUserByEmailRepository.execute({ email })
+export class GetUserByEmailUseCase implements IGetUserByEmailUseCase {
+  private getUserByEmailRepository: IPostgresGetUserByEmailRepository
+  constructor(getUserByEmailRepository: IPostgresGetUserByEmailRepository) {
+    this.getUserByEmailRepository = getUserByEmailRepository
+  }
+
+  async execute(params: GetUserByEmailParams) {
+    const user = await this.getUserByEmailRepository.execute(params)
     if (!user) {
-      throw new Error('Usuário não encontrado')
+      throw new UserNotFoundError(params.email)
     }
-    return user as GetUserByEmailResponse
-  },
+    return user
+  }
 }

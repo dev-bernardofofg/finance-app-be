@@ -1,18 +1,25 @@
 import { Request, Response } from 'express'
 import { UserNotFoundError } from '../errors/user'
 import { GetUserByIdParams } from '../repositories/postgres/get-user-by-id'
-import { GetUserByIdUseCase } from '../use-cases/get-user-by-id'
+import { IGetUserByIdUseCase } from '../use-cases/get-user-by-id'
 import { responseHelper } from './helpers/http'
 import { validatorHelpers } from './helpers/validator'
 
-export const GetUserByIdController = {
-  execute: async (req: Request, res: Response) => {
+export class GetUserByIdController {
+  private getUserByIdUseCase: IGetUserByIdUseCase
+  constructor(getUserByIdUseCase: IGetUserByIdUseCase) {
+    this.getUserByIdUseCase = getUserByIdUseCase
+  }
+
+  async execute(req: Request, res: Response) {
     const params = req.params as Partial<GetUserByIdParams>
 
     validatorHelpers.idIsValid(params.id ?? '', res)
 
     try {
-      const user = await GetUserByIdUseCase.execute(params as GetUserByIdParams)
+      const user = await this.getUserByIdUseCase.execute(
+        params as GetUserByIdParams,
+      )
 
       return responseHelper.ok(res, user)
     } catch (error) {
@@ -22,5 +29,5 @@ export const GetUserByIdController = {
       }
       return responseHelper.internalServerError(res, 'Erro ao buscar usuário')
     }
-  },
+  }
 }

@@ -1,20 +1,24 @@
 import { Request, Response } from 'express'
 import { UserNotFoundError } from '../errors/user'
-import { DeleteUserUseCase } from '../use-cases/delete.user'
+import { IDeleteUserUseCase } from '../use-cases/delete.user'
 import { responseHelper } from './helpers/http'
 import { validatorHelpers } from './helpers/validator'
 
-export const DeleteUserController = {
-  execute: async (req: Request, res: Response) => {
+export class DeleteUserController {
+  private deleteUserUseCase: IDeleteUserUseCase
+  constructor(deleteUserUseCase: IDeleteUserUseCase) {
+    this.deleteUserUseCase = deleteUserUseCase
+  }
+  async execute(req: Request, res: Response) {
     try {
       const userId = req.params.id
 
       validatorHelpers.idIsValid(userId, res)
 
-      const user = await DeleteUserUseCase.execute(userId)
+      const user = await this.deleteUserUseCase.execute(userId)
       console.log(user)
 
-      if (user.length === 0) {
+      if (!user) {
         return responseHelper.notFound(res, 'Usuário não encontrado')
       }
 
@@ -26,5 +30,5 @@ export const DeleteUserController = {
       }
       return responseHelper.internalServerError(res, 'Erro ao deletar usuário')
     }
-  },
+  }
 }

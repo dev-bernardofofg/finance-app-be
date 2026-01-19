@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: finance-app-postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: financeapp
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ 'CMD-SHELL', 'pg_isready -U root -d financeapp' ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - finance-app-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finance-app-api
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+      POSTGRES_PORT: '5432'
+      POSTGRES_HOST: postgres
+      POSTGRES_DB: financeapp
+      PORT: 8000
+      NODE_ENV: development
+    ports:
+      - '8000:8000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./src:/app/src
+    networks:
+      - finance-app-network
+    command: sh -c "sleep 2 && pnpm migrate && pnpm start"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+
+networks:
+  finance-app-network:
+    driver: bridge

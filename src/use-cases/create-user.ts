@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
 import { EmailAlreadyInUseError } from '../errors/user'
-import { PostgresCreateUserRepository } from '../repositories/postgres/create-user'
-import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email'
+import { IPostgresCreateUserRepository } from '../repositories/postgres/create-user'
+import { UserResponse } from '../types/user'
 
 interface CreateUserParams {
   first_name: string
@@ -11,12 +11,22 @@ interface CreateUserParams {
   password: string
 }
 
-export const CreateUserUseCase = {
-  execute: async (createUserParams: CreateUserParams) => {
+export interface ICreateUserUseCase {
+  execute(createUserParams: CreateUserParams): Promise<UserResponse>
+}
+
+export class CreateUserUseCase implements ICreateUserUseCase {
+  private createUserRepository: IPostgresCreateUserRepository
+
+  constructor(createUserRepository: IPostgresCreateUserRepository) {
+    this.createUserRepository = createUserRepository
+  }
+
+  async execute(createUserParams: CreateUserParams) {
     // Verificar se o usuário já existe
-    const user = await PostgresGetUserByEmailRepository.execute({
-      email: createUserParams.email,
-    })
+    const user = await this.createUserRepository.findByEmail(
+      createUserParams.email,
+    )
     if (user) {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
@@ -31,9 +41,9 @@ export const CreateUserUseCase = {
       password: hashedPassword,
     }
     try {
-      return await PostgresCreateUserRepository.execute(payload)
+      return await this.createUserRepository.execute(payload)
     } catch (error) {
       throw new Error('Erro ao criar usuário')
     }
-  },
+  }
 }

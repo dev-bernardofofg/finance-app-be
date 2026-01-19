@@ -1,4 +1,6 @@
 import { PostgresHelper } from '../../db/postgres/helper'
+import { UserResponse } from '../../types/user'
+import { IPostgresHelper } from './create-user'
 
 export interface UpdateUserParams {
   id: string
@@ -10,9 +12,25 @@ export interface UpdateUserParams {
 
 export type UserFields = Omit<UpdateUserParams, 'id'>
 
-export const PostgresUpdateUserRepository = {
-  execute: async (userId: string, updateUserParams: UserFields) => {
-    const updatedFields = []
+export interface IPostgresUpdateUserRepository {
+  execute(
+    userId: string,
+    updateUserParams: UserFields,
+  ): Promise<UserResponse | null>
+}
+
+export class PostgresUpdateUserRepository implements IPostgresUpdateUserRepository {
+  private postgresHelper: IPostgresHelper
+
+  constructor(postgresHelper: IPostgresHelper = PostgresHelper) {
+    this.postgresHelper = postgresHelper
+  }
+
+  async execute(
+    userId: string,
+    updateUserParams: UserFields,
+  ): Promise<UserResponse | null> {
+    const updatedFields: string[] = []
     const updateValues: string[] = []
 
     Object.keys(updateUserParams).forEach((key) => {
@@ -35,8 +53,11 @@ export const PostgresUpdateUserRepository = {
     RETURNING *
     `
 
-    const updatedUser = await PostgresHelper.query(query, updateValues)
+    const updatedUser = await PostgresHelper.query<UserResponse[]>(
+      query,
+      updateValues,
+    )
 
-    return updatedUser
-  },
+    return updatedUser[0] ?? null
+  }
 }

@@ -1,12 +1,17 @@
 import { Request, Response } from 'express'
 import { EmailAlreadyInUseError } from '../errors/user'
 import { CreateUserParams } from '../repositories/postgres/create-user'
-import { CreateUserUseCase } from '../use-cases/create-user'
+import { ICreateUserUseCase } from '../use-cases/create-user'
 import { responseHelper } from './helpers/http'
 import { validatorHelpers } from './helpers/validator'
 
-export const CreateUserController = {
-  execute: async (req: Request, res: Response) => {
+export class CreateUserController {
+  private createUserUseCase: ICreateUserUseCase
+  constructor(createUserUseCase: ICreateUserUseCase) {
+    this.createUserUseCase = createUserUseCase
+  }
+
+  async execute(req: Request, res: Response) {
     // Validar os dados da requisição
     const params = req.body as Partial<CreateUserParams>
     const requiredFields: (keyof CreateUserParams)[] = [
@@ -27,7 +32,9 @@ export const CreateUserController = {
 
     // Executar o use case
     try {
-      const user = await CreateUserUseCase.execute(params as CreateUserParams)
+      const user = await this.createUserUseCase.execute(
+        params as CreateUserParams,
+      )
       return responseHelper.created(res, user)
     } catch (error) {
       console.error('Erro ao criar usuário:', error)
@@ -39,5 +46,5 @@ export const CreateUserController = {
 
       return responseHelper.internalServerError(res, 'Erro ao criar usuário')
     }
-  },
+  }
 }

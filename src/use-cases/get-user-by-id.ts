@@ -1,22 +1,25 @@
 import { UserNotFoundError } from '../errors/user'
 import {
   GetUserByIdParams,
-  PostgresGetUserByIdRepository,
+  IPostgresGetUserByIdRepository,
 } from '../repositories/postgres/get-user-by-id'
+import { UserResponse } from '../types/user'
 
-export interface GetUserByIdResponse {
-  id: string
-  first_name: string
-  last_name: string
-  email: string
+export interface IGetUserByIdUseCase {
+  execute(params: GetUserByIdParams): Promise<UserResponse>
 }
 
-export const GetUserByIdUseCase = {
-  execute: async ({ id }: GetUserByIdParams) => {
-    const user = await PostgresGetUserByIdRepository.execute({ id })
+export class GetUserByIdUseCase implements IGetUserByIdUseCase {
+  private getUserByIdRepository: IPostgresGetUserByIdRepository
+  constructor(getUserByIdRepository: IPostgresGetUserByIdRepository) {
+    this.getUserByIdRepository = getUserByIdRepository
+  }
+
+  async execute(params: GetUserByIdParams) {
+    const user = await this.getUserByIdRepository.execute(params)
     if (!user) {
-      throw new UserNotFoundError(id)
+      throw new UserNotFoundError(params.id)
     }
-    return user as GetUserByIdResponse
-  },
+    return user
+  }
 }

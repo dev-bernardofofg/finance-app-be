@@ -1,36 +1,21 @@
-import bcrypt from 'bcrypt'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../errors/user'
-import { PostgresGetUserByEmailRepository } from '../repositories/postgres/get-user-by-email'
 import {
-  PostgresUpdateUserRepository,
+  IPostgresUpdateUserRepository,
   UserFields,
 } from '../repositories/postgres/update-user'
+import { UserResponse } from '../types/user'
 
-export const UpdateUserUseCase = {
-  execute: async (userId: string, updateUserParams: UserFields) => {
-    if (updateUserParams.email) {
-      const user = await PostgresGetUserByEmailRepository.execute({
-        email: updateUserParams.email,
-      })
-      if (user && user.id !== userId) {
-        throw new EmailAlreadyInUseError(updateUserParams.email)
-      }
-    }
-
-    if (updateUserParams.password) {
-      const hashedPassword = await bcrypt.hash(updateUserParams.password, 10)
-      updateUserParams.password = hashedPassword
-    }
-
-    const updatedUser = await PostgresUpdateUserRepository.execute(
-      userId,
-      updateUserParams,
-    )
-
-    if (!updatedUser) {
-      throw new UserNotFoundError(userId)
-    }
-
-    return updatedUser
-  },
+export interface IUpdateUserUseCase {
+  execute(
+    userId: string,
+    updateUserParams: UserFields,
+  ): Promise<UserResponse | null>
+}
+export class UpdateUserUseCase implements IUpdateUserUseCase {
+  private updateUserRepository: IPostgresUpdateUserRepository
+  constructor(updateUserRepository: IPostgresUpdateUserRepository) {
+    this.updateUserRepository = updateUserRepository
+  }
+  async execute(userId: string, updateUserParams: UserFields) {
+    return await this.updateUserRepository.execute(userId, updateUserParams)
+  }
 }
