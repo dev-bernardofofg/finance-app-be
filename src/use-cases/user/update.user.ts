@@ -2,7 +2,7 @@ import {
   IPostgresUpdateUserRepository,
   UserFields,
 } from '../../repositories/postgres'
-import { UserResponse } from '../../types/user'
+import { UserResponse } from '../../types/user.type'
 
 export interface IUpdateUserUseCase {
   execute(

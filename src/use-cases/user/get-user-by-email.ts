@@ -3,7 +3,7 @@ import {
   GetUserByEmailParams,
   IPostgresGetUserByEmailRepository,
 } from '../../repositories/postgres'
-import { UserResponse } from '../../types/user'
+import { UserResponse } from '../../types/user.type'
 
 export interface IGetUserByEmailUseCase {
   execute(params: GetUserByEmailParams): Promise<UserResponse>

@@ -1,6 +1,5 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
-import { UserResponse } from '../../../types/user'
-import { IPostgresHelper } from './create.user'
+import { UserResponse } from '../../../types/user.type'
 
 export interface UpdateUserParams {
   id: string
@@ -20,12 +19,6 @@ export interface IPostgresUpdateUserRepository {
 }
 
 export class PostgresUpdateUserRepository implements IPostgresUpdateUserRepository {
-  private postgresHelper: IPostgresHelper
-
-  constructor(postgresHelper: IPostgresHelper = PostgresHelper) {
-    this.postgresHelper = postgresHelper
-  }
-
   async execute(
     userId: string,
     updateUserParams: UserFields,

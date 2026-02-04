@@ -1,6 +1,5 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
-import { UserResponse } from '../../../types/user'
-import { IPostgresHelper } from './create.user'
+import { UserResponse } from '../../../types/user.type'
 
 export interface GetUserByEmailParams {
   email: string
@@ -11,17 +10,11 @@ export interface IPostgresGetUserByEmailRepository {
 }
 
 export class PostgresGetUserByEmailRepository implements IPostgresGetUserByEmailRepository {
-  private postgresHelper: IPostgresHelper
-
-  constructor(postgresHelper: IPostgresHelper = PostgresHelper) {
-    this.postgresHelper = postgresHelper
-  }
-
   async execute(params: GetUserByEmailParams) {
-    const result = await this.postgresHelper.query<UserResponse[]>(
+    const user = await PostgresHelper.query<UserResponse[]>(
       'SELECT id, first_name, last_name, email FROM users WHERE email = $1',
       [params.email],
     )
-    return result[0] ?? null
+    return user[0] ?? null
   }
 }
