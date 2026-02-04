@@ -1,18 +1,18 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
 import {
-  ICreateTransactionParams,
+  ITransactionParams,
   ITransactionResponse,
 } from '../../../types/transaction.type'
 
 export interface IPostgresCreateTransactionRepository {
   execute(
-    createTransactionParams: ICreateTransactionParams,
+    createTransactionParams: ITransactionParams,
   ): Promise<ITransactionResponse>
 }
 
 export class PostgresCreateTransactionRepository implements IPostgresCreateTransactionRepository {
   async execute(
-    createTransactionParams: ICreateTransactionParams,
+    createTransactionParams: ITransactionParams,
   ): Promise<ITransactionResponse> {
     const createdTransaction = await PostgresHelper.query<
       ITransactionResponse[]
