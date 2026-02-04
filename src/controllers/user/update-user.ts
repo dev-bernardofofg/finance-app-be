@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../errors/user'
-import { UserFields } from '../repositories/postgres/update-user'
-import { IUpdateUserUseCase } from '../use-cases/update-user'
-import { responseHelper } from './helpers/http'
-import { validatorHelpers } from './helpers/validator'
+import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
+import { UserFields } from '../../repositories/postgres'
+import { IUpdateUserUseCase } from '../../use-cases'
+import { responseHelper } from '../helpers/http'
+import { validatorHelpers } from '../helpers/validator'
 
 export class UpdateUserController {
   private updateUserUseCase: IUpdateUserUseCase

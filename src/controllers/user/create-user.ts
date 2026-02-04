@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { EmailAlreadyInUseError } from '../errors/user'
-import { CreateUserParams } from '../repositories/postgres/create-user'
-import { ICreateUserUseCase } from '../use-cases/create-user'
-import { responseHelper } from './helpers/http'
-import { validatorHelpers } from './helpers/validator'
+import { EmailAlreadyInUseError } from '../../errors/user'
+import { CreateUserParams } from '../../repositories/postgres'
+import { ICreateUserUseCase } from '../../use-cases'
+import { responseHelper } from '../helpers/http'
+import { validatorHelpers } from '../helpers/validator'
 
 export class CreateUserController {
   private createUserUseCase: ICreateUserUseCase

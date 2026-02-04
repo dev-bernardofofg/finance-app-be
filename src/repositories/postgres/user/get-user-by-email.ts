@@ -1,6 +1,6 @@
-import { PostgresHelper } from '../../db/postgres/helper'
-import { UserResponse } from '../../types/user'
-import { IPostgresHelper } from './create-user'
+import { PostgresHelper } from '../../../db/postgres/helper'
+import { UserResponse } from '../../../types/user'
+import { IPostgresHelper } from './create.user'
 
 export interface GetUserByEmailParams {
   email: string

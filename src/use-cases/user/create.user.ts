@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
-import { EmailAlreadyInUseError } from '../errors/user'
-import { IPostgresCreateUserRepository } from '../repositories/postgres/create-user'
-import { UserResponse } from '../types/user'
+import { EmailAlreadyInUseError } from '../../errors/user'
+import { IPostgresCreateUserRepository } from '../../repositories/postgres'
+import { UserResponse } from '../../types/user'
 
 interface CreateUserParams {
   first_name: string

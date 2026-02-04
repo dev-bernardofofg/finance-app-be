@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { UserNotFoundError } from '../errors/user'
-import { IDeleteUserUseCase } from '../use-cases/delete.user'
-import { responseHelper } from './helpers/http'
-import { validatorHelpers } from './helpers/validator'
+import { UserNotFoundError } from '../../errors/user'
+import { IDeleteUserUseCase } from '../../use-cases'
+import { responseHelper } from '../helpers/http'
+import { validatorHelpers } from '../helpers/validator'
 
 export class DeleteUserController {
   private deleteUserUseCase: IDeleteUserUseCase

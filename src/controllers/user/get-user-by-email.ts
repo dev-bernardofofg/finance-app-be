@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { UserNotFoundError } from '../errors/user'
-import { GetUserByEmailParams } from '../repositories/postgres/get-user-by-email'
-import { IGetUserByEmailUseCase } from '../use-cases/get-user-by-email.ts'
-import { responseHelper } from './helpers/http.ts'
-import { validatorHelpers } from './helpers/validator.ts'
+import { UserNotFoundError } from '../../errors/user.ts'
+import { GetUserByEmailParams } from '../../repositories/postgres/index.ts'
+import { IGetUserByEmailUseCase } from '../../use-cases/index.ts'
+import { responseHelper } from '../helpers/http.ts'
+import { validatorHelpers } from '../helpers/validator.ts'
 
 export class GetUserByEmailController {
   private getUserByEmailUseCase: IGetUserByEmailUseCase

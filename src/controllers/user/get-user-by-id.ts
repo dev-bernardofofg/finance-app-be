@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { UserNotFoundError } from '../errors/user'
-import { GetUserByIdParams } from '../repositories/postgres/get-user-by-id'
-import { IGetUserByIdUseCase } from '../use-cases/get-user-by-id'
-import { responseHelper } from './helpers/http'
-import { validatorHelpers } from './helpers/validator'
+import { UserNotFoundError } from '../../errors/user'
+import { GetUserByIdParams } from '../../repositories/postgres'
+import { IGetUserByIdUseCase } from '../../use-cases'
+import { responseHelper } from '../helpers/http'
+import { validatorHelpers } from '../helpers/validator'
 
 export class GetUserByIdController {
   private getUserByIdUseCase: IGetUserByIdUseCase

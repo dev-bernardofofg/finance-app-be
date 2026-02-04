@@ -1,8 +1,8 @@
 import {
   IPostgresUpdateUserRepository,
   UserFields,
-} from '../repositories/postgres/update-user'
-import { UserResponse } from '../types/user'
+} from '../../repositories/postgres'
+import { UserResponse } from '../../types/user'
 
 export interface IUpdateUserUseCase {
   execute(

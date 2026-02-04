@@ -1,18 +1,24 @@
-import { CreateUserController } from '../../controllers/create-user'
-import { DeleteUserController } from '../../controllers/delete-user'
-import { GetUserByEmailController } from '../../controllers/get-user-by-email'
-import { GetUserByIdController } from '../../controllers/get-user-by-id'
-import { UpdateUserController } from '../../controllers/update-user'
-import { PostgresCreateUserRepository } from '../../repositories/postgres/create-user'
-import { PostgresDeleteUserRepository } from '../../repositories/postgres/delete.user'
-import { PostgresGetUserByEmailRepository } from '../../repositories/postgres/get-user-by-email'
-import { PostgresGetUserByIdRepository } from '../../repositories/postgres/get-user-by-id'
-import { PostgresUpdateUserRepository } from '../../repositories/postgres/update-user'
-import { CreateUserUseCase } from '../../use-cases/create-user'
-import { DeleteUserUseCase } from '../../use-cases/delete.user'
-import { GetUserByEmailUseCase } from '../../use-cases/get-user-by-email'
-import { GetUserByIdUseCase } from '../../use-cases/get-user-by-id'
-import { UpdateUserUseCase } from '../../use-cases/update-user'
+import {
+  CreateUserController,
+  DeleteUserController,
+  GetUserByEmailController,
+  GetUserByIdController,
+  UpdateUserController,
+} from '../../controllers'
+import {
+  PostgresCreateUserRepository,
+  PostgresDeleteUserRepository,
+  PostgresGetUserByEmailRepository,
+  PostgresGetUserByIdRepository,
+  PostgresUpdateUserRepository,
+} from '../../repositories/postgres'
+import {
+  CreateUserUseCase,
+  DeleteUserUseCase,
+  GetUserByEmailUseCase,
+  GetUserByIdUseCase,
+  UpdateUserUseCase,
+} from '../../use-cases'
 
 export const makeGetUserByIdController = () => {
   const getUserByIdRepository = new PostgresGetUserByIdRepository()

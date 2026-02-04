@@ -1,9 +1,9 @@
-import { UserNotFoundError } from '../errors/user'
+import { UserNotFoundError } from '../../errors/user'
 import {
   GetUserByEmailParams,
   IPostgresGetUserByEmailRepository,
-} from '../repositories/postgres/get-user-by-email'
-import { UserResponse } from '../types/user'
+} from '../../repositories/postgres'
+import { UserResponse } from '../../types/user'
 
 export interface IGetUserByEmailUseCase {
   execute(params: GetUserByEmailParams): Promise<UserResponse>
