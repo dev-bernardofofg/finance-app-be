@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { UserNotFoundError } from '../../errors/user'
 import { ITransactionParams } from '../../types/transaction.type'
 import { ICreateTransactionUseCase } from '../../use-cases/transaction/create.transaction'
 import { responseHelper } from '../helpers/http'
@@ -21,6 +22,12 @@ export class CreateTransactionController {
     ]
 
     validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
+    validatorHelpers.fieldIsGreaterThanZero(params.amount, res)
+    validatorHelpers.fieldIsInEnum(
+      params.type,
+      ['income', 'expense', 'investment'],
+      res,
+    )
 
     for (const field of requiredFields) {
       if (
@@ -37,7 +44,7 @@ export class CreateTransactionController {
       )
       return responseHelper.created(res, transaction)
     } catch (error) {
-      if (error instanceof Error) {
+      if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
       console.error('Erro ao criar transação:', error)

@@ -55,4 +55,26 @@ export const validatorHelpers = {
       )
     }
   },
+  fieldIsGreaterThanZero: (field: number, res: Response): Response | null => {
+    if (field <= 0) {
+      return responseHelper.badRequest(
+        res,
+        `O campo ${field} deve ser maior que 0`,
+      )
+    }
+    return null
+  },
+  fieldIsInEnum: (
+    field: string,
+    enumValues: string[],
+    res: Response,
+  ): Response | null => {
+    if (!enumValues.includes(field)) {
+      return responseHelper.badRequest(
+        res,
+        `O campo ${field} deve ser um dos seguintes valores: ${enumValues.join(', ')}`,
+      )
+    }
+    return null
+  },
 }

@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import { UserNotFoundError } from '../../errors/user'
 import {
   IPostgresCreateTransactionRepository,
   IPostgresGetUserByIdRepository,
@@ -33,7 +34,7 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
       id: createTransactionParams.user_id,
     })
     if (!user) {
-      throw new Error('Usuário não encontrado')
+      throw new UserNotFoundError(createTransactionParams.user_id)
     }
 
     const transactionId = uuidv4()
@@ -41,11 +42,10 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
       ...createTransactionParams,
       id: transactionId,
     }
-    try {
-      return await this.createTransactionRepository.execute(payload)
-    } catch (error) {
-      console.error('Erro ao criar transação:', error)
-      throw new Error('Erro ao criar transação')
-    }
+
+    const createdTransaction =
+      await this.createTransactionRepository.execute(payload)
+
+    return createdTransaction
   }
 }
