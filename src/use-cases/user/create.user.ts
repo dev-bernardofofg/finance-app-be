@@ -23,18 +23,14 @@ export class CreateUserUseCase implements ICreateUserUseCase {
   }
 
   async execute(createUserParams: CreateUserParams) {
-    // Verificar se o usuário já existe
     const user = await this.createUserRepository.findByEmail(
       createUserParams.email,
     )
     if (user) {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
-    // Gerar ID do usuário
     const userId = uuidv4()
-    // Criptografar a senha
     const hashedPassword = await bcrypt.hash(createUserParams.password, 10)
-    // Salvar o usuário no banco de dados
     const payload = {
       ...createUserParams,
       id: userId,
