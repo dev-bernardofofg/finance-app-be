@@ -38,7 +38,7 @@ export class CreateTransactionController {
       )
     )
       return
-    if (validatorHelpers.fieldIsCurrency(params.amount, res)) return
+    if (validatorHelpers.fieldIsCurrency('amount', params.amount, res)) return
 
     try {
       const transaction = await this.createTransactionUseCase.execute(

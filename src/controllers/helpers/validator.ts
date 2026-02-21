@@ -81,9 +81,19 @@ export const validatorHelpers = {
     }
     return null
   },
-  fieldIsCurrency: (field: number, res: Response): Response | null => {
+  fieldIsCurrency: (
+    fieldName: string,
+    value: number,
+    res: Response,
+  ): Response | null => {
+    if (typeof value !== 'number') {
+      return responseHelper.badRequest(
+        res,
+        `O campo ${fieldName} deve ser um número`,
+      )
+    }
     if (
-      !validator.isCurrency(field.toString(), {
+      !validator.isCurrency(value.toFixed(2), {
         digits_after_decimal: [2],
         allow_negatives: false,
         decimal_separator: '.',
@@ -91,7 +101,7 @@ export const validatorHelpers = {
     ) {
       return responseHelper.badRequest(
         res,
-        `O campo ${field} deve ser um valor monetário válido`,
+        `O campo ${fieldName} deve ser um valor monetário válido`,
       )
     }
     return null
