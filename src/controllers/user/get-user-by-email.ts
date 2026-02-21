@@ -14,7 +14,7 @@ export class GetUserByEmailController {
   async execute(req: Request, res: Response) {
     const params = req.query as Partial<GetUserByEmailParams>
 
-    validatorHelpers.emailIsValid(params.email ?? '', res)
+    if (validatorHelpers.emailIsValid(params.email ?? '', res)) return
 
     try {
       const user = await this.getUserByEmailUseCase.execute(

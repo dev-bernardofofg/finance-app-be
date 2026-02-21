@@ -10,10 +10,15 @@ export class DeleteTransactionController {
   }
   async execute(req: Request, res: Response) {
     const transactionId = req.params.id
-    validatorHelpers.idIsValid(transactionId, res)
+    if (validatorHelpers.idIsValid(transactionId, res)) return
     try {
       const transaction =
         await this.deleteTransactionUseCase.execute(transactionId)
+
+      if (!transaction) {
+        return responseHelper.badRequest(res, 'Transação não encontrada')
+      }
+
       return responseHelper.ok(res, transaction)
     } catch (error) {
       if (error instanceof Error) {

@@ -16,14 +16,12 @@ export class GetAllTransactionsUseCase implements IGetAllTransactionsUseCase {
   async execute(
     params: GetTransactionsParams,
   ): Promise<ITransactionResponse[] | null> {
-    try {
-      const transactions = await this.getTransactionsRepository.execute(params)
-      if (!transactions) {
-        throw new Error('Transações não encontradas')
-      }
-      return transactions
-    } catch (error) {
-      throw new Error('Erro ao buscar transações')
+    const transactions = await this.getTransactionsRepository.execute(params)
+
+    if (!transactions) {
+      return null
     }
+
+    return transactions
   }
 }

@@ -22,19 +22,15 @@ export class UpdateTransactionUseCase implements IUpdateTransactionUseCase {
     transactionId: string,
     updateTransactionParams: ITransactionParams,
   ): Promise<ITransactionResponse | null> {
-    try {
-      const transaction = await this.updateTransactionRepository.execute(
-        transactionId,
-        updateTransactionParams,
-      )
+    const transaction = await this.updateTransactionRepository.execute(
+      transactionId,
+      updateTransactionParams,
+    )
 
-      if (!transaction) {
-        throw new Error('Transação não encontrada')
-      }
-
-      return transaction
-    } catch (error) {
-      throw new Error('Erro ao atualizar transação')
+    if (!transaction) {
+      return null
     }
+
+    return transaction
   }
 }

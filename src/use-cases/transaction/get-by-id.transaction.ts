@@ -20,15 +20,12 @@ export class GetTransactionByIdUseCase implements IGetTransactionByIdUseCase {
   async execute(
     params: GetTransactionByIdParams,
   ): Promise<ITransactionResponse | null> {
-    try {
-      const transaction =
-        await this.getTransactionByIdRepository.execute(params)
-      if (!transaction) {
-        throw new Error('Transação não encontrada')
-      }
-      return transaction
-    } catch (error) {
-      throw new Error('Erro ao buscar transação')
+    const transaction = await this.getTransactionByIdRepository.execute(params)
+
+    if (!transaction) {
+      return null
     }
+
+    return transaction
   }
 }

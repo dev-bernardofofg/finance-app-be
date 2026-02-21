@@ -13,7 +13,7 @@ export class DeleteUserController {
     try {
       const userId = req.params.id
 
-      validatorHelpers.idIsValid(userId, res)
+      if (validatorHelpers.idIsValid(userId, res)) return
 
       const user = await this.deleteUserUseCase.execute(userId)
       console.log(user)

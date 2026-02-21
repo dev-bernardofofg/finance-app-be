@@ -13,17 +13,13 @@ export class DeleteTransactionUseCase implements IDeleteTransactionUseCase {
     this.deleteTransactionRepository = deleteTransactionRepository
   }
   async execute(transactionId: string): Promise<ITransactionResponse | null> {
-    try {
-      const transaction =
-        await this.deleteTransactionRepository.execute(transactionId)
+    const transaction =
+      await this.deleteTransactionRepository.execute(transactionId)
 
-      if (!transaction) {
-        throw new Error('Transação não encontrada')
-      }
-
-      return transaction
-    } catch (error) {
-      throw new Error('Erro ao deletar transação')
+    if (!transaction) {
+      return null
     }
+
+    return transaction
   }
 }

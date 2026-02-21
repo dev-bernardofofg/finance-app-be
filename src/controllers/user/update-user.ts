@@ -15,7 +15,7 @@ export class UpdateUserController {
       const params = req.body as UserFields
       const userId = req.params.id
 
-      validatorHelpers.idIsValid(userId, res)
+      if (validatorHelpers.idIsValid(userId, res)) return
 
       const allowedFields: (keyof UserFields)[] = [
         'first_name',
@@ -24,13 +24,15 @@ export class UpdateUserController {
         'password',
       ]
 
-      validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
-
+      if (
+        validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
+      )
+        return
       if (params.password) {
-        validatorHelpers.passwordIsValid(params.password ?? '', res)
+        if (validatorHelpers.passwordIsValid(params.password ?? '', res)) return
       }
       if (params.email) {
-        validatorHelpers.emailIsValid(params.email ?? '', res)
+        if (validatorHelpers.emailIsValid(params.email ?? '', res)) return
       }
 
       const updatedUser = await this.updateUserUseCase.execute(userId, params)

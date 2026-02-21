@@ -14,7 +14,7 @@ export class GetUserByIdController {
   async execute(req: Request, res: Response) {
     const params = req.params as Partial<GetUserByIdParams>
 
-    validatorHelpers.idIsValid(params.id ?? '', res)
+    if (validatorHelpers.idIsValid(params.id ?? '', res)) return
 
     try {
       const user = await this.getUserByIdUseCase.execute(

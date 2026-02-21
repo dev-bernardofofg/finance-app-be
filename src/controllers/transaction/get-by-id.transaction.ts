@@ -10,7 +10,7 @@ export class GetTransactionByIdController {
   }
   async execute(req: Request, res: Response) {
     const transactionId = req.params.id
-    validatorHelpers.idIsValid(transactionId, res)
+    if (validatorHelpers.idIsValid(transactionId, res)) return
     try {
       const transaction = await this.getTransactionByIdUseCase.execute({
         transactionId,
