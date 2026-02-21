@@ -19,10 +19,14 @@ export class CreateUserController {
       'email',
       'password',
     ]
-    validatorHelpers.validateRequiredFields(params, requiredFields, res)
-    validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
-    validatorHelpers.emailIsValid(params.email ?? '', res)
-    validatorHelpers.passwordIsValid(params.password ?? '', res)
+    if (validatorHelpers.validateRequiredFields(params, requiredFields, res))
+      return
+    if (
+      validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
+    )
+      return
+    if (validatorHelpers.emailIsValid(params.email ?? '', res)) return
+    if (validatorHelpers.passwordIsValid(params.password ?? '', res)) return
 
     try {
       const user = await this.createUserUseCase.execute(

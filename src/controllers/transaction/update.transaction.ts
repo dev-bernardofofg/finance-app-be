@@ -11,7 +11,8 @@ export class UpdateTransactionController {
   }
   async execute(req: Request, res: Response) {
     const transactionId = req.params.id
-    validatorHelpers.idIsValid(transactionId, res)
+    if (validatorHelpers.idIsValid(transactionId, res)) return
+
     const params = req.body
     const requiredFields: (keyof ITransactionParams)[] = [
       'user_id',
@@ -20,8 +21,12 @@ export class UpdateTransactionController {
       'amount',
       'date',
     ]
-    validatorHelpers.validateRequiredFields(params, requiredFields, res)
-    validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
+    if (validatorHelpers.validateRequiredFields(params, requiredFields, res))
+      return
+    if (
+      validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
+    )
+      return
 
     try {
       const transaction = await this.updateTransactionUseCase.execute(

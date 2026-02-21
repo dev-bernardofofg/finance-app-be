@@ -22,15 +22,22 @@ export class CreateTransactionController {
     ]
     const allowedFields = [...requiredFields]
     const convertTypeParam = (type: string) => type.trim().toLowerCase()
-    validatorHelpers.validateRequiredFields(params, requiredFields, res)
-    validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
-    validatorHelpers.fieldIsGreaterThanZero(params.amount, res)
-    validatorHelpers.fieldIsInEnum(
-      convertTypeParam(params.type),
-      ['income', 'expense', 'investment'],
-      res,
+    if (validatorHelpers.validateRequiredFields(params, requiredFields, res))
+      return
+    if (
+      validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
     )
-    validatorHelpers.fieldIsCurrency(params.amount, res)
+      return
+    if (validatorHelpers.fieldIsGreaterThanZero(params.amount, res)) return
+    if (
+      validatorHelpers.fieldIsInEnum(
+        convertTypeParam(params.type),
+        ['income', 'expense', 'investment'],
+        res,
+      )
+    )
+      return
+    if (validatorHelpers.fieldIsCurrency(params.amount, res)) return
 
     try {
       const transaction = await this.createTransactionUseCase.execute(
