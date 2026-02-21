@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import { UserFields } from '../../repositories/postgres'
-import { IUpdateUserUseCase } from '../../use-cases'
+import { IUpdateUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 

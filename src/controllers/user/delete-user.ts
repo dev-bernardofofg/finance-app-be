@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import { UserNotFoundError } from '../../errors/user'
-import { IDeleteUserUseCase } from '../../use-cases'
+import { IDeleteUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 

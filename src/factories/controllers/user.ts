@@ -18,7 +18,7 @@ import {
   GetUserByEmailUseCase,
   GetUserByIdUseCase,
   UpdateUserUseCase,
-} from '../../use-cases'
+} from '../../use-cases/user'
 
 export const makeGetUserByIdController = () => {
   const getUserByIdRepository = new PostgresGetUserByIdRepository()

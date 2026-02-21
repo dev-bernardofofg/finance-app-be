@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { EmailAlreadyInUseError } from '../../errors/user'
 import { ICreateUserParams } from '../../types/user.type'
-import { ICreateUserUseCase } from '../../use-cases'
+import { ICreateUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { UserNotFoundError } from '../../errors/user.ts'
 import { GetUserByEmailParams } from '../../repositories/postgres/index.ts'
-import { IGetUserByEmailUseCase } from '../../use-cases/index.ts'
+import { IGetUserByEmailUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http.ts'
 import { validatorHelpers } from '../helpers/validator.ts'
 

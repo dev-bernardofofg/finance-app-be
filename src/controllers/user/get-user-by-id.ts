@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { GetUserByIdParams } from '../../repositories/postgres'
-import { IGetUserByIdUseCase } from '../../use-cases'
+import { IGetUserByIdUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 
