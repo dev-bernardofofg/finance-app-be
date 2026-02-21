@@ -28,7 +28,8 @@ export class CreateTransactionController {
       validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
     )
       return
-    if (validatorHelpers.fieldIsGreaterThanZero(params.amount, res)) return
+    if (validatorHelpers.fieldIsGreaterThanZero('amount', params.amount, res))
+      return
     if (
       validatorHelpers.fieldIsInEnum(
         convertTypeParam(params.type),

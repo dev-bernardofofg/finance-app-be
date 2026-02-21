@@ -21,12 +21,24 @@ export class UpdateTransactionController {
       'amount',
       'date',
     ]
+    const convertTypeParam = (type: string) => type.trim().toLowerCase()
     if (validatorHelpers.validateRequiredFields(params, requiredFields, res))
       return
     if (
       validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
     )
       return
+    if (validatorHelpers.fieldIsGreaterThanZero('amount', params.amount, res))
+      return
+    if (
+      validatorHelpers.fieldIsInEnum(
+        convertTypeParam(params.type),
+        ['income', 'expense', 'investment'],
+        res,
+      )
+    )
+      return
+    if (validatorHelpers.fieldIsCurrency(params.amount, res)) return
 
     try {
       const transaction = await this.updateTransactionUseCase.execute(

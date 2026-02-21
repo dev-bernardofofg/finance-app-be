@@ -55,11 +55,15 @@ export const validatorHelpers = {
       )
     }
   },
-  fieldIsGreaterThanZero: (field: number, res: Response): Response | null => {
-    if (field <= 0) {
+  fieldIsGreaterThanZero: (
+    fieldName: string,
+    value: number,
+    res: Response,
+  ): Response | null => {
+    if (value <= 0) {
       return responseHelper.badRequest(
         res,
-        `O campo ${field} deve ser maior que 0`,
+        `O campo ${fieldName} deve ser maior que 0`,
       )
     }
     return null
