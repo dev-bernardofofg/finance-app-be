@@ -19,14 +19,10 @@ export class CreateUserController {
       'email',
       'password',
     ]
+    validatorHelpers.validateRequiredFields(params, requiredFields, res)
+    validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
     validatorHelpers.emailIsValid(params.email ?? '', res)
     validatorHelpers.passwordIsValid(params.password ?? '', res)
-
-    for (const field of requiredFields) {
-      if (!params?.[field] || String(params[field]).trim().length === 0) {
-        return responseHelper.badRequest(res, `O campo ${field} é obrigatório`)
-      }
-    }
 
     try {
       const user = await this.createUserUseCase.execute(

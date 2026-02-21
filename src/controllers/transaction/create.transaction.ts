@@ -13,30 +13,24 @@ export class CreateTransactionController {
 
   async execute(req: Request, res: Response) {
     const params = req.body
-    const requiredFields: (keyof ITransactionParams)[] = [
+    const requiredFields: (keyof Omit<ITransactionParams, 'id'>)[] = [
       'user_id',
       'name',
       'type',
       'amount',
       'date',
     ]
-
-    validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
+    const allowedFields = [...requiredFields]
+    const convertTypeParam = (type: string) => type.trim().toLowerCase()
+    validatorHelpers.validateRequiredFields(params, requiredFields, res)
+    validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
     validatorHelpers.fieldIsGreaterThanZero(params.amount, res)
     validatorHelpers.fieldIsInEnum(
-      params.type,
+      convertTypeParam(params.type),
       ['income', 'expense', 'investment'],
       res,
     )
-
-    for (const field of requiredFields) {
-      if (
-        !params?.[field] ||
-        (typeof params[field] === 'number' && params[field] <= 0)
-      ) {
-        return responseHelper.badRequest(res, `O campo ${field} é obrigatório`)
-      }
-    }
+    validatorHelpers.fieldIsCurrency(params.amount, res)
 
     try {
       const transaction = await this.createTransactionUseCase.execute(

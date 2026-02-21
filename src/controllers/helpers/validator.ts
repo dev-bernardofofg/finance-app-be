@@ -77,4 +77,35 @@ export const validatorHelpers = {
     }
     return null
   },
+  fieldIsCurrency: (field: number, res: Response): Response | null => {
+    if (
+      !validator.isCurrency(field.toString(), {
+        digits_after_decimal: [2],
+        allow_negatives: false,
+        decimal_separator: '.',
+      })
+    ) {
+      return responseHelper.badRequest(
+        res,
+        `O campo ${field} deve ser um valor monetário válido`,
+      )
+    }
+    return null
+  },
+  validateRequiredFields: (
+    params: Record<string, unknown>,
+    requiredFields: string[],
+    res: Response,
+  ): Response | null => {
+    const missingFields = requiredFields.filter(
+      (field) => params[field] === undefined || params[field] === null,
+    )
+    if (missingFields.length > 0) {
+      return responseHelper.badRequest(
+        res,
+        `Campos obrigatórios: ${missingFields.join(', ')}`,
+      )
+    }
+    return null
+  },
 }

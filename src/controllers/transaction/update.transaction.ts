@@ -20,16 +20,8 @@ export class UpdateTransactionController {
       'amount',
       'date',
     ]
+    validatorHelpers.validateRequiredFields(params, requiredFields, res)
     validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
-
-    for (const field of requiredFields) {
-      if (
-        !params?.[field] ||
-        (typeof params[field] === 'number' && params[field] <= 0)
-      ) {
-        return responseHelper.badRequest(res, `O campo ${field} é obrigatório`)
-      }
-    }
 
     try {
       const transaction = await this.updateTransactionUseCase.execute(
