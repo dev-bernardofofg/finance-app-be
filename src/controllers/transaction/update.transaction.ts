@@ -15,7 +15,6 @@ export class UpdateTransactionController {
 
     const params = req.body
     const requiredFields: (keyof ITransactionParams)[] = [
-      'user_id',
       'name',
       'type',
       'amount',

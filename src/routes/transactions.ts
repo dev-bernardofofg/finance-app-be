@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express'
 import {
   makeCreateTransactionController,
+  makeDeleteTransactionController,
   makeGetTransactionByIdController,
   makeGetTransactionByUserIdController,
   makeUpdateTransactionController,
@@ -21,6 +22,13 @@ transactionsRoutes.put('/:id', async (request: Request, response: Response) => {
   return updateTransactionController.execute(request, response)
 })
 
+transactionsRoutes.delete(
+  '/:id',
+  async (request: Request, response: Response) => {
+    const deleteTransactionController = makeDeleteTransactionController()
+    return deleteTransactionController.execute(request, response)
+  },
+)
 transactionsRoutes.get('/', async (request: Request, response: Response) => {
   const getTransactionByUserIdController =
     makeGetTransactionByUserIdController()
