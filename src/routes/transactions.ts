@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 import {
   makeCreateTransactionController,
   makeGetTransactionByIdController,
+  makeGetTransactionByUserIdController,
   makeUpdateTransactionController,
 } from '../factories/controllers/transaction'
 
@@ -18,4 +19,10 @@ transactionsRoutes.get('/:id', async (request: Request, response: Response) => {
 transactionsRoutes.put('/:id', async (request: Request, response: Response) => {
   const updateTransactionController = makeUpdateTransactionController()
   return updateTransactionController.execute(request, response)
+})
+
+transactionsRoutes.get('/', async (request: Request, response: Response) => {
+  const getTransactionByUserIdController =
+    makeGetTransactionByUserIdController()
+  return getTransactionByUserIdController.execute(request, response)
 })

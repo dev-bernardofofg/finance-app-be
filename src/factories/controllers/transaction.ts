@@ -1,17 +1,20 @@
 import {
   CreateTransactionController,
   GetTransactionByIdController,
+  GetTransactionByUserIdController,
   UpdateTransactionController,
 } from '../../controllers/transaction'
 import {
   PostgresCreateTransactionRepository,
   PostgresGetTransactionByIdRepository,
+  PostgresGetTransactionByUserIdRepository,
   PostgresGetUserByIdRepository,
   PostgresUpdateTransactionRepository,
 } from '../../repositories/postgres'
 import {
   CreateTransactionUseCase,
   GetTransactionByIdUseCase,
+  GetTransactionByUserIdUseCase,
   UpdateTransactionUseCase,
 } from '../../use-cases/transaction'
 
@@ -49,4 +52,18 @@ export const makeUpdateTransactionController = () => {
     updateTransactionUseCase,
   )
   return updateTransactionController
+}
+
+export const makeGetTransactionByUserIdController = () => {
+  const getTransactionByUserIdRepository =
+    new PostgresGetTransactionByUserIdRepository()
+  const getUserByIdRepository = new PostgresGetUserByIdRepository()
+  const getTransactionByUserIdUseCase = new GetTransactionByUserIdUseCase(
+    getTransactionByUserIdRepository,
+    getUserByIdRepository,
+  )
+  const getTransactionByUserIdController = new GetTransactionByUserIdController(
+    getTransactionByUserIdUseCase,
+  )
+  return getTransactionByUserIdController
 }
