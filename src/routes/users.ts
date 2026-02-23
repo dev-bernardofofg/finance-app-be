@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 import {
   makeCreateUserController,
   makeDeleteUserController,
+  makeGetBalanceUserController,
   makeGetUserByEmailController,
   makeGetUserByIdController,
   makeUpdateUserByIdController,
@@ -29,3 +30,10 @@ usersRoutes.delete('/:id', async (request: Request, response: Response) => {
   const deleteUserController = makeDeleteUserController()
   return deleteUserController.execute(request, response)
 })
+usersRoutes.get(
+  '/:id/balance',
+  async (request: Request, response: Response) => {
+    const getBalanceUserController = makeGetBalanceUserController()
+    return getBalanceUserController.execute(request, response)
+  },
+)
