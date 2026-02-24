@@ -18,18 +18,7 @@ export interface IGetBalanceUserRepository {
 export class PostgresGetBalanceUserRepository implements IGetBalanceUserRepository {
   async execute(params: GetBalanceUserParams): Promise<GetBalanceUserResponse> {
     const query = `
-      SELECT
-	      SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expenses,
-	      SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income,
-	      SUM(CASE WHEN type = 'investment' THEN amount ELSE 0 END) AS total_investments,
-		      (SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END)
-		        -
-		      SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END)
-		        -
-		      SUM(CASE WHEN type = 'investment' THEN amount ELSE 0 END)
-		      ) AS balance
-      FROM transactions
-      WHERE user_id = $1
+      SELECT * FROM get_user_balance($1)
     `
     const balance = await PostgresHelper.query<GetBalanceUserResponse>(query, [
       params.id,
