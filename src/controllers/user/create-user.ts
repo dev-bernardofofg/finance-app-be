@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
+import { ZodError } from 'zod'
 import { EmailAlreadyInUseError } from '../../errors/user'
-import { ICreateUserParams } from '../../types/user.type'
+import { createUserSchema } from '../../types/user.type'
 import { ICreateUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 
 export class CreateUserController {
   private createUserUseCase: ICreateUserUseCase
@@ -12,32 +12,20 @@ export class CreateUserController {
   }
 
   async execute(req: Request, res: Response) {
-    const params = req.body as Partial<ICreateUserParams>
-    const requiredFields: (keyof ICreateUserParams)[] = [
-      'first_name',
-      'last_name',
-      'email',
-      'password',
-    ]
-    if (validatorHelpers.validateRequiredFields(params, requiredFields, res))
-      return
-    if (
-      validatorHelpers.fieldsAreValid(Object.keys(params), requiredFields, res)
-    )
-      return
-    if (validatorHelpers.emailIsValid(params.email ?? '', res)) return
-    if (validatorHelpers.passwordIsValid(params.password ?? '', res)) return
-
     try {
-      const user = await this.createUserUseCase.execute(
-        params as ICreateUserParams,
-      )
+      const params = await createUserSchema.parseAsync(req.body)
+      const user = await this.createUserUseCase.execute(params)
       return responseHelper.created(res, user)
     } catch (error) {
-      if (error instanceof EmailAlreadyInUseError) {
-        return responseHelper.badRequest(res, error.message)
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(res, error.issues[0].message)
       }
 
+      if (error instanceof EmailAlreadyInUseError) {
+        return responseHelper.conflict(res, error.message)
+      }
+
+      console.error('Erro ao criar usuário:', error)
       return responseHelper.internalServerError(res, 'Erro ao criar usuário')
     }
   }

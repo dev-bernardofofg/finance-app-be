@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
+import { ZodError } from 'zod'
 import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
-import { UserFields } from '../../repositories/postgres'
+import { updateUserSchema } from '../../types/user.type'
 import { IUpdateUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
@@ -12,39 +13,23 @@ export class UpdateUserController {
   }
   async execute(req: Request, res: Response) {
     try {
-      const params = req.body as UserFields
+      const params = await updateUserSchema.parseAsync(req.body)
       const userId = req.params.id
 
       if (validatorHelpers.idIsValid(userId, res)) return
-
-      const allowedFields: (keyof UserFields)[] = [
-        'first_name',
-        'last_name',
-        'email',
-        'password',
-      ]
-
-      if (
-        validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
-      )
-        return
-      if (params.password) {
-        if (validatorHelpers.passwordIsValid(params.password ?? '', res)) return
-      }
-      if (params.email) {
-        if (validatorHelpers.emailIsValid(params.email ?? '', res)) return
-      }
 
       const updatedUser = await this.updateUserUseCase.execute(userId, params)
 
       return responseHelper.ok(res, updatedUser)
     } catch (error) {
-      console.error('Erro ao atualizar usuário:', error)
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(res, error.issues[0].message)
+      }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
       if (error instanceof EmailAlreadyInUseError) {
-        return responseHelper.badRequest(res, error.message)
+        return responseHelper.conflict(res, error.message)
       }
       return responseHelper.internalServerError(
         res,

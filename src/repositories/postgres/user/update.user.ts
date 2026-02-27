@@ -43,7 +43,7 @@ export class PostgresUpdateUserRepository implements IPostgresUpdateUserReposito
     UPDATE users 
     SET ${updatedFields.join(', ')} 
     WHERE id = $${updateValues.length}
-    RETURNING *
+    RETURNING id, first_name, last_name, email
     `
 
     const updatedUser = await PostgresHelper.query<UserResponse[]>(

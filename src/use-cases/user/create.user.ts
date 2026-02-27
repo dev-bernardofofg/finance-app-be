@@ -36,10 +36,6 @@ export class CreateUserUseCase implements ICreateUserUseCase {
       id: userId,
       password: hashedPassword,
     }
-    try {
-      return await this.createUserRepository.execute(payload)
-    } catch (error) {
-      throw new Error('Erro ao criar usuário')
-    }
+    return this.createUserRepository.execute(payload)
   }
 }

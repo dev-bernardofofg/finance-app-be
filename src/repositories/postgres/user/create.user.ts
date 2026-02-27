@@ -17,7 +17,7 @@ export class PostgresCreateUserRepository implements IPostgresCreateUserReposito
 
   async execute(createUserParams: ICreateUserParams): Promise<UserResponse> {
     const createdUser = await PostgresHelper.query<UserResponse[]>(
-      'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5)',
+      'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id, first_name, last_name, email',
       [
         createUserParams.id,
         createUserParams.first_name,

@@ -3,24 +3,6 @@ import validator from 'validator'
 import { responseHelper } from './http'
 
 export const validatorHelpers = {
-  passwordIsValid: (password: string, res: Response): Response | null => {
-    const isValid = validator.isStrongPassword(password, {
-      minLength: 6,
-      minLowercase: 1,
-      minUppercase: 1,
-      minNumbers: 1,
-      minSymbols: 1,
-    })
-
-    if (!isValid) {
-      return responseHelper.badRequest(
-        res,
-        'A senha deve ter pelo menos 6 caracteres, uma letra maiúscula, uma letra minúscula, um número e um símbolo.',
-      )
-    }
-
-    return null
-  },
   emailIsValid: (email: string, res: Response): Response | null => {
     if (!validator.isEmail(email)) {
       return responseHelper.badRequest(
