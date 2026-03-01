@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
+import { ZodError } from 'zod'
 import { UserNotFoundError } from '../../errors/user'
-import { ITransactionParams } from '../../types/transaction.type'
+import { createTransactionSchema, ITransactionParams } from '../../types'
 import { ICreateTransactionUseCase } from '../../use-cases/transaction/create.transaction'
 import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 
 export class CreateTransactionController {
   private createTransactionUseCase: ICreateTransactionUseCase
@@ -12,44 +12,23 @@ export class CreateTransactionController {
   }
 
   async execute(req: Request, res: Response) {
-    const params = req.body
-    const requiredFields: (keyof Omit<ITransactionParams, 'id'>)[] = [
-      'user_id',
-      'name',
-      'type',
-      'amount',
-      'date',
-    ]
-    const allowedFields = [...requiredFields]
-    const convertTypeParam = (type: string) => type.trim().toLowerCase()
-    if (validatorHelpers.validateRequiredFields(params, requiredFields, res))
-      return
-    if (
-      validatorHelpers.fieldsAreValid(Object.keys(params), allowedFields, res)
-    )
-      return
-    if (validatorHelpers.fieldIsGreaterThanZero('amount', params.amount, res))
-      return
-    if (
-      validatorHelpers.fieldIsInEnum(
-        convertTypeParam(params.type),
-        ['income', 'expense', 'investment'],
-        res,
-      )
-    )
-      return
-    if (validatorHelpers.fieldIsCurrency('amount', params.amount, res)) return
-
     try {
-      const transaction = await this.createTransactionUseCase.execute(
-        params as ITransactionParams,
-      )
+      const params = await createTransactionSchema.parseAsync(req.body)
+      const transaction = await this.createTransactionUseCase.execute({
+        ...params,
+        date: new Date(params.date),
+      } as ITransactionParams)
       return responseHelper.created(res, transaction)
     } catch (error) {
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(
+          res,
+          error.issues[0]?.message ?? 'Dados da transação inválidos',
+        )
+      }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
-      console.error('Erro ao criar transação:', error)
       return responseHelper.internalServerError(res, 'Erro ao criar transação')
     }
   }
