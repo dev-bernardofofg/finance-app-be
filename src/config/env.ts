@@ -9,6 +9,7 @@ const getEnv = (key: string, defaultValue?: string): string => {
 }
 
 export const env = {
+  DATABASE_URL: process.env.DATABASE_URL,
   POSTGRES_USER: getEnv('POSTGRES_USER'),
   POSTGRES_DB: getEnv('POSTGRES_DB'),
   POSTGRES_PASSWORD: getEnv('POSTGRES_PASSWORD'),

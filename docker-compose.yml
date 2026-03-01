@@ -26,6 +26,7 @@ services:
       dockerfile: Dockerfile
     container_name: finance-app-api
     environment:
+      DATABASE_URL: ${DATABASE_URL}
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_PORT: '5432'
