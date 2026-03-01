@@ -14,7 +14,7 @@ model User {
   email      String   @unique @db.VarChar(100)
   password   String   @db.VarChar(100)
   created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  updated_at DateTime @default(now()) @updatedAt
 
   @@map("users")
 }
@@ -28,12 +28,12 @@ enum TransactionType {
 model Transaction {
   id         String          @id @default(uuid())
   user_id    String
-  name       String
+  name       String          @db.VarChar(100)
   type       TransactionType
-  amount     Float
-  date       DateTime
+  amount     Decimal         @db.Decimal(10, 2)
+  date       DateTime        @db.Date
   created_at DateTime        @default(now())
-  updated_at DateTime        @updatedAt
+  updated_at DateTime        @default(now()) @updatedAt
 
   @@map("transactions")
 }

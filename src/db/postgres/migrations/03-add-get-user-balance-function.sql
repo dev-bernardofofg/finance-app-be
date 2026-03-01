@@ -7,7 +7,7 @@ CREATE OR REPLACE FUNCTION get_user_balance(p_user_id UUID) RETURNS TABLE (
 SELECT COALESCE(
     SUM(
       CASE
-        WHEN type = 'income' THEN amount
+        WHEN type = 'INCOME' THEN amount
         ELSE 0
       END
     ),
@@ -16,7 +16,7 @@ SELECT COALESCE(
   COALESCE(
     SUM(
       CASE
-        WHEN type = 'expense' THEN amount
+        WHEN type = 'EXPENSE' THEN amount
         ELSE 0
       END
     ),
@@ -25,7 +25,7 @@ SELECT COALESCE(
   COALESCE(
     SUM(
       CASE
-        WHEN type = 'investment' THEN amount
+        WHEN type = 'INVESTMENT' THEN amount
         ELSE 0
       END
     ),
@@ -34,7 +34,7 @@ SELECT COALESCE(
   COALESCE(
     SUM(
       CASE
-        WHEN type = 'income' THEN amount
+        WHEN type = 'INCOME' THEN amount
         ELSE 0
       END
     ),
@@ -42,7 +42,7 @@ SELECT COALESCE(
   ) - COALESCE(
     SUM(
       CASE
-        WHEN type = 'expense' THEN amount
+        WHEN type = 'EXPENSE' THEN amount
         ELSE 0
       END
     ),
@@ -50,7 +50,7 @@ SELECT COALESCE(
   ) - COALESCE(
     SUM(
       CASE
-        WHEN type = 'investment' THEN amount
+        WHEN type = 'INVESTMENT' THEN amount
         ELSE 0
       END
     ),
