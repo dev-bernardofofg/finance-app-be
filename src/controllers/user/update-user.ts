@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { ZodError } from 'zod'
 import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
-import { updateUserSchema } from '../../types/user.type'
+import { updateUserSchema } from '../../types'
 import { IUpdateUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'

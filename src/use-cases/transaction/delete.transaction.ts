@@ -1,5 +1,5 @@
 import { IPostgresDeleteTransactionRepository } from '../../repositories/postgres'
-import { ITransactionResponse } from '../../types/transaction.type'
+import { ITransactionResponse } from '../../types'
 
 export interface IDeleteTransactionUseCase {
   execute(transactionId: string): Promise<ITransactionResponse | null>

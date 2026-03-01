@@ -4,7 +4,7 @@ import {
   IPostgresUpdateUserRepository,
   UserFields,
 } from '../../repositories/postgres'
-import { UserResponse } from '../../types/user.type'
+import { UserResponse } from '../../types'
 
 export interface IUpdateUserUseCase {
   execute(userId: string, updateUserParams: UserFields): Promise<UserResponse>

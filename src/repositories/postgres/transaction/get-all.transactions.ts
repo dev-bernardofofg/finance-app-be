@@ -1,5 +1,5 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
-import { ITransactionResponse } from '../../../types/transaction.type'
+import { ITransactionResponse } from '../../../types'
 
 export interface GetTransactionsParams {
   user_id: string

@@ -1,6 +1,6 @@
 import { UserNotFoundError } from '../../errors/user'
 import { IPostgresDeleteUserRepository } from '../../repositories/postgres'
-import { UserResponse } from '../../types/user.type'
+import { UserResponse } from '../../types'
 
 export interface IDeleteUserUseCase {
   execute(userId: string): Promise<UserResponse>

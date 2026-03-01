@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { ITransactionParams } from '../../types/transaction.type'
+import { ITransactionParams } from '../../types'
 import { IUpdateTransactionUseCase } from '../../use-cases/transaction/update.transaction'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'

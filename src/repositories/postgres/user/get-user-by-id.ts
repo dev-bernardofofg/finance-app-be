@@ -1,5 +1,5 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
-import { UserResponse } from '../../../types/user.type'
+import { UserResponse } from '../../../types'
 
 export interface GetUserByIdParams {
   id: string

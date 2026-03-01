@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { ZodError } from 'zod'
 import { EmailAlreadyInUseError } from '../../errors/user'
-import { createUserSchema } from '../../types/user.type'
+import { createUserSchema } from '../../types'
 import { ICreateUserUseCase } from '../../use-cases/user'
 import { responseHelper } from '../helpers/http'
 

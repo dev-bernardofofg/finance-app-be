@@ -4,7 +4,7 @@ import {
   IPostgresGetTransactionByUserIdRepository,
   IPostgresGetUserByIdRepository,
 } from '../../repositories/postgres'
-import { ITransactionResponse } from '../../types/transaction.type'
+import { ITransactionResponse } from '../../types'
 
 export interface IGetTransactionByUserIdUseCase {
   execute(params: GetTransactionByUserIdParams): Promise<ITransactionResponse[]>

@@ -2,7 +2,7 @@ import {
   GetTransactionByIdParams,
   IPostgresGetTransactionByIdRepository,
 } from '../../repositories/postgres'
-import { ITransactionResponse } from '../../types/transaction.type'
+import { ITransactionResponse } from '../../types'
 
 export interface IGetTransactionByIdUseCase {
   execute(

@@ -1,8 +1,5 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
-import {
-  ITransactionParams,
-  ITransactionResponse,
-} from '../../../types/transaction.type'
+import { ITransactionParams, ITransactionResponse } from '../../../types'
 
 export interface IPostgresUpdateTransactionRepository {
   execute(

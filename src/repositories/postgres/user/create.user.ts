@@ -1,5 +1,5 @@
 import { PostgresHelper } from '../../../db/postgres/helper'
-import { ICreateUserParams, UserResponse } from '../../../types/user.type'
+import { ICreateUserParams, UserResponse } from '../../../types'
 
 export interface IPostgresCreateUserRepository {
   findByEmail(email: string): Promise<UserResponse | null>
