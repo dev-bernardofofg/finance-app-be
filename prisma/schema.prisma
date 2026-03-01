@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id         String   @id @default(uuid())
+  first_name String   @db.VarChar(50)
+  last_name  String   @db.VarChar(50)
+  email      String   @unique @db.VarChar(100)
+  password   String   @db.VarChar(100)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum TransactionType {
+  INCOME
+  EXPENSE
+  INVESTMENT
+}
+
+model Transaction {
+  id         String          @id @default(uuid())
+  user_id    String
+  name       String
+  type       TransactionType
+  amount     Float
+  date       DateTime
+  created_at DateTime        @default(now())
+  updated_at DateTime        @updatedAt
+
+  @@map("transactions")
+}
