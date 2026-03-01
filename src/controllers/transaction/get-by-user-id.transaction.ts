@@ -1,8 +1,9 @@
 import { Request, Response } from 'express'
+import { ZodError } from 'zod'
 import { UserNotFoundError } from '../../errors/user'
+import { getTransactionsByUserIdQuerySchema } from '../../types'
 import { IGetTransactionByUserIdUseCase } from '../../use-cases/transaction/get-by-user-id.transaction'
 import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 
 export class GetTransactionByUserIdController {
   private getTransactionByUserIdUseCase: IGetTransactionByUserIdUseCase
@@ -11,17 +12,21 @@ export class GetTransactionByUserIdController {
   }
   async execute(req: Request, res: Response) {
     try {
-      const userId = req.query.userId as string
-      if (!userId) {
-        return responseHelper.badRequest(res, 'O campo userId é obrigatório')
-      }
-      if (validatorHelpers.idIsValid(userId, res)) return
+      const { userId } = await getTransactionsByUserIdQuerySchema.parseAsync(
+        req.query,
+      )
 
       const transactions = await this.getTransactionByUserIdUseCase.execute({
         userId,
       })
       return responseHelper.ok(res, transactions)
     } catch (error) {
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(
+          res,
+          error.issues[0]?.message ?? 'Dados da transação inválidos',
+        )
+      }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }

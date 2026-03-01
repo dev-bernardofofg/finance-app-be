@@ -5,7 +5,7 @@ export interface ITransactionParams {
   id?: string
   user_id: string
   name: string
-  type: 'income' | 'expense' | 'investment'
+  type: 'INCOME' | 'EXPENSE' | 'INVESTMENT'
   amount: number
   date: Date
 }
@@ -14,7 +14,7 @@ export interface ITransactionResponse {
   id: string
   user_id: string
   name: string
-  type: 'income' | 'expense' | 'investment'
+  type: 'INCOME' | 'EXPENSE' | 'INVESTMENT'
   amount: number
   date: Date
 }
@@ -34,8 +34,8 @@ export const createTransactionSchema = z.object({
       error: 'O nome da transação é obrigatório',
     })
     .trim(),
-  type: z.enum(['income', 'expense', 'investment'], {
-    error: 'O tipo de transação deve ser "income", "expense" ou "investment"',
+  type: z.enum(['INCOME', 'EXPENSE', 'INVESTMENT'], {
+    error: 'O tipo de transação deve ser "INCOME", "EXPENSE" ou "INVESTMENT"',
   }),
   amount: z
     .number({
@@ -63,5 +63,24 @@ export const createTransactionSchema = z.object({
 
 export type CreateTransactionParams = z.infer<typeof createTransactionSchema>
 
-export const updateTransactionSchema = createTransactionSchema.partial()
+export const updateTransactionSchema = createTransactionSchema.pick({
+  name: true,
+  type: true,
+  amount: true,
+  date: true,
+})
 export type UpdateTransactionParams = z.infer<typeof updateTransactionSchema>
+
+export const transactionIdParamSchema = z.object({
+  id: z
+    .string({ error: 'O ID da transação é obrigatório' })
+    .min(1, { error: 'O ID da transação é obrigatório' })
+    .uuid({ error: 'O ID da transação deve ser um UUID válido' }),
+})
+
+export const getTransactionsByUserIdQuerySchema = z.object({
+  userId: z
+    .string({ error: 'O campo userId é obrigatório' })
+    .min(1, { error: 'O campo userId é obrigatório' })
+    .uuid({ error: 'O campo userId deve ser um UUID válido' }),
+})

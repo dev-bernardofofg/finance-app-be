@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
+import { ZodError } from 'zod'
+import { transactionIdParamSchema } from '../../types'
 import { IDeleteTransactionUseCase } from '../../use-cases/transaction/delete.transaction'
 import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 
 export class DeleteTransactionController {
   private deleteTransactionUseCase: IDeleteTransactionUseCase
@@ -9,9 +10,10 @@ export class DeleteTransactionController {
     this.deleteTransactionUseCase = deleteTransactionUseCase
   }
   async execute(req: Request, res: Response) {
-    const transactionId = req.params.id
-    if (validatorHelpers.idIsValid(transactionId, res)) return
     try {
+      const { id: transactionId } = await transactionIdParamSchema.parseAsync(
+        req.params,
+      )
       const transaction =
         await this.deleteTransactionUseCase.execute(transactionId)
 
@@ -21,6 +23,12 @@ export class DeleteTransactionController {
 
       return responseHelper.ok(res, transaction)
     } catch (error) {
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(
+          res,
+          error.issues[0]?.message ?? 'Parâmetros inválidos',
+        )
+      }
       if (error instanceof Error) {
         return responseHelper.notFound(res, error.message)
       }
