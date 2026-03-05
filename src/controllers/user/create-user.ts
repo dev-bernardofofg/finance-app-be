@@ -25,7 +25,6 @@ export class CreateUserController {
         return responseHelper.conflict(res, error.message)
       }
 
-      console.error('Erro ao criar usuário:', error)
       return responseHelper.internalServerError(res, 'Erro ao criar usuário')
     }
   }

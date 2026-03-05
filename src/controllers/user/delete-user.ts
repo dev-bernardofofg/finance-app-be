@@ -16,15 +16,9 @@ export class DeleteUserController {
       if (validatorHelpers.idIsValid(userId, res)) return
 
       const user = await this.deleteUserUseCase.execute(userId)
-      console.log(user)
-
-      if (!user) {
-        return responseHelper.notFound(res, 'Usuário não encontrado')
-      }
 
       return responseHelper.ok(res, user)
     } catch (error) {
-      console.error('Erro ao deletar usuário:', error)
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }

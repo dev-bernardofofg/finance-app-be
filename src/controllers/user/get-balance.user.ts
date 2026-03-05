@@ -14,7 +14,6 @@ export class GetBalanceUserController {
   async execute(req: Request, res: Response) {
     const params = req.params as Partial<GetBalanceUserParams>
 
-    console.log(params.id)
     if (validatorHelpers.idIsValid(params.id ?? '', res)) return
     try {
       const balance = await this.getBalanceUserUseCase.execute(
@@ -22,10 +21,11 @@ export class GetBalanceUserController {
       )
       return responseHelper.ok(res, balance)
     } catch (error) {
-      console.error('Erro ao buscar saldo do usuário:', error)
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
+
+      return responseHelper.internalServerError(res, 'Erro ao buscar saldo')
     }
   }
 }

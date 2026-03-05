@@ -22,7 +22,6 @@ export class GetUserByEmailController {
       )
       return responseHelper.ok(res, user)
     } catch (error) {
-      console.error('Erro ao buscar usuário:', error)
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
