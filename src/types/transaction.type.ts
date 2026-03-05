@@ -1,4 +1,3 @@
-import validator from 'validator'
 import z from 'zod'
 
 export interface ITransactionParams {
@@ -41,18 +40,12 @@ export const createTransactionSchema = z.object({
     .number({
       error: 'O valor da transação é obrigatório e deve ser um número',
     })
-    .min(1, {
-      error: 'O valor da transação deve ser maior que 0',
+    .int({
+      error: 'O valor da transação deve ser informado em centavos (inteiro)',
     })
-    .refine(
-      (value) =>
-        validator.isCurrency(value.toFixed(2), {
-          digits_after_decimal: [2],
-          allow_negatives: false,
-          decimal_separator: '.',
-        }),
-      { error: 'O valor da transação deve ser um valor monetário válido' },
-    ),
+    .min(1, {
+      error: 'O valor da transação em centavos deve ser maior que 0',
+    }),
   date: z
     .string({ error: 'A data da transação é obrigatória' })
     .datetime()

@@ -1,4 +1,5 @@
 import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
+import { isPrismaErrorCode } from '../../errors/prisma'
 import {
   IPostgresGetUserByEmailRepository,
   IPostgresUpdateUserRepository,
@@ -30,10 +31,24 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
       }
     }
 
-    const updatedUser = await this.updateUserRepository.execute(
-      userId,
-      updateUserParams,
-    )
+    let updatedUser: UserResponse | null = null
+
+    try {
+      updatedUser = await this.updateUserRepository.execute(
+        userId,
+        updateUserParams,
+      )
+    } catch (error) {
+      if (isPrismaErrorCode(error, 'P2025')) {
+        throw new UserNotFoundError(userId)
+      }
+
+      if (isPrismaErrorCode(error, 'P2002')) {
+        throw new EmailAlreadyInUseError(updateUserParams.email ?? 'informado')
+      }
+
+      throw error
+    }
 
     if (!updatedUser) {
       throw new UserNotFoundError(userId)

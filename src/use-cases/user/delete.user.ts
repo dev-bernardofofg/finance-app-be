@@ -1,3 +1,4 @@
+import { isPrismaErrorCode } from '../../errors/prisma'
 import { UserNotFoundError } from '../../errors/user'
 import { IPostgresDeleteUserRepository } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
@@ -11,7 +12,18 @@ export class DeleteUserUseCase implements IDeleteUserUseCase {
     this.deleteUserRepository = deleteUserRepository
   }
   async execute(userId: string) {
-    const user = await this.deleteUserRepository.execute(userId)
+    let user: UserResponse | null = null
+
+    try {
+      user = await this.deleteUserRepository.execute(userId)
+    } catch (error) {
+      if (isPrismaErrorCode(error, 'P2025')) {
+        throw new UserNotFoundError(userId)
+      }
+
+      throw error
+    }
+
     if (!user) {
       throw new UserNotFoundError(userId)
     }

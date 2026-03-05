@@ -1,5 +1,6 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { prisma } from '../../../../prisma/prisma'
 import { ITransactionResponse } from '../../../types'
+import { mapTransactionFromDatabase } from './mapper'
 
 export interface IPostgresDeleteTransactionRepository {
   execute(transactionId: string): Promise<ITransactionResponse | null>
@@ -7,9 +8,15 @@ export interface IPostgresDeleteTransactionRepository {
 
 export class PostgresDeleteTransactionRepository implements IPostgresDeleteTransactionRepository {
   async execute(transactionId: string): Promise<ITransactionResponse | null> {
-    const deletedTransaction = await PostgresHelper.query<
-      ITransactionResponse[]
-    >('DELETE FROM transactions WHERE id = $1 RETURNING *', [transactionId])
-    return (deletedTransaction[0] as ITransactionResponse) ?? null
+    try {
+      const deletedTransaction = await prisma.transaction.delete({
+        where: {
+          id: transactionId,
+        },
+      })
+      return mapTransactionFromDatabase(deletedTransaction)
+    } catch (error) {
+      return null
+    }
   }
 }

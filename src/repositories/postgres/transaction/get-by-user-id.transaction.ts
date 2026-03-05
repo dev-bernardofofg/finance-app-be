@@ -1,5 +1,6 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { prisma } from '../../../../prisma/prisma'
 import { ITransactionResponse } from '../../../types'
+import { mapTransactionFromDatabase } from './mapper'
 
 export interface GetTransactionByUserIdParams {
   userId: string
@@ -11,10 +12,17 @@ export interface IPostgresGetTransactionByUserIdRepository {
 
 export class PostgresGetTransactionByUserIdRepository implements IPostgresGetTransactionByUserIdRepository {
   async execute(userId: string): Promise<ITransactionResponse[]> {
-    const transactions = await PostgresHelper.query<ITransactionResponse[]>(
-      'SELECT * FROM transactions WHERE user_id = $1',
-      [userId],
-    )
-    return transactions
+    try {
+      const transactions = await prisma.transaction.findMany({
+        where: {
+          user_id: userId,
+        },
+      })
+      return transactions.map((transaction) =>
+        mapTransactionFromDatabase(transaction),
+      )
+    } catch (error) {
+      return []
+    }
   }
 }

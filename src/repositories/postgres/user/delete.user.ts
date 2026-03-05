@@ -1,4 +1,4 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { prisma } from '../../../../prisma/prisma'
 import { UserResponse } from '../../../types'
 
 export interface IPostgresDeleteUserRepository {
@@ -7,10 +7,11 @@ export interface IPostgresDeleteUserRepository {
 
 export class PostgresDeleteUserRepository implements IPostgresDeleteUserRepository {
   async execute(userId: string): Promise<UserResponse | null> {
-    const deletedUser = await PostgresHelper.query<UserResponse[]>(
-      'DELETE FROM users WHERE id = $1 RETURNING id, first_name, last_name, email',
-      [userId],
-    )
-    return deletedUser[0] ?? null
+    const deletedUser = await prisma.user.delete({
+      where: {
+        id: userId,
+      },
+    })
+    return deletedUser
   }
 }

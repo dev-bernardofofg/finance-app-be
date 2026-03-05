@@ -1,4 +1,4 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { prisma } from '../../../../prisma/prisma'
 import { UserResponse } from '../../../types'
 
 export interface UpdateUserParams {
@@ -23,34 +23,9 @@ export class PostgresUpdateUserRepository implements IPostgresUpdateUserReposito
     userId: string,
     updateUserParams: UserFields,
   ): Promise<UserResponse | null> {
-    const updatedFields: string[] = []
-    const updateValues: string[] = []
-
-    Object.keys(updateUserParams).forEach((key) => {
-      updatedFields.push(
-        `${key as keyof UpdateUserParams} = $${
-          updateValues.length + 1
-        }` as never,
-      )
-      updateValues.push(
-        updateUserParams[key as keyof UpdateUserParams] as never,
-      )
+    return prisma.user.update({
+      where: { id: userId },
+      data: updateUserParams,
     })
-
-    updateValues.push(userId)
-
-    const query = `
-    UPDATE users 
-    SET ${updatedFields.join(', ')} 
-    WHERE id = $${updateValues.length}
-    RETURNING id, first_name, last_name, email
-    `
-
-    const updatedUser = await PostgresHelper.query<UserResponse[]>(
-      query,
-      updateValues,
-    )
-
-    return updatedUser[0] ?? null
   }
 }

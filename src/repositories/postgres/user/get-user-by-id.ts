@@ -1,4 +1,4 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { prisma } from '../../../../prisma/prisma'
 import { UserResponse } from '../../../types'
 
 export interface GetUserByIdParams {
@@ -11,10 +11,11 @@ export interface IPostgresGetUserByIdRepository {
 
 export class PostgresGetUserByIdRepository implements IPostgresGetUserByIdRepository {
   async execute(params: GetUserByIdParams) {
-    const user = await PostgresHelper.query<UserResponse[]>(
-      'SELECT id, first_name, last_name, email FROM users WHERE id = $1',
-      [params.id],
-    )
-    return user[0] ?? null
+    const user = await prisma.user.findUnique({
+      where: {
+        id: params.id,
+      },
+    })
+    return user
   }
 }

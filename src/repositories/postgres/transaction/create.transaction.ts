@@ -1,5 +1,7 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { TransactionType } from '../../../../generated/prisma/enums'
+import { prisma } from '../../../../prisma/prisma'
 import { ITransactionParams, ITransactionResponse } from '../../../types'
+import { mapTransactionFromDatabase } from './mapper'
 
 export interface IPostgresCreateTransactionRepository {
   execute(
@@ -11,20 +13,17 @@ export class PostgresCreateTransactionRepository implements IPostgresCreateTrans
   async execute(
     createTransactionParams: ITransactionParams,
   ): Promise<ITransactionResponse> {
-    const createdTransaction = await PostgresHelper.query<
-      ITransactionResponse[]
-    >(
-      `INSERT INTO transactions (id, user_id, name, type, amount, date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [
-        createTransactionParams.id,
-        createTransactionParams.user_id,
-        createTransactionParams.name,
-        createTransactionParams.type,
-        createTransactionParams.amount,
-        createTransactionParams.date,
-      ],
-    )
+    const createdTransactionByPrisma = await prisma.transaction.create({
+      data: {
+        id: createTransactionParams.id,
+        user_id: createTransactionParams.user_id,
+        name: createTransactionParams.name,
+        type: createTransactionParams.type as TransactionType,
+        amount: createTransactionParams.amount,
+        date: createTransactionParams.date,
+      },
+    })
 
-    return createdTransaction[0] as ITransactionResponse
+    return mapTransactionFromDatabase(createdTransactionByPrisma)
   }
 }

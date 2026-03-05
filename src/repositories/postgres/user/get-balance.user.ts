@@ -1,4 +1,5 @@
-import { PostgresHelper } from '../../../db/postgres/helper'
+import { prisma } from '../../../../prisma/prisma'
+import { toNumberFromDatabase } from '../../../helpers/money'
 
 export interface GetBalanceUserParams {
   id: string
@@ -17,15 +18,30 @@ export interface IGetBalanceUserRepository {
 
 export class PostgresGetBalanceUserRepository implements IGetBalanceUserRepository {
   async execute(params: GetBalanceUserParams): Promise<GetBalanceUserResponse> {
-    const query = `
-      SELECT * FROM get_user_balance($1)
-    `
-    const balance = await PostgresHelper.query<GetBalanceUserResponse>(query, [
-      params.id,
+    const [income, expense, investment] = await Promise.all([
+      prisma.transaction.aggregate({
+        where: { user_id: params.id, type: 'INCOME' },
+        _sum: { amount: true },
+      }),
+      prisma.transaction.aggregate({
+        where: { user_id: params.id, type: 'EXPENSE' },
+        _sum: { amount: true },
+      }),
+      prisma.transaction.aggregate({
+        where: { user_id: params.id, type: 'INVESTMENT' },
+        _sum: { amount: true },
+      }),
     ])
+
+    const totalIncome = toNumberFromDatabase(income._sum.amount)
+    const totalExpenses = toNumberFromDatabase(expense._sum.amount)
+    const totalInvestments = toNumberFromDatabase(investment._sum.amount)
+
     return {
-      ...balance[0],
-      userId: params.id,
+      total_income: totalIncome,
+      total_expenses: totalExpenses,
+      total_investments: totalInvestments,
+      balance: totalIncome - totalExpenses - totalInvestments,
     }
   }
 }

@@ -1,3 +1,4 @@
+import { prisma } from '../../../../prisma/prisma'
 import { PostgresHelper } from '../../../db/postgres/helper'
 import { ICreateUserParams, UserResponse } from '../../../types'
 
@@ -16,16 +17,15 @@ export class PostgresCreateUserRepository implements IPostgresCreateUserReposito
   }
 
   async execute(createUserParams: ICreateUserParams): Promise<UserResponse> {
-    const createdUser = await PostgresHelper.query<UserResponse[]>(
-      'INSERT INTO users (id, first_name, last_name, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id, first_name, last_name, email',
-      [
-        createUserParams.id,
-        createUserParams.first_name,
-        createUserParams.last_name,
-        createUserParams.email,
-        createUserParams.password,
-      ],
-    )
-    return createdUser[0] as UserResponse
+    const user = await prisma.user.create({
+      data: {
+        id: createUserParams.id,
+        first_name: createUserParams.first_name,
+        last_name: createUserParams.last_name,
+        email: createUserParams.email,
+        password: createUserParams.password,
+      },
+    })
+    return user
   }
 }
