@@ -30,7 +30,7 @@ model Transaction {
   user_id    String
   name       String          @db.VarChar(100)
   type       TransactionType
-  amount     Decimal         @db.Decimal(10, 2)
+  amount     Int
   date       DateTime        @db.Date
   created_at DateTime        @default(now())
   updated_at DateTime        @default(now()) @updatedAt
