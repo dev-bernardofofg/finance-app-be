@@ -1,42 +1,52 @@
 import { Request } from 'express'
+import { EmailAlreadyInUseError } from '../../errors/user'
 import { CreateUserParams, UserResponse } from '../../types'
 import { HttpResponse } from '../helpers/http'
 import { CreateUserController } from './create-user'
 
 describe('CreateUserController', () => {
   class CreateUserUseCaseStub {
-    async execute(user: CreateUserParams): Promise<UserResponse> {
-      return {
+    execute = jest.fn(
+      async (user: CreateUserParams): Promise<UserResponse> => ({
         id: 'user-id',
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-      }
-    }
+      }),
+    )
   }
 
-  it('should return 201 when user is created', async () => {
-    // arrange
-    const createUserUseCaseStub = new CreateUserUseCaseStub()
-    const createUserController = new CreateUserController(createUserUseCaseStub)
-
-    const httpRequest = {
+  const makeHttpRequest = (body?: Partial<CreateUserParams>) =>
+    ({
       body: {
         first_name: 'John',
         last_name: 'Doe',
         email: 'john.doe@example.com',
         password: '123456',
+        ...body,
       },
-    } as Request
+    }) as Request
 
+  const makeHttpResponse = () => {
     const status = jest.fn().mockReturnThis()
     const json = jest.fn().mockReturnThis()
-    const httpResponse: HttpResponse = { status, json }
+    const response: HttpResponse = { status, json }
+
+    return { response, status, json }
+  }
+
+  it('deve retornar 201 quando o usuário é criado com sucesso', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest()
+    const { response, status, json } = makeHttpResponse()
 
     // act
-    const result = await createUserController.execute(httpRequest, httpResponse)
+    const result = await createUserController.execute(httpRequest, response)
 
     // assert
+    expect(createUserUseCaseStub.execute).toHaveBeenCalledWith(httpRequest.body)
     expect(status).toHaveBeenCalledWith(201)
     expect(json).toHaveBeenCalledWith({
       id: 'user-id',
@@ -44,6 +54,65 @@ describe('CreateUserController', () => {
       last_name: 'Doe',
       email: 'john.doe@example.com',
     })
-    expect(result).toBe(httpResponse)
+    expect(result).toBe(response)
+  })
+
+  it('deve retornar 400 quando os dados enviados são inválidos', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest({ email: 'email-invalido' })
+    const { response, status, json } = makeHttpResponse()
+
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(createUserUseCaseStub.execute).not.toHaveBeenCalled()
+    expect(status).toHaveBeenCalledWith(400)
+    expect(json).toHaveBeenCalledWith({ message: 'O email não é válido' })
+    expect(result).toBe(response)
+  })
+
+  it('deve retornar 409 quando o email já está em uso', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest()
+    const { response, status, json } = makeHttpResponse()
+
+    createUserUseCaseStub.execute.mockRejectedValueOnce(
+      new EmailAlreadyInUseError(httpRequest.body.email),
+    )
+
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(status).toHaveBeenCalledWith(409)
+    expect(json).toHaveBeenCalledWith({
+      message: `O email ${httpRequest.body.email} já está em uso.`,
+    })
+    expect(result).toBe(response)
+  })
+
+  it('deve retornar 500 quando ocorre um erro inesperado', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest()
+    const { response, status, json } = makeHttpResponse()
+
+    createUserUseCaseStub.execute.mockRejectedValueOnce(
+      new Error('falha inesperada'),
+    )
+
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(status).toHaveBeenCalledWith(500)
+    expect(json).toHaveBeenCalledWith({ message: 'Erro ao criar usuário' })
+    expect(result).toBe(response)
   })
 })

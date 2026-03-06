@@ -1,0 +1,28 @@
+---
+description: Identificar cenários de teste com confiabilidade em controllers
+globs: '{src/controllers/**/*.ts,**/*.test.ts}'
+alwaysApply: false
+---
+
+# Identificação de Cenários de Teste (Controllers)
+
+Antes de criar/editar testes de controller, mapear os cenários a partir do código:
+
+- Cada `return responseHelper.*` vira pelo menos 1 teste.
+- Cada `if`/`catch` especializado vira 1 teste dedicado.
+- Sempre cobrir: sucesso, erro de validação, erro de negócio, erro inesperado.
+- Verificar quando dependência **deve** e **não deve** ser chamada.
+
+Checklist mínimo por endpoint:
+
+1. Entrada válida -> `status` e `json` esperados.
+2. Entrada inválida (schema) -> `400` e mensagem.
+3. Regra de domínio (ex.: email em uso) -> código específico (ex.: `409`).
+4. Exceção genérica -> `500` com mensagem segura.
+5. Assert de interação com dependências (`toHaveBeenCalledWith` / `not.toHaveBeenCalled`).
+
+Formato sugerido (AAA):
+
+- **Arrange**: montar `req`, `res` e stub/mock da dependência.
+- **Act**: executar controller uma vez.
+- **Assert**: validar contrato HTTP + colaboração com dependências.
