@@ -6,10 +6,11 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
+    files: ['**/*.{js,mjs,cjs,ts,mts,cts,test.ts}'],
     languageOptions: {
       globals: {
         ...globals.node,
+        ...globals.jest,
       },
       ecmaVersion: 2022,
       sourceType: 'module',

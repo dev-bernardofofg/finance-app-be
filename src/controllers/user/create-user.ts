@@ -1,9 +1,9 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { ZodError } from 'zod'
 import { EmailAlreadyInUseError } from '../../errors/user'
 import { createUserSchema } from '../../types'
 import { ICreateUserUseCase } from '../../use-cases/user'
-import { responseHelper } from '../helpers/http'
+import { HttpResponse, responseHelper } from '../helpers/http'
 
 export class CreateUserController {
   private createUserUseCase: ICreateUserUseCase
@@ -11,7 +11,7 @@ export class CreateUserController {
     this.createUserUseCase = createUserUseCase
   }
 
-  async execute(req: Request, res: Response) {
+  async execute(req: Request, res: HttpResponse) {
     try {
       const params = await createUserSchema.parseAsync(req.body)
       const user = await this.createUserUseCase.execute(params)
