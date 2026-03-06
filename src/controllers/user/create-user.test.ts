@@ -96,6 +96,22 @@ describe('CreateUserController', () => {
     expect(result).toBe(response)
   })
 
+  it('should return 400 if email is not valid', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest({ email: 'email-invalido' })
+    const { response, status, json } = makeHttpResponse()
+
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(status).toHaveBeenCalledWith(400)
+    expect(json).toHaveBeenCalledWith({ message: 'O email não é válido' })
+    expect(result).toBe(response)
+  })
+
   it('should return 500 when an unexpected error occurs', async () => {
     // arrange
     const createUserUseCaseStub = new CreateUserUseCaseStub()
@@ -113,6 +129,24 @@ describe('CreateUserController', () => {
     // assert
     expect(status).toHaveBeenCalledWith(500)
     expect(json).toHaveBeenCalledWith({ message: 'Erro ao criar usuário' })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 if password is less than 6 characters', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest({ password: '12345' })
+    const { response, status, json } = makeHttpResponse()
+
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(status).toHaveBeenCalledWith(400)
+    expect(json).toHaveBeenCalledWith({
+      message: 'A senha deve ter pelo menos 6 caracteres',
+    })
     expect(result).toBe(response)
   })
 })
