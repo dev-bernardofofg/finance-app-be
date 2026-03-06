@@ -35,7 +35,7 @@ describe('CreateUserController', () => {
     return { response, status, json }
   }
 
-  it('deve retornar 201 quando o usuário é criado com sucesso', async () => {
+  it('should return 201 when user is created successfully', async () => {
     // arrange
     const createUserUseCaseStub = new CreateUserUseCaseStub()
     const createUserController = new CreateUserController(createUserUseCaseStub)
@@ -57,7 +57,7 @@ describe('CreateUserController', () => {
     expect(result).toBe(response)
   })
 
-  it('deve retornar 400 quando os dados enviados são inválidos', async () => {
+  it('should return 400 when the sent data is invalid', async () => {
     // arrange
     const createUserUseCaseStub = new CreateUserUseCaseStub()
     const createUserController = new CreateUserController(createUserUseCaseStub)
@@ -74,7 +74,7 @@ describe('CreateUserController', () => {
     expect(result).toBe(response)
   })
 
-  it('deve retornar 409 quando o email já está em uso', async () => {
+  it('should return 409 when the email is already in use', async () => {
     // arrange
     const createUserUseCaseStub = new CreateUserUseCaseStub()
     const createUserController = new CreateUserController(createUserUseCaseStub)
@@ -96,7 +96,7 @@ describe('CreateUserController', () => {
     expect(result).toBe(response)
   })
 
-  it('deve retornar 500 quando ocorre um erro inesperado', async () => {
+  it('should return 500 when an unexpected error occurs', async () => {
     // arrange
     const createUserUseCaseStub = new CreateUserUseCaseStub()
     const createUserController = new CreateUserController(createUserUseCaseStub)
