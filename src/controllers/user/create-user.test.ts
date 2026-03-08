@@ -160,4 +160,46 @@ describe('CreateUserController', () => {
     // assert
     expect(executeSpy).toHaveBeenCalledWith(httpRequest.body)
   })
+
+  it('should return 500 if CreateUserUseCase throws an error', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest()
+    const { response, status, json } = makeHttpResponse()
+
+    // Explicação: mockImplementationOnce é uma função que permite mockar uma função e alterar o valor de retorno da função
+    jest.spyOn(createUserUseCaseStub, 'execute').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(status).toHaveBeenCalledWith(500)
+    expect(json).toHaveBeenCalledWith({ message: 'Erro ao criar usuário' })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 if CreateUserUseCase throws an EmailAlreadyInUseError', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest()
+    const { response, status, json } = makeHttpResponse()
+
+    createUserUseCaseStub.execute.mockRejectedValueOnce(
+      new EmailAlreadyInUseError('email'),
+    )
+
+    // act
+    const result = await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(status).toHaveBeenCalledWith(409)
+    expect(json).toHaveBeenCalledWith({
+      message: 'O email email já está em uso.',
+    })
+    expect(result).toBe(response)
+  })
 })
