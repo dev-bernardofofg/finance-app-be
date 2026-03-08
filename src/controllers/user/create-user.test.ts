@@ -149,4 +149,20 @@ describe('CreateUserController', () => {
     })
     expect(result).toBe(response)
   })
+
+  it('should call CreateUserUseCase with correct parameters', async () => {
+    // arrange
+    const createUserUseCaseStub = new CreateUserUseCaseStub()
+    const createUserController = new CreateUserController(createUserUseCaseStub)
+    const httpRequest = makeHttpRequest()
+    // Explicação: spyOn é uma função que permite espionar uma função e retornar o valor dela
+    // nesse caso, estamos espionando a função execute do createUserUseCaseStub e retornando o valor dela
+    const executeSpy = jest.spyOn(createUserUseCaseStub, 'execute')
+    const { response } = makeHttpResponse()
+    // act
+    await createUserController.execute(httpRequest, response)
+
+    // assert
+    expect(executeSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
 })
