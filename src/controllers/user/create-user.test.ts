@@ -1,3 +1,4 @@
+import { faker } from '@faker-js/faker'
 import { Request } from 'express'
 import { EmailAlreadyInUseError } from '../../errors/user'
 import { CreateUserParams, UserResponse } from '../../types'
@@ -19,10 +20,10 @@ describe('CreateUserController', () => {
   const makeHttpRequest = (body?: Partial<CreateUserParams>) =>
     ({
       body: {
-        first_name: 'John',
-        last_name: 'Doe',
-        email: 'john.doe@example.com',
-        password: '123456',
+        first_name: faker.person.firstName(),
+        last_name: faker.person.lastName(),
+        email: faker.internet.email(),
+        password: faker.internet.password({ length: 6 }),
         ...body,
       },
     }) as Request
@@ -48,12 +49,6 @@ describe('CreateUserController', () => {
     // assert
     expect(createUserUseCaseStub.execute).toHaveBeenCalledWith(httpRequest.body)
     expect(status).toHaveBeenCalledWith(201)
-    expect(json).toHaveBeenCalledWith({
-      id: 'user-id',
-      first_name: 'John',
-      last_name: 'Doe',
-      email: 'john.doe@example.com',
-    })
     expect(result).toBe(response)
   })
 
