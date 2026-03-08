@@ -181,16 +181,18 @@ describe('CreateUserController', () => {
     expect(result).toBe(response)
   })
 
-  it('should return 400 if CreateUserUseCase throws an EmailAlreadyInUseError', async () => {
+  it('should return 409 if CreateUserUseCase throws an EmailAlreadyInUseError', async () => {
     // arrange
     const createUserUseCaseStub = new CreateUserUseCaseStub()
     const createUserController = new CreateUserController(createUserUseCaseStub)
     const httpRequest = makeHttpRequest()
     const { response, status, json } = makeHttpResponse()
 
-    createUserUseCaseStub.execute.mockRejectedValueOnce(
-      new EmailAlreadyInUseError('email'),
-    )
+    jest
+      .spyOn(createUserUseCaseStub, 'execute')
+      .mockImplementationOnce(async () => {
+        throw new EmailAlreadyInUseError(httpRequest.body.email)
+      })
 
     // act
     const result = await createUserController.execute(httpRequest, response)
@@ -198,7 +200,7 @@ describe('CreateUserController', () => {
     // assert
     expect(status).toHaveBeenCalledWith(409)
     expect(json).toHaveBeenCalledWith({
-      message: 'O email email já está em uso.',
+      message: `O email ${httpRequest.body.email} já está em uso.`,
     })
     expect(result).toBe(response)
   })
