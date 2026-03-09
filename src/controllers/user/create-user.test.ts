@@ -58,7 +58,7 @@ describe('CreateUserController', () => {
 
   it('should return 400 when the sent data is invalid', async () => {
     // arrange
-    const { sut, createUserUseCaseStub } = makeSut()
+    const { sut } = makeSut()
     const httpRequest = makeHttpRequest({ email: 'email-invalido' })
     const { response } = makeHttpResponse()
 
@@ -96,7 +96,7 @@ describe('CreateUserController', () => {
 
   it('should return 400 if email is not valid', async () => {
     // arrange
-    const { sut, createUserUseCaseStub } = makeSut()
+    const { sut } = makeSut()
     const httpRequest = makeHttpRequest({ email: 'email-invalido' })
     const { response } = makeHttpResponse()
 
