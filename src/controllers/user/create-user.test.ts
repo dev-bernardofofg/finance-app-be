@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 import { Request } from 'express'
 import { EmailAlreadyInUseError } from '../../errors/user'
+import { makeHttpResponse } from '../../helpers/test'
 import { CreateUserParams, UserResponse } from '../../types'
-import { HttpResponse } from '../helpers/http'
 import { CreateUserController } from './create-user'
 
 describe('CreateUserController', () => {
@@ -33,14 +33,6 @@ describe('CreateUserController', () => {
         ...body,
       },
     }) as Request
-
-  const makeHttpResponse = () => {
-    const status = jest.fn().mockReturnThis()
-    const json = jest.fn().mockReturnThis()
-    const response: HttpResponse = { status, json }
-
-    return { response }
-  }
 
   it('should return 201 when user is created successfully', async () => {
     // arrange
