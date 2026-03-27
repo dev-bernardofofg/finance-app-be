@@ -25,7 +25,19 @@ export const createUserSchema = z.object({
     .min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
 
-export const updateUserSchema = createUserSchema.partial()
+export const updateUserSchema = z
+  .strictObject(createUserSchema.shape, {
+    error: (issue) => {
+      if (issue.code === 'unrecognized_keys') {
+        return `Campos inválidos: ${issue.keys.join(', ')}`
+      }
+      return undefined
+    },
+  })
+  .partial()
+  .refine((campos) => Object.keys(campos).length > 0, {
+    message: 'Informe ao menos um campo para atualizar.',
+  })
 
 export type CreateUserParams = z.infer<typeof createUserSchema>
 export type UpdateUserParams = z.infer<typeof updateUserSchema>
