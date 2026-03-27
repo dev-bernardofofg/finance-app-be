@@ -1,7 +1,7 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { IDeleteUserUseCase } from '../../use-cases/user'
-import { responseHelper } from '../helpers/http'
+import { HttpResponse, responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 
 export class DeleteUserController {
@@ -9,11 +9,12 @@ export class DeleteUserController {
   constructor(deleteUserUseCase: IDeleteUserUseCase) {
     this.deleteUserUseCase = deleteUserUseCase
   }
-  async execute(req: Request, res: Response) {
+  async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
     try {
       const userId = req.params.id
 
-      if (validatorHelpers.idIsValid(userId, res)) return
+      const invalidIdResponse = validatorHelpers.idIsValid(userId, res)
+      if (invalidIdResponse) return invalidIdResponse
 
       const user = await this.deleteUserUseCase.execute(userId)
 

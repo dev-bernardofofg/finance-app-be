@@ -1,9 +1,8 @@
-import { Response } from 'express'
 import validator from 'validator'
-import { responseHelper } from './http'
+import { HttpResponse, responseHelper } from './http'
 
 export const validatorHelpers = {
-  emailIsValid: (email: string, res: Response): Response | null => {
+  emailIsValid: (email: string, res: HttpResponse): HttpResponse | null => {
     if (!validator.isEmail(email)) {
       return responseHelper.badRequest(
         res,
@@ -13,7 +12,7 @@ export const validatorHelpers = {
 
     return null
   },
-  idIsValid: (id: string, res: Response): Response | null => {
+  idIsValid: (id: string, res: HttpResponse): HttpResponse | null => {
     if (!validator.isUUID(id)) {
       return responseHelper.badRequest(
         res,
@@ -26,7 +25,7 @@ export const validatorHelpers = {
   fieldsAreValid: (
     fields: string[],
     allowedFields: string[],
-    res: Response,
+    res: HttpResponse,
   ) => {
     if (fields.some((field) => !allowedFields.includes(field))) {
       return responseHelper.badRequest(
@@ -40,8 +39,8 @@ export const validatorHelpers = {
   fieldIsGreaterThanZero: (
     fieldName: string,
     value: number,
-    res: Response,
-  ): Response | null => {
+    res: HttpResponse,
+  ): HttpResponse | null => {
     if (value <= 0) {
       return responseHelper.badRequest(
         res,
@@ -53,8 +52,8 @@ export const validatorHelpers = {
   fieldIsInEnum: (
     field: string,
     enumValues: string[],
-    res: Response,
-  ): Response | null => {
+    res: HttpResponse,
+  ): HttpResponse | null => {
     if (!enumValues.includes(field)) {
       return responseHelper.badRequest(
         res,
@@ -66,8 +65,8 @@ export const validatorHelpers = {
   fieldIsCurrency: (
     fieldName: string,
     value: number,
-    res: Response,
-  ): Response | null => {
+    res: HttpResponse,
+  ): HttpResponse | null => {
     if (typeof value !== 'number') {
       return responseHelper.badRequest(
         res,
@@ -91,8 +90,8 @@ export const validatorHelpers = {
   validateRequiredFields: (
     params: Record<string, unknown>,
     requiredFields: string[],
-    res: Response,
-  ): Response | null => {
+    res: HttpResponse,
+  ): HttpResponse | null => {
     const missingFields = requiredFields.filter(
       (field) => params[field] === undefined || params[field] === null,
     )
