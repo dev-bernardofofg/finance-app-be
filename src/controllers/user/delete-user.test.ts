@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { Request } from 'express'
 import { UserNotFoundError } from '../../errors/user'
+import { makeHttpRequestById } from '../../helpers/test'
 import { UserResponse } from '../../types'
 import { HttpResponse, responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
@@ -24,14 +24,6 @@ describe('DeleteUserController', () => {
     return { sut, deleteUserUseCaseStub }
   }
 
-  const makeHttpRequest = (params?: {
-    id?: string
-  }): Pick<Request, 'params'> => ({
-    params: {
-      id: params?.id ?? faker.string.uuid(),
-    },
-  })
-
   const makeHttpResponse = () => {
     const status = jest.fn().mockReturnThis()
     const json = jest.fn().mockReturnThis()
@@ -44,7 +36,7 @@ describe('DeleteUserController', () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
     const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequest({ id: userId })
+    const httpRequest = makeHttpRequestById({ id: userId })
     const { response } = makeHttpResponse()
     // act
     const result = await sut.execute(httpRequest, response)
@@ -60,7 +52,7 @@ describe('DeleteUserController', () => {
   it('should return 400 when the user id is invalid', async () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest({ id: 'id-invalido' })
+    const httpRequest = makeHttpRequestById({ id: 'id-invalido' })
     const { response } = makeHttpResponse()
     jest
       .spyOn(validatorHelpers, 'idIsValid')
@@ -87,7 +79,7 @@ describe('DeleteUserController', () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
     const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequest({ id: userId })
+    const httpRequest = makeHttpRequestById({ id: userId })
     const { response } = makeHttpResponse()
     // act
     deleteUserUseCaseStub.execute.mockRejectedValueOnce(
@@ -106,12 +98,10 @@ describe('DeleteUserController', () => {
   it('should return 500 when an unexpected error occurs', async () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest()
+    const httpRequest = makeHttpRequestById()
     const { response } = makeHttpResponse()
 
-    deleteUserUseCaseStub.execute.mockRejectedValueOnce(
-      new Error('falha inesperada'),
-    )
+    deleteUserUseCaseStub.execute.mockRejectedValueOnce(new Error())
     // act
     const result = await sut.execute(httpRequest, response)
 

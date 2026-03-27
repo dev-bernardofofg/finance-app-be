@@ -1,3 +1,5 @@
+import { faker } from '@faker-js/faker'
+import { Request } from 'express'
 import { HttpResponse } from '../controllers/helpers/http'
 
 export const makeHttpResponse = () => {
@@ -7,3 +9,11 @@ export const makeHttpResponse = () => {
 
   return { response }
 }
+
+export const makeHttpRequestById = (params?: {
+  id?: string
+}): Pick<Request, 'params'> => ({
+  params: {
+    id: params?.id ?? faker.string.uuid(),
+  },
+})

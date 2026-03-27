@@ -117,9 +117,7 @@ describe('CreateUserController', () => {
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
-    createUserUseCaseStub.execute.mockRejectedValueOnce(
-      new Error('falha inesperada'),
-    )
+    createUserUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
     // act
     const result = await sut.execute(httpRequest, response)
