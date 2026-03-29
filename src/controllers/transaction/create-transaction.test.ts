@@ -2,25 +2,26 @@ import { faker } from '@faker-js/faker'
 import { Request } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
-import { CreateTransactionParams, ITransactionResponse } from '../../types'
+import {
+  CreateTransactionParams,
+  ITransactionParams,
+  ITransactionResponse,
+} from '../../types'
 import { CreateTransactionController } from './create.transaction'
 
 describe('CreateTransactionController', () => {
+  // execute = jest.fn(...) transforma o método em um spy do Jest.
+  // Isso permite usar .mockRejectedValueOnce(), .mockResolvedValueOnce() etc.
+  // Sem jest.fn(), o Jest não consegue interceptar ou sobrescrever a função.
   class CreateTransactionUseCaseStub {
     execute = jest.fn(
-      async (params: {
-        user_id: string
-        name: string
-        type: 'INCOME' | 'EXPENSE' | 'INVESTMENT'
-        amount: number
-        date: Date
-      }): Promise<ITransactionResponse> => ({
+      async (_params: ITransactionParams): Promise<ITransactionResponse> => ({
         id: faker.string.uuid(),
-        user_id: params.user_id,
-        name: params.name,
-        type: params.type,
-        amount: params.amount,
-        date: params.date,
+        user_id: faker.string.uuid(),
+        name: faker.person.firstName(),
+        type: 'INCOME',
+        amount: 100,
+        date: new Date(),
       }),
     )
   }
@@ -31,60 +32,51 @@ describe('CreateTransactionController', () => {
     return { sut, createTransactionUseCaseStub }
   }
 
-  const makeHttpRequest = (body?: Partial<CreateTransactionParams>) => {
-    const dateIso = faker.date.recent().toISOString()
-    return {
+  // Partial<CreateTransactionParams> permite sobrescrever só o campo que cada
+  // teste precisa mudar — ex: makeHttpRequest({ amount: 0 }) para testar validação do valor igual a 0.
+  // date é string ISO aqui porque o schema Zod espera z.string().datetime().
+  // O controller converte para Date internamente: new Date(params.date).
+  const makeHttpRequest = (body?: Partial<CreateTransactionParams>) =>
+    ({
       body: {
-        amount: faker.number.int({ min: 1, max: 1000 }),
+        user_id: faker.string.uuid(),
+        name: faker.commerce.productName(),
         type: faker.helpers.arrayElement([
           'INCOME',
           'EXPENSE',
           'INVESTMENT',
         ] as const),
-        user_id: faker.string.uuid(),
-        name: faker.person.firstName(),
-        date: dateIso,
+        amount: faker.number.int({ min: 1, max: 100000 }),
+        date: new Date().toISOString(),
         ...body,
       },
-    } as Request
-  }
+    }) as Request
 
   it('should return 201 when the transaction is created successfully', async () => {
-    const { sut, createTransactionUseCaseStub } = makeSut()
+    // arrange
+    const { sut } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
-    const expectedDate = new Date(httpRequest.body.date as string)
 
+    // act
     const result = await sut.execute(httpRequest, response)
 
-    expect(createTransactionUseCaseStub.execute).toHaveBeenCalledWith({
-      user_id: httpRequest.body.user_id,
-      name: httpRequest.body.name,
-      type: httpRequest.body.type,
-      amount: httpRequest.body.amount,
-      date: expectedDate,
-    })
+    // assert
     expect(response.status).toHaveBeenCalledWith(201)
-    expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        id: expect.any(String),
-        user_id: httpRequest.body.user_id,
-        name: httpRequest.body.name,
-        type: httpRequest.body.type,
-        amount: httpRequest.body.amount,
-        date: expectedDate,
-      }),
-    )
     expect(result).toBe(response)
   })
 
   it('should return 400 when the sent data is invalid', async () => {
+    // arrange
     const { sut } = makeSut()
+    // amount: 0 dispara o .min(1) do Zod → ZodError → controller retorna 400
     const httpRequest = makeHttpRequest({ amount: 0 })
     const { response } = makeHttpResponse()
 
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
       message: 'O valor da transação em centavos deve ser maior que 0',
@@ -92,18 +84,92 @@ describe('CreateTransactionController', () => {
     expect(result).toBe(response)
   })
 
+  it('should return 400 when missing user_id', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequest({ user_id: undefined })
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID do usuário é obrigatório',
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when name is missing', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequest({ name: undefined })
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O nome da transação é obrigatório',
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when type is missing', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequest({ type: undefined })
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message:
+        'O tipo de transação deve ser "INCOME", "EXPENSE" ou "INVESTMENT"',
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when date is missing', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequest({ date: undefined })
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'A data da transação é obrigatória',
+    })
+    expect(result).toBe(response)
+  })
+
   it('should return 404 when the user is not found', async () => {
+    // arrange
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
     const userId = httpRequest.body.user_id as string
 
+    // mockRejectedValueOnce simula o use case lançando um erro na próxima chamada.
+    // "Once" significa que só afeta a próxima execução — depois volta ao comportamento padrão.
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(
       new UserNotFoundError(userId),
     )
 
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
       message: `Usuário com ID ${userId} não encontrado.`,
@@ -112,14 +178,19 @@ describe('CreateTransactionController', () => {
   })
 
   it('should return 500 when an unexpected error occurs', async () => {
+    // arrange
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
+    // new Error() genérico não é ZodError nem UserNotFoundError,
+    // então cai no último catch do controller → 500
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao criar transação',

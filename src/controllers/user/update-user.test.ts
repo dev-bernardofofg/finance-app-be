@@ -3,8 +3,6 @@ import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { UpdateUserParams, UserFields } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
-import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 import { UpdateUserController, type UpdateUserHttpInput } from './update-user'
 
 describe('UpdateUserController', () => {
@@ -30,7 +28,7 @@ describe('UpdateUserController', () => {
 
   const makeHttpRequest = (
     body?: Partial<UpdateUserParams & { unallowed_field?: string }>,
-    userId: string = faker.string.uuid(),
+    id: string = faker.string.uuid(),
   ): UpdateUserHttpInput => ({
     body: {
       first_name: faker.person.firstName(),
@@ -38,14 +36,13 @@ describe('UpdateUserController', () => {
       email: faker.internet.email(),
       ...body,
     },
-    params: { id: userId },
+    params: { id },
   })
 
   it('should return 200 when updating user', async () => {
     // arrange
     const { sut, updateUserUseCaseStub } = makeSut()
-    const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequest(undefined, userId)
+    const httpRequest = makeHttpRequest(undefined)
     const { response } = makeHttpResponse()
 
     // act
@@ -53,7 +50,7 @@ describe('UpdateUserController', () => {
 
     // assert
     expect(updateUserUseCaseStub.execute).toHaveBeenCalledWith(
-      userId,
+      httpRequest.params.id,
       expect.objectContaining({
         first_name: httpRequest.body.first_name,
         last_name: httpRequest.body.last_name,
@@ -63,7 +60,7 @@ describe('UpdateUserController', () => {
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: userId,
+        id: httpRequest.params.id,
         first_name: httpRequest.body.first_name,
         last_name: httpRequest.body.last_name,
         email: httpRequest.body.email,
@@ -91,23 +88,16 @@ describe('UpdateUserController', () => {
 
   it('should return 400 when the user id is invalid', async () => {
     // arrange
+    // 'id-invalido' não é um UUID — validatorHelpers.idIsValid retorna 400 naturalmente,
+    // sem precisar de mock. Testar com o valor real é mais confiável.
     const { sut, updateUserUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest(undefined, 'id-invalido')
     const { response } = makeHttpResponse()
 
     // act
-    jest
-      .spyOn(validatorHelpers, 'idIsValid')
-      .mockReturnValueOnce(
-        responseHelper.badRequest(
-          response,
-          'O ID não é válido. Por favor, informe um ID válido.',
-        ),
-      )
-
-    // assert
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(updateUserUseCaseStub.execute).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
@@ -117,6 +107,7 @@ describe('UpdateUserController', () => {
   })
 
   it('should return 400 when the body has no fields to update', async () => {
+    // arrange
     const { sut } = makeSut()
     const userId = faker.string.uuid()
     const httpRequest: UpdateUserHttpInput = {
@@ -125,8 +116,10 @@ describe('UpdateUserController', () => {
     }
     const { response } = makeHttpResponse()
 
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Informe ao menos um campo para atualizar.',
@@ -150,24 +143,23 @@ describe('UpdateUserController', () => {
     })
     expect(result).toBe(response)
   })
+
   it('should return 404 when the user is not found (UserNotFoundError)', async () => {
     // arrange
     const { sut, updateUserUseCaseStub } = makeSut()
-    const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequest(undefined, userId)
+    const httpRequest = makeHttpRequest(undefined)
     const { response } = makeHttpResponse()
-
-    // act
     updateUserUseCaseStub.execute.mockRejectedValueOnce(
-      new UserNotFoundError(userId),
+      new UserNotFoundError(httpRequest.params.id as string),
     )
 
-    // assert
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: `Usuário com ID ${userId} não encontrado.`,
+      message: `Usuário com ID ${httpRequest.params.id} não encontrado.`,
     })
     expect(result).toBe(response)
   })
@@ -175,18 +167,16 @@ describe('UpdateUserController', () => {
   it('should return 404 when the use case returns no user', async () => {
     // arrange
     const { sut, updateUserUseCaseStub } = makeSut()
-    const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequest(undefined, userId)
+    const httpRequest = makeHttpRequest(undefined)
     const { response } = makeHttpResponse()
-
-    // act
     updateUserUseCaseStub.execute.mockImplementationOnce(
       async (): Promise<UserResponse> => null as never,
     )
 
-    // assert
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Usuário não encontrado',
@@ -199,13 +189,12 @@ describe('UpdateUserController', () => {
     const { sut, updateUserUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
-
-    // act
     updateUserUseCaseStub.execute.mockRejectedValueOnce(new Error('falha'))
 
-    // assert
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao atualizar usuário',
@@ -219,15 +208,14 @@ describe('UpdateUserController', () => {
     const email = faker.internet.email()
     const httpRequest = makeHttpRequest({ email })
     const { response } = makeHttpResponse()
-
-    // act
     updateUserUseCaseStub.execute.mockRejectedValueOnce(
       new EmailAlreadyInUseError(email),
     )
 
-    // assert
+    // act
     const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(409)
     expect(response.json).toHaveBeenCalledWith({
       message: `O email ${email} já está em uso.`,
