@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { ZodError } from 'zod'
 import {
   ITransactionParams,
@@ -6,14 +6,14 @@ import {
   updateTransactionSchema,
 } from '../../types'
 import { IUpdateTransactionUseCase } from '../../use-cases/transaction/update.transaction'
-import { responseHelper } from '../helpers/http'
+import { HttpResponse, responseHelper } from '../helpers/http'
 
 export class UpdateTransactionController {
   private updateTransactionUseCase: IUpdateTransactionUseCase
   constructor(updateTransactionUseCase: IUpdateTransactionUseCase) {
     this.updateTransactionUseCase = updateTransactionUseCase
   }
-  async execute(req: Request, res: Response) {
+  async execute(req: Pick<Request, 'params' | 'body'>, res: HttpResponse) {
     try {
       const { id: transactionId } = await transactionIdParamSchema.parseAsync(
         req.params,
@@ -21,10 +21,7 @@ export class UpdateTransactionController {
       const params = await updateTransactionSchema.parseAsync(req.body)
       const transaction = await this.updateTransactionUseCase.execute(
         transactionId,
-        {
-          ...params,
-          date: new Date(params.date),
-        } as ITransactionParams,
+        { ...params, date: new Date(params.date) } as ITransactionParams,
       )
 
       if (!transaction) {
@@ -34,13 +31,7 @@ export class UpdateTransactionController {
       return responseHelper.ok(res, transaction)
     } catch (error) {
       if (error instanceof ZodError) {
-        return responseHelper.badRequest(
-          res,
-          error.issues[0]?.message ?? 'Dados da transação inválidos',
-        )
-      }
-      if (error instanceof Error) {
-        return responseHelper.notFound(res, error.message)
+        return responseHelper.badRequest(res, error.issues[0].message)
       }
       return responseHelper.internalServerError(
         res,

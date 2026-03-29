@@ -3,7 +3,7 @@ import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { UpdateUserParams, UserFields } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
-import { UpdateUserController, type UpdateUserHttpInput } from './update-user'
+import { UpdateUserController } from './update-user'
 
 describe('UpdateUserController', () => {
   class UpdateUserUseCaseStub {
@@ -29,7 +29,7 @@ describe('UpdateUserController', () => {
   const makeHttpRequest = (
     body?: Partial<UpdateUserParams & { unallowed_field?: string }>,
     id: string = faker.string.uuid(),
-  ): UpdateUserHttpInput => ({
+  ) => ({
     body: {
       first_name: faker.person.firstName(),
       last_name: faker.person.lastName(),
@@ -110,7 +110,7 @@ describe('UpdateUserController', () => {
     // arrange
     const { sut } = makeSut()
     const userId = faker.string.uuid()
-    const httpRequest: UpdateUserHttpInput = {
+    const httpRequest = {
       body: {},
       params: { id: userId },
     }
