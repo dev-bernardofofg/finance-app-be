@@ -1,13 +1,12 @@
 import { UserNotFoundError } from '../../errors/user'
 import { IPostgresGetUserByIdRepository } from '../../repositories/postgres'
 import {
-  GetBalanceUserParams,
   GetBalanceUserResponse,
   IGetBalanceUserRepository,
 } from '../../repositories/postgres/user/get-balance.user'
 
 export interface IGetBalanceUserUseCase {
-  execute(params: GetBalanceUserParams): Promise<GetBalanceUserResponse>
+  execute(id: string): Promise<GetBalanceUserResponse>
 }
 
 export class GetBalanceUserUseCase implements IGetBalanceUserUseCase {
@@ -21,13 +20,13 @@ export class GetBalanceUserUseCase implements IGetBalanceUserUseCase {
     this.getUserByIdRepository = getUserByIdRepository
   }
 
-  async execute(params: GetBalanceUserParams): Promise<GetBalanceUserResponse> {
-    const user = await this.getUserByIdRepository.execute({ id: params.id })
+  async execute(id: string): Promise<GetBalanceUserResponse> {
+    const user = await this.getUserByIdRepository.execute({ id })
     if (!user) {
-      throw new UserNotFoundError(params.id)
+      throw new UserNotFoundError(id)
     }
 
-    const balance = await this.getBalanceUserRepository.execute(params)
+    const balance = await this.getBalanceUserRepository.execute({ id })
 
     return balance
   }

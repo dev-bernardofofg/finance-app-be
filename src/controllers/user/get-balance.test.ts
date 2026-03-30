@@ -6,7 +6,7 @@ import { GetBalanceUserController } from './get-balance.user'
 describe('GetBalanceUserController', () => {
   class GetBalanceUserUseCaseStub {
     execute = jest.fn(
-      async (): Promise<GetBalanceUserResponse> => ({
+      async (_id: string): Promise<GetBalanceUserResponse> => ({
         total_income: faker.number.int(),
         total_expenses: faker.number.int(),
         total_investments: faker.number.int(),
@@ -34,9 +34,7 @@ describe('GetBalanceUserController', () => {
       response as Response,
     )
 
-    expect(getBalanceUserUseCaseStub.execute).toHaveBeenCalledWith({
-      id: userId,
-    })
+    expect(getBalanceUserUseCaseStub.execute).toHaveBeenCalledWith(userId)
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
       expect.objectContaining({

@@ -1,9 +1,8 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { UserNotFoundError } from '../../errors/user'
-import { GetBalanceUserParams } from '../../repositories/postgres'
+import { getBalanceUserParamsSchema } from '../../types'
 import { IGetBalanceUserUseCase } from '../../use-cases/user'
-import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
+import { HttpResponse, responseHelper } from '../helpers/http'
 
 export class GetBalanceUserController {
   private getBalanceUserUseCase: IGetBalanceUserUseCase
@@ -11,14 +10,11 @@ export class GetBalanceUserController {
     this.getBalanceUserUseCase = getBalanceUserUseCase
   }
 
-  async execute(req: Request, res: Response) {
-    const params = req.params as Partial<GetBalanceUserParams>
+  async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
+    const { id } = await getBalanceUserParamsSchema.parseAsync(req.params)
 
-    if (validatorHelpers.idIsValid(params.id ?? '', res)) return
     try {
-      const balance = await this.getBalanceUserUseCase.execute(
-        params as GetBalanceUserParams,
-      )
+      const balance = await this.getBalanceUserUseCase.execute(id)
       return responseHelper.ok(res, balance)
     } catch (error) {
       if (error instanceof UserNotFoundError) {
