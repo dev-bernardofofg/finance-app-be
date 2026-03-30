@@ -1,8 +1,8 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { GetUserByIdParams } from '../../repositories/postgres'
 import { IGetUserByIdUseCase } from '../../use-cases/user'
-import { responseHelper } from '../helpers/http'
+import { HttpResponse, responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 
 export class GetUserByIdController {
@@ -11,7 +11,7 @@ export class GetUserByIdController {
     this.getUserByIdUseCase = getUserByIdUseCase
   }
 
-  async execute(req: Request, res: Response) {
+  async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
     const params = req.params as Partial<GetUserByIdParams>
 
     const invalidIdResponse = validatorHelpers.idIsValid(params.id ?? '', res)

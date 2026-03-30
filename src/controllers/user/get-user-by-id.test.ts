@@ -26,24 +26,26 @@ describe('GetUserByIdController', () => {
     return { sut, getUserByIdUseCaseStub }
   }
 
+  const makeHttpRequest = () => ({
+    params: { id: faker.string.uuid() },
+  })
+
   it('should return 200 when getting user by id', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById()
-    const userId = httpRequest.params.id as string
+    const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
     // act
-    const result = await sut.execute(
-      httpRequest as Request,
-      response as Response,
-    )
+    const result = await sut.execute(httpRequest, response as Response)
 
     // assert
-    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith({ id: userId })
+    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith({
+      id: httpRequest.params.id,
+    })
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ id: userId }),
+      expect.objectContaining({ id: httpRequest.params.id }),
     )
     expect(result).toBe(response)
   })
@@ -79,42 +81,49 @@ describe('GetUserByIdController', () => {
 
   it('should return 404 when user is not found', async () => {
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequestById({ id: userId })
+    const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
     getUserByIdUseCaseStub.execute.mockRejectedValueOnce(
-      new UserNotFoundError(userId),
+      new UserNotFoundError(httpRequest.params.id),
     )
 
-    const result = await sut.execute(
-      httpRequest as Request,
-      response as Response,
-    )
+    const result = await sut.execute(httpRequest, response as Response)
 
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: `Usuário com ID ${userId} não encontrado.`,
+      message: `Usuário com ID ${httpRequest.params.id} não encontrado.`,
     })
     expect(result).toBe(response)
   })
 
   it('should return 500 when an unexpected error occurs', async () => {
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById()
+    const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
     getUserByIdUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
-    const result = await sut.execute(
-      httpRequest as Request,
-      response as Response,
-    )
+    const result = await sut.execute(httpRequest, response as Response)
 
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao buscar usuário',
     })
     expect(result).toBe(response)
+  })
+
+  it('should call GetUserByIdUseCase with the correct parameters', async () => {
+    // arrange
+    const { sut, getUserByIdUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest()
+    const { response } = makeHttpResponse()
+    const executeSpy = jest.spyOn(getUserByIdUseCaseStub, 'execute')
+
+    // act
+    await sut.execute(httpRequest, response)
+
+    // assert
+    expect(executeSpy).toHaveBeenCalledWith({ id: httpRequest.params.id })
   })
 })
