@@ -45,7 +45,7 @@ describe('UpdateTransactionController', () => {
         'INVESTMENT',
       ] as const),
       amount: faker.number.int({ min: 1, max: 100000 }),
-      date: new Date().toISOString(),
+      date: faker.date.recent().toISOString(),
       ...body,
     },
   })

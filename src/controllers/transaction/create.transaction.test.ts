@@ -21,7 +21,7 @@ describe('CreateTransactionController', () => {
         name: faker.person.firstName(),
         type: 'INCOME',
         amount: 100,
-        date: new Date(),
+        date: faker.date.recent().toISOString(),
       }),
     )
   }
@@ -47,7 +47,7 @@ describe('CreateTransactionController', () => {
           'INVESTMENT',
         ] as const),
         amount: faker.number.int({ min: 1, max: 100000 }),
-        date: new Date().toISOString(),
+        date: faker.date.recent().toISOString(),
         ...body,
       },
     }) as Request
@@ -196,5 +196,19 @@ describe('CreateTransactionController', () => {
       message: 'Erro ao criar transação',
     })
     expect(result).toBe(response)
+  })
+
+  it('should call CreateTransactionUseCase with the correct parameters', async () => {
+    // arrange
+    const { sut, createTransactionUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest()
+    const { response } = makeHttpResponse()
+    const executeSpy = jest.spyOn(createTransactionUseCaseStub, 'execute')
+
+    // act
+    await sut.execute(httpRequest, response)
+
+    // assert
+    expect(executeSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })

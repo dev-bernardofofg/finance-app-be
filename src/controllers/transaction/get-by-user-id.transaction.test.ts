@@ -16,7 +16,7 @@ describe('GetTransactionByUserIdController', () => {
           name: faker.person.firstName(),
           type: 'INCOME',
           amount: 100,
-          date: new Date(),
+          date: faker.date.recent().toISOString(),
         },
       ],
     )

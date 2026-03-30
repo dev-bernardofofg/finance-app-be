@@ -12,7 +12,7 @@ describe('DeleteTransactionController', () => {
         name: faker.person.firstName(),
         type: 'INCOME',
         amount: 100,
-        date: new Date(),
+        date: faker.date.recent().toISOString(),
       }),
     )
   }
@@ -88,5 +88,19 @@ describe('DeleteTransactionController', () => {
       message: 'Erro ao deletar transação',
     })
     expect(result).toBe(response)
+  })
+
+  it('should call DeleteTransactionUseCase with the correct parameters', async () => {
+    // arrange
+    const { sut, deleteTransactionUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const { response } = makeHttpResponse()
+    const executeSpy = jest.spyOn(deleteTransactionUseCaseStub, 'execute')
+
+    // act
+    await sut.execute(httpRequest, response)
+
+    // assert
+    expect(executeSpy).toHaveBeenCalledWith(httpRequest.params.id)
   })
 })
