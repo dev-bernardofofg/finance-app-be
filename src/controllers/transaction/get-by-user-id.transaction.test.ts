@@ -106,6 +106,21 @@ describe('GetTransactionByUserIdController', () => {
     expect(result).toBe(response)
   })
 
+  it('should call GetUserIdUseCase with the correct userId', async () => {
+    // arrange
+    const { sut, getTransactionByUserIdUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest(faker.string.uuid())
+    const { response } = makeHttpResponse()
+
+    // act
+    await sut.execute(httpRequest, response)
+
+    // assert
+    expect(getTransactionByUserIdUseCaseStub.execute).toHaveBeenCalledWith({
+      userId: httpRequest.query.userId,
+    })
+  })
+
   it('should return 500 when an unexpected error occurs', async () => {
     // arrange
     const { sut, getTransactionByUserIdUseCaseStub } = makeSut()
