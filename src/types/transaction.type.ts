@@ -64,12 +64,7 @@ export const transactionIdParamSchema = z.object({
 export type CreateTransactionParams = z.infer<typeof createTransactionSchema>
 
 export const updateTransactionSchema = z.strictObject(
-  createTransactionSchema.pick({
-    name: true,
-    type: true,
-    amount: true,
-    date: true,
-  }).shape,
+  createTransactionSchema.omit({ user_id: true }).partial().shape,
   {
     error: (issue) => {
       if (issue.code === 'unrecognized_keys') {
@@ -79,6 +74,7 @@ export const updateTransactionSchema = z.strictObject(
     },
   },
 )
+
 export type UpdateTransactionParams = z.infer<typeof updateTransactionSchema>
 
 export const getTransactionsByUserIdQuerySchema = z.object({
