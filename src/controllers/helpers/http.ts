@@ -1,7 +1,5 @@
 import { Response } from 'express'
 
-// Tipo para valores JSON serializáveis pelo Express
-// Aceita objetos com propriedades específicas (sem assinatura de índice)
 type JsonSerializable = string | number | boolean | null | object | unknown[]
 export type HttpResponse = Pick<Response, 'status' | 'json'>
 

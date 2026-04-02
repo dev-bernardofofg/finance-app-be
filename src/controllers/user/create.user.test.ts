@@ -3,7 +3,7 @@ import { Request } from 'express'
 import { EmailAlreadyInUseError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { CreateUserParams, UserResponse } from '../../types'
-import { CreateUserController } from './create-user'
+import { CreateUserController } from './create.user'
 
 describe('CreateUserController', () => {
   class CreateUserUseCaseStub {

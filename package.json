@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch --passWithNoTests",
+    "test:coverage": "jest --passWithNoTests --silent --coverage",
     "postinstall": "npx husky install",
     "migrate": "tsx src/db/postgres/migrations/exec.ts",
     "start": "tsx src/server.ts",

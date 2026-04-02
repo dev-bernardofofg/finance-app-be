@@ -18,10 +18,7 @@ export class CreateTransactionController {
       return responseHelper.created(res, transaction)
     } catch (error) {
       if (error instanceof ZodError) {
-        return responseHelper.badRequest(
-          res,
-          error.issues[0]?.message ?? 'Dados da transação inválidos',
-        )
+        return responseHelper.badRequest(res, error.issues[0].message)
       }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)

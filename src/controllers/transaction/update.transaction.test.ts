@@ -107,6 +107,23 @@ describe('UpdateTransactionController', () => {
     expect(result).toBe(response)
   })
 
+  it('should return 400 when body is not an object', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = {
+      params: { id: faker.string.uuid() },
+      body: null,
+    }
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest as never, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(result).toBe(response)
+  })
+
   it('should return 400 when unallowed field is sent', async () => {
     // arrange
     const { sut } = makeSut()

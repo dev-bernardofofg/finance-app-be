@@ -6,7 +6,7 @@ import { GetUserByIdParams } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
-import { GetUserByIdController } from './get-user-by-id'
+import { GetUserByIdController } from './get-by-id.user'
 
 describe('GetUserByIdController', () => {
   class GetUserByIdUseCaseStub {
@@ -50,6 +50,21 @@ describe('GetUserByIdController', () => {
     expect(result).toBe(response)
   })
 
+  it('should return 400 when the user id is missing', async () => {
+    // arrange
+    const { sut, getUserByIdUseCaseStub } = makeSut()
+    const httpRequest = { params: {} as { id: string } }
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response as Response)
+
+    // assert
+    expect(getUserByIdUseCaseStub.execute).not.toHaveBeenCalled()
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(result).toBe(response)
+  })
+
   it('should return 400 when the user id is invalid', async () => {
     const { sut, getUserByIdUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequestById({ id: 'id-invalido' })
@@ -80,6 +95,7 @@ describe('GetUserByIdController', () => {
   })
 
   it('should return 404 when user is not found', async () => {
+    // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
@@ -88,8 +104,13 @@ describe('GetUserByIdController', () => {
       new UserNotFoundError(httpRequest.params.id),
     )
 
-    const result = await sut.execute(httpRequest, response as Response)
+    // act
+    const result = await sut.execute(httpRequest, response)
 
+    // assert
+    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith({
+      id: httpRequest.params.id,
+    })
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
       message: `Usuário com ID ${httpRequest.params.id} não encontrado.`,

@@ -20,10 +20,7 @@ export class GetTransactionByIdController {
       return responseHelper.ok(res, transaction)
     } catch (error) {
       if (error instanceof ZodError) {
-        return responseHelper.badRequest(
-          res,
-          error.issues[0]?.message ?? 'Parâmetros inválidos',
-        )
+        return responseHelper.badRequest(res, error.issues[0].message)
       }
       if (error instanceof Error) {
         return responseHelper.notFound(res, error.message)

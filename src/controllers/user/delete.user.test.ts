@@ -4,7 +4,7 @@ import { makeHttpRequestById } from '../../helpers/test'
 import { UserResponse } from '../../types'
 import { HttpResponse, responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
-import { DeleteUserController } from './delete-user'
+import { DeleteUserController } from './delete.user'
 
 describe('DeleteUserController', () => {
   class DeleteUserUseCaseStub {

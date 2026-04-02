@@ -3,7 +3,7 @@ import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { UpdateUserParams, UserFields } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
-import { UpdateUserController } from './update-user'
+import { UpdateUserController } from './update.user'
 
 describe('UpdateUserController', () => {
   class UpdateUserUseCaseStub {
@@ -69,6 +69,23 @@ describe('UpdateUserController', () => {
     expect(result).toBe(response)
   })
 
+  it('should return 400 when body is not an object', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = {
+      body: null,
+      params: { id: faker.string.uuid() },
+    }
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest as never, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(result).toBe(response)
+  })
+
   it('should return 400 when the sent data is invalid', async () => {
     // arrange
     const { sut } = makeSut()
@@ -88,10 +105,8 @@ describe('UpdateUserController', () => {
 
   it('should return 400 when the user id is invalid', async () => {
     // arrange
-    // 'id-invalido' não é um UUID — validatorHelpers.idIsValid retorna 400 naturalmente,
-    // sem precisar de mock. Testar com o valor real é mais confiável.
     const { sut, updateUserUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest(undefined, 'id-invalido')
+    const httpRequest = makeHttpRequest({ id: 'id-invalido' })
     const { response } = makeHttpResponse()
 
     // act
@@ -101,8 +116,61 @@ describe('UpdateUserController', () => {
     expect(updateUserUseCaseStub.execute).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
-      message: 'O ID não é válido. Por favor, informe um ID válido.',
+      message: 'Campos inválidos: id',
     })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when the user id is required', async () => {
+    // arrange
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequest(undefined, '')
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID do usuário é obrigatório',
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when the user id is undefined', async () => {
+    // arrange
+    const { sut, updateUserUseCaseStub } = makeSut()
+    const httpRequest = {
+      body: { first_name: faker.person.firstName() },
+      params: {} as { id: string },
+    }
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(updateUserUseCaseStub.execute).not.toHaveBeenCalled()
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID do usuário é obrigatório',
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when the user id is not a valid uuid', async () => {
+    // arrange
+    const { sut, updateUserUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest(undefined, 'not-a-uuid')
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(updateUserUseCaseStub.execute).not.toHaveBeenCalled()
+    expect(response.status).toHaveBeenCalledWith(400)
     expect(result).toBe(response)
   })
 

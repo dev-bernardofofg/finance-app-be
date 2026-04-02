@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { GetTransactionByUserIdParams } from '../../repositories/postgres'
 import { ITransactionResponse } from '../../types'
@@ -119,6 +120,44 @@ describe('GetTransactionByUserIdController', () => {
     expect(getTransactionByUserIdUseCaseStub.execute).toHaveBeenCalledWith({
       userId: httpRequest.query.userId,
     })
+  })
+
+  it('should call GetTransactionByUserIdUseCase with the incorrect parameters', async () => {
+    // arrange
+    const { sut, getTransactionByUserIdUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest('invalid-id')
+    const { response } = makeHttpResponse()
+
+    // act
+    await sut.execute(httpRequest, response)
+
+    // assert
+    expect(getTransactionByUserIdUseCaseStub.execute).not.toHaveBeenCalled()
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O campo userId deve ser um UUID válido',
+    })
+  })
+
+  it('should return 404 when UserNotFoundError is thrown', async () => {
+    // arrange
+    const { sut, getTransactionByUserIdUseCaseStub } = makeSut()
+    const userId = faker.string.uuid()
+    const httpRequest = makeHttpRequest(userId)
+    const { response } = makeHttpResponse()
+    getTransactionByUserIdUseCaseStub.execute.mockRejectedValueOnce(
+      new UserNotFoundError(userId),
+    )
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(404)
+    expect(response.json).toHaveBeenCalledWith({
+      message: `Usuário com ID ${userId} não encontrado.`,
+    })
+    expect(result).toBe(response)
   })
 
   it('should return 500 when an unexpected error occurs', async () => {

@@ -1,8 +1,8 @@
 export * from './user/create.user'
 export * from './user/delete.user'
 export * from './user/get-balance.user'
-export * from './user/get-user-by-email'
-export * from './user/get-user-by-id'
+export * from './user/get-by-email.user'
+export * from './user/get-by-id.user'
 export * from './user/update.user'
 
 export * from './transaction/create.transaction'

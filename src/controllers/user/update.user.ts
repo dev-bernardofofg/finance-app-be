@@ -16,6 +16,10 @@ export class UpdateUserController {
       const params = await updateUserSchema.parseAsync(req.body)
       const userId = req.params.id ?? ''
 
+      if (!userId) {
+        return responseHelper.badRequest(res, 'O ID do usuário é obrigatório')
+      }
+
       const invalidIdResponse = validatorHelpers.idIsValid(userId, res)
       if (invalidIdResponse) return invalidIdResponse
 

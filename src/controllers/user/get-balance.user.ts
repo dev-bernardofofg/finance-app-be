@@ -15,6 +15,11 @@ export class GetBalanceUserController {
 
     try {
       const balance = await this.getBalanceUserUseCase.execute(id)
+
+      if (!balance) {
+        return responseHelper.notFound(res, 'Saldo não encontrado')
+      }
+
       return responseHelper.ok(res, balance)
     } catch (error) {
       if (error instanceof UserNotFoundError) {
