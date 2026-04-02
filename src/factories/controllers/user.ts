@@ -1,11 +1,12 @@
+import { PasswordHasherAdapter } from '../../adapters'
 import {
   CreateUserController,
   DeleteUserController,
+  GetBalanceUserController,
   GetUserByEmailController,
   GetUserByIdController,
   UpdateUserController,
 } from '../../controllers'
-import { GetBalanceUserController } from '../../controllers/user/get-balance.user'
 import {
   PostgresCreateUserRepository,
   PostgresDeleteUserRepository,
@@ -65,7 +66,13 @@ export const makeDeleteUserController = () => {
 
 export const makeCreateUserController = () => {
   const createUserRepository = new PostgresCreateUserRepository()
-  const createUserUseCase = new CreateUserUseCase(createUserRepository)
+  const getUserByEmailRepository = new PostgresGetUserByEmailRepository()
+  const passwordHasherAdapter = new PasswordHasherAdapter()
+  const createUserUseCase = new CreateUserUseCase(
+    createUserRepository,
+    getUserByEmailRepository,
+    passwordHasherAdapter,
+  )
   const createUserController = new CreateUserController(createUserUseCase)
 
   return createUserController

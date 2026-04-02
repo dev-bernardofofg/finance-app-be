@@ -1,7 +1,10 @@
-import bcrypt from 'bcrypt'
 import { v4 as uuidv4 } from 'uuid'
+import { PasswordHasherAdapter } from '../../adapters/bcrypt'
 import { EmailAlreadyInUseError } from '../../errors/user'
-import { IPostgresCreateUserRepository } from '../../repositories/postgres'
+import {
+  IPostgresCreateUserRepository,
+  IPostgresGetUserByEmailRepository,
+} from '../../repositories/postgres'
 import { UserResponse } from '../../types'
 
 interface CreateUserParams {
@@ -17,20 +20,29 @@ export interface ICreateUserUseCase {
 
 export class CreateUserUseCase implements ICreateUserUseCase {
   private createUserRepository: IPostgresCreateUserRepository
-
-  constructor(createUserRepository: IPostgresCreateUserRepository) {
+  private getUserByEmailRepository: IPostgresGetUserByEmailRepository
+  private passwordHasherAdapter: PasswordHasherAdapter
+  constructor(
+    createUserRepository: IPostgresCreateUserRepository,
+    getUserByEmailRepository: IPostgresGetUserByEmailRepository,
+    passwordHasherAdapter: PasswordHasherAdapter,
+  ) {
     this.createUserRepository = createUserRepository
+    this.getUserByEmailRepository = getUserByEmailRepository
+    this.passwordHasherAdapter = passwordHasherAdapter
   }
 
   async execute(createUserParams: CreateUserParams) {
-    const user = await this.createUserRepository.findByEmail(
-      createUserParams.email,
-    )
+    const user = await this.getUserByEmailRepository.execute({
+      email: createUserParams.email,
+    })
     if (user) {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
     const userId = uuidv4()
-    const hashedPassword = await bcrypt.hash(createUserParams.password, 10)
+    const hashedPassword = await this.passwordHasherAdapter.execute(
+      createUserParams.password,
+    )
     const payload = {
       ...createUserParams,
       id: userId,
