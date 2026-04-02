@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import { IdGeneratorAdapter } from '../../adapters'
 import { UserNotFoundError } from '../../errors/user'
 import {
   IPostgresCreateTransactionRepository,
@@ -15,13 +15,15 @@ export interface ICreateTransactionUseCase {
 export class CreateTransactionUseCase implements ICreateTransactionUseCase {
   private createTransactionRepository: IPostgresCreateTransactionRepository
   private getUserByIdRepository: IPostgresGetUserByIdRepository
-
+  private idGeneratorAdapter: IdGeneratorAdapter
   constructor(
     createTransactionRepository: IPostgresCreateTransactionRepository,
     getUserByIdRepository: IPostgresGetUserByIdRepository,
+    idGeneratorAdapter: IdGeneratorAdapter,
   ) {
     this.createTransactionRepository = createTransactionRepository
     this.getUserByIdRepository = getUserByIdRepository
+    this.idGeneratorAdapter = idGeneratorAdapter
   }
 
   async execute(
@@ -34,7 +36,7 @@ export class CreateTransactionUseCase implements ICreateTransactionUseCase {
       throw new UserNotFoundError(createTransactionParams.user_id)
     }
 
-    const transactionId = uuidv4()
+    const transactionId = await this.idGeneratorAdapter.execute()
     const payload = {
       ...createTransactionParams,
       id: transactionId,
