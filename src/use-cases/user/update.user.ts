@@ -1,5 +1,6 @@
-import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
+import { PasswordHasherAdapter } from '../../adapters'
 import { isPrismaErrorCode } from '../../errors/prisma'
+import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import {
   IPostgresGetUserByEmailRepository,
   IPostgresUpdateUserRepository,
@@ -13,12 +14,15 @@ export interface IUpdateUserUseCase {
 export class UpdateUserUseCase implements IUpdateUserUseCase {
   private getUserByEmailRepository: IPostgresGetUserByEmailRepository
   private updateUserRepository: IPostgresUpdateUserRepository
+  private passwordHasherAdapter: PasswordHasherAdapter
   constructor(
     getUserByEmailRepository: IPostgresGetUserByEmailRepository,
     updateUserRepository: IPostgresUpdateUserRepository,
+    passwordHasherAdapter: PasswordHasherAdapter,
   ) {
     this.getUserByEmailRepository = getUserByEmailRepository
     this.updateUserRepository = updateUserRepository
+    this.passwordHasherAdapter = passwordHasherAdapter
   }
   async execute(userId: string, updateUserParams: UserFields) {
     if (updateUserParams.email) {
@@ -29,6 +33,12 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
       if (userWithEmail && userWithEmail.id !== userId) {
         throw new EmailAlreadyInUseError(updateUserParams.email)
       }
+    }
+
+    if (updateUserParams.password) {
+      updateUserParams.password = await this.passwordHasherAdapter.execute(
+        updateUserParams.password,
+      )
     }
 
     let updatedUser: UserResponse | null = null
