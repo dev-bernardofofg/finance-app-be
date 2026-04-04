@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
 import { UserNotFoundError } from '../../errors/user.ts'
 import { GetUserByEmailParams } from '../../repositories/postgres/index.ts'
+import { getEmailUserParamsSchema } from '../../types/user.type.ts'
 import { IGetUserByEmailUseCase } from '../../use-cases/user/index.ts'
 import { responseHelper } from '../helpers/http.ts'
-import { validatorHelpers } from '../helpers/validator.ts'
 
 export class GetUserByEmailController {
   private getUserByEmailUseCase: IGetUserByEmailUseCase
@@ -14,7 +14,11 @@ export class GetUserByEmailController {
   async execute(req: Request, res: Response) {
     const params = req.query as Partial<GetUserByEmailParams>
 
-    if (validatorHelpers.emailIsValid(params.email ?? '', res)) return
+    const { email } = await getEmailUserParamsSchema.parseAsync(params)
+
+    if (!email) {
+      return responseHelper.badRequest(res, 'O email é obrigatório')
+    }
 
     try {
       const user = await this.getUserByEmailUseCase.execute(
