@@ -1,15 +1,16 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import { ZodError } from 'zod'
+import { TransactionNotFoundError } from '../../errors/transaction'
 import { transactionIdParamSchema } from '../../types'
 import { IGetTransactionByIdUseCase } from '../../use-cases/transaction/get-by-id.transaction'
-import { responseHelper } from '../helpers/http'
+import { HttpResponse, responseHelper } from '../helpers/http'
 
 export class GetTransactionByIdController {
   private getTransactionByIdUseCase: IGetTransactionByIdUseCase
   constructor(getTransactionByIdUseCase: IGetTransactionByIdUseCase) {
     this.getTransactionByIdUseCase = getTransactionByIdUseCase
   }
-  async execute(req: Request, res: Response) {
+  async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
     try {
       const { id: transactionId } = await transactionIdParamSchema.parseAsync(
         req.params,
@@ -22,7 +23,7 @@ export class GetTransactionByIdController {
       if (error instanceof ZodError) {
         return responseHelper.badRequest(res, error.issues[0].message)
       }
-      if (error instanceof Error) {
+      if (error instanceof TransactionNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
       return responseHelper.internalServerError(res, 'Erro ao buscar transação')
