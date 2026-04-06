@@ -7,15 +7,14 @@ import { validatorHelpers } from '../helpers/validator'
 import { DeleteUserController } from './delete.user'
 
 describe('DeleteUserController', () => {
+  const user = {
+    id: faker.string.uuid(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
+    email: faker.internet.email(),
+  }
   class DeleteUserUseCaseStub {
-    execute = jest.fn(
-      async (userId: string): Promise<UserResponse> => ({
-        id: userId,
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-      }),
-    )
+    execute = jest.fn(async (): Promise<UserResponse> => user)
   }
 
   const makeSut = () => {
@@ -35,16 +34,15 @@ describe('DeleteUserController', () => {
   it('should return 200 when user is deleted successfully', async () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
-    const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequestById({ id: userId })
+    const httpRequest = makeHttpRequestById({ id: user.id })
     const { response } = makeHttpResponse()
     // act
     const result = await sut.execute(httpRequest, response)
     // assert
-    expect(deleteUserUseCaseStub.execute).toHaveBeenCalledWith(userId)
+    expect(deleteUserUseCaseStub.execute).toHaveBeenCalledWith(user.id)
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ id: userId }),
+      expect.objectContaining({ id: user.id }),
     )
     expect(result).toBe(response)
   })

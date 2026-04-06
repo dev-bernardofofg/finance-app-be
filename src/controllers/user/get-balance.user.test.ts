@@ -1,19 +1,17 @@
 import { faker } from '@faker-js/faker'
-import { Request, Response } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
 import { GetBalanceUserResponse } from '../../repositories/postgres/user/get-balance.user'
 import { GetBalanceUserController } from './get-balance.user'
 describe('GetBalanceUserController', () => {
+  const balance = {
+    total_income: faker.number.int(),
+    total_expenses: faker.number.int(),
+    total_investments: faker.number.int(),
+    balance: faker.number.int(),
+  }
   class GetBalanceUserUseCaseStub {
-    execute = jest.fn(
-      async (_id: string): Promise<GetBalanceUserResponse> => ({
-        total_income: faker.number.int(),
-        total_expenses: faker.number.int(),
-        total_investments: faker.number.int(),
-        balance: faker.number.int(),
-      }),
-    )
+    execute = jest.fn(async (): Promise<GetBalanceUserResponse> => balance)
   }
 
   const makeSut = () => {
@@ -28,10 +26,7 @@ describe('GetBalanceUserController', () => {
     const httpRequest = makeHttpRequestById({ id: userId })
     const { response } = makeHttpResponse()
 
-    const result = await stub.execute(
-      httpRequest as Request,
-      response as Response,
-    )
+    const result = await stub.execute(httpRequest, response)
 
     expect(getBalanceUserUseCaseStub.execute).toHaveBeenCalledWith(userId)
     expect(response.status).toHaveBeenCalledWith(200)

@@ -1,23 +1,20 @@
 import { faker } from '@faker-js/faker'
-import { Request, Response } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
-import { GetUserByIdParams } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
 import { responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 import { GetUserByIdController } from './get-by-id.user'
 
 describe('GetUserByIdController', () => {
+  const user = {
+    id: faker.string.uuid(),
+    first_name: faker.person.firstName(),
+    last_name: faker.person.lastName(),
+    email: faker.internet.email(),
+  }
   class GetUserByIdUseCaseStub {
-    execute = jest.fn(
-      async (params: GetUserByIdParams): Promise<UserResponse> => ({
-        id: params.id,
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-      }),
-    )
+    execute = jest.fn(async (): Promise<UserResponse> => user)
   }
 
   const makeSut = () => {
@@ -26,26 +23,26 @@ describe('GetUserByIdController', () => {
     return { sut, getUserByIdUseCaseStub }
   }
 
-  const makeHttpRequest = () => ({
-    params: { id: faker.string.uuid() },
+  const makeHttpRequest = (id: string) => ({
+    params: { id },
   })
 
   it('should return 200 when getting user by id', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest()
+    const httpRequest = makeHttpRequest(user.id)
     const { response } = makeHttpResponse()
 
     // act
-    const result = await sut.execute(httpRequest, response as Response)
+    const result = await sut.execute(httpRequest, response)
 
     // assert
     expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith({
-      id: httpRequest.params.id,
+      id: user.id,
     })
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ id: httpRequest.params.id }),
+      expect.objectContaining({ id: user.id }),
     )
     expect(result).toBe(response)
   })
@@ -53,11 +50,11 @@ describe('GetUserByIdController', () => {
   it('should return 400 when the user id is missing', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = { params: {} as { id: string } }
+    const httpRequest = makeHttpRequestById({ id: '' })
     const { response } = makeHttpResponse()
 
     // act
-    const result = await sut.execute(httpRequest, response as Response)
+    const result = await sut.execute(httpRequest, response)
 
     // assert
     expect(getUserByIdUseCaseStub.execute).not.toHaveBeenCalled()
@@ -67,7 +64,7 @@ describe('GetUserByIdController', () => {
 
   it('should return 400 when the user id is invalid', async () => {
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: 'id-invalido' })
+    const httpRequest = makeHttpRequestById({ id: 'invalid-id' })
     const { response } = makeHttpResponse()
 
     jest
@@ -79,10 +76,7 @@ describe('GetUserByIdController', () => {
         ),
       )
 
-    const result = await sut.execute(
-      httpRequest as Request,
-      response as Response,
-    )
+    const result = await sut.execute(httpRequest, response)
 
     expect(getUserByIdUseCaseStub.execute).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(400)
@@ -97,7 +91,7 @@ describe('GetUserByIdController', () => {
   it('should return 404 when user is not found', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest()
+    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
     const { response } = makeHttpResponse()
 
     getUserByIdUseCaseStub.execute.mockRejectedValueOnce(
@@ -119,14 +113,17 @@ describe('GetUserByIdController', () => {
   })
 
   it('should return 500 when an unexpected error occurs', async () => {
+    // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest()
+    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
     const { response } = makeHttpResponse()
 
     getUserByIdUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
-    const result = await sut.execute(httpRequest, response as Response)
+    // act
+    const result = await sut.execute(httpRequest, response)
 
+    // assert
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao buscar usuário',
@@ -137,7 +134,7 @@ describe('GetUserByIdController', () => {
   it('should call GetUserByIdUseCase with the correct parameters', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest()
+    const httpRequest = makeHttpRequest(user.id)
     const { response } = makeHttpResponse()
     const executeSpy = jest.spyOn(getUserByIdUseCaseStub, 'execute')
 
@@ -145,6 +142,6 @@ describe('GetUserByIdController', () => {
     await sut.execute(httpRequest, response)
 
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ id: httpRequest.params.id })
+    expect(executeSpy).toHaveBeenCalledWith({ id: user.id })
   })
 })
