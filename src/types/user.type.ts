@@ -47,5 +47,5 @@ export const getBalanceUserParamsSchema = z.object({
 })
 
 export const getEmailUserParamsSchema = z.object({
-  email: z.string().email('O email não é válido'),
+  email: z.string().email('O email não é válido').optional(),
 })
