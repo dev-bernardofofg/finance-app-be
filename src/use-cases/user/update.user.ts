@@ -1,6 +1,5 @@
 import { PasswordHasherAdapter } from '../../adapters'
-import { isPrismaErrorCode } from '../../errors/prisma'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
+import { EmailAlreadyInUseError } from '../../errors/user'
 import {
   IPostgresGetUserByEmailRepository,
   IPostgresUpdateUserRepository,
@@ -9,7 +8,10 @@ import {
 import { UserResponse } from '../../types'
 
 export interface IUpdateUserUseCase {
-  execute(userId: string, updateUserParams: UserFields): Promise<UserResponse>
+  execute(
+    userId: string,
+    updateUserParams: UserFields,
+  ): Promise<UserResponse | null>
 }
 export class UpdateUserUseCase implements IUpdateUserUseCase {
   private getUserByEmailRepository: IPostgresGetUserByEmailRepository
@@ -41,28 +43,10 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
       )
     }
 
-    let updatedUser: UserResponse | null = null
-
-    try {
-      updatedUser = await this.updateUserRepository.execute(
-        userId,
-        updateUserParams,
-      )
-    } catch (error) {
-      if (isPrismaErrorCode(error, 'P2025')) {
-        throw new UserNotFoundError(userId)
-      }
-
-      if (isPrismaErrorCode(error, 'P2002')) {
-        throw new EmailAlreadyInUseError(updateUserParams.email ?? 'informado')
-      }
-
-      throw error
-    }
-
-    if (!updatedUser) {
-      throw new UserNotFoundError(userId)
-    }
+    const updatedUser = await this.updateUserRepository.execute(
+      userId,
+      updateUserParams,
+    )
 
     return updatedUser
   }
