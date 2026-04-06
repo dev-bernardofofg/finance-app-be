@@ -6,20 +6,21 @@ import { ITransactionResponse } from '../../types'
 import { GetTransactionByUserIdController } from './get-by-user-id.transaction'
 
 describe('GetTransactionByUserIdController', () => {
+  const transaction = {
+    id: faker.string.uuid(),
+    user_id: faker.string.uuid(),
+    name: faker.person.firstName(),
+    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
+    amount: Number(faker.finance.amount()),
+    date: faker.date.recent().toISOString(),
+    created_at: faker.date.recent().toISOString(),
+    updated_at: faker.date.recent().toISOString(),
+  }
   class GetTransactionByUserIdUseCaseStub {
     execute = jest.fn(
       async (
         _params: GetTransactionByUserIdParams,
-      ): Promise<ITransactionResponse[]> => [
-        {
-          id: faker.string.uuid(),
-          user_id: faker.string.uuid(),
-          name: faker.person.firstName(),
-          type: 'INCOME',
-          amount: 100,
-          date: faker.date.recent().toISOString(),
-        },
-      ],
+      ): Promise<ITransactionResponse[]> => [transaction],
     )
   }
 

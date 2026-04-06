@@ -4,16 +4,20 @@ import { ITransactionResponse } from '../../types'
 import { DeleteTransactionController } from './delete.transaction'
 
 describe('DeleteTransactionController', () => {
+  const transaction = {
+    id: faker.string.uuid(),
+    user_id: faker.string.uuid(),
+    name: faker.person.firstName(),
+    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
+    amount: Number(faker.finance.amount()),
+    date: faker.date.recent().toISOString(),
+    created_at: faker.date.recent().toISOString(),
+    updated_at: faker.date.recent().toISOString(),
+  }
   class DeleteTransactionUseCaseStub {
     execute = jest.fn(
-      async (_transactionId: string): Promise<ITransactionResponse> => ({
-        id: faker.string.uuid(),
-        user_id: faker.string.uuid(),
-        name: faker.person.firstName(),
-        type: 'INCOME',
-        amount: 100,
-        date: faker.date.recent().toISOString(),
-      }),
+      async (_transactionId: string): Promise<ITransactionResponse> =>
+        transaction,
     )
   }
 

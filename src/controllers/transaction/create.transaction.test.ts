@@ -10,19 +10,20 @@ import {
 import { CreateTransactionController } from './create.transaction'
 
 describe('CreateTransactionController', () => {
-  // execute = jest.fn(...) transforma o método em um spy do Jest.
-  // Isso permite usar .mockRejectedValueOnce(), .mockResolvedValueOnce() etc.
-  // Sem jest.fn(), o Jest não consegue interceptar ou sobrescrever a função.
+  const transaction = {
+    id: faker.string.uuid(),
+    user_id: faker.string.uuid(),
+    name: faker.person.firstName(),
+    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
+    amount: Number(faker.finance.amount()),
+    date: faker.date.recent().toISOString(),
+    created_at: faker.date.recent().toISOString(),
+    updated_at: faker.date.recent().toISOString(),
+  }
   class CreateTransactionUseCaseStub {
     execute = jest.fn(
-      async (_params: ITransactionParams): Promise<ITransactionResponse> => ({
-        id: faker.string.uuid(),
-        user_id: faker.string.uuid(),
-        name: faker.person.firstName(),
-        type: 'INCOME',
-        amount: 100,
-        date: faker.date.recent().toISOString(),
-      }),
+      async (_params: ITransactionParams): Promise<ITransactionResponse> =>
+        transaction,
     )
   }
 

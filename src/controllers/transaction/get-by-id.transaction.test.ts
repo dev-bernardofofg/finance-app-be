@@ -1,24 +1,22 @@
 import { faker } from '@faker-js/faker'
 import { TransactionNotFoundError } from '../../errors/transaction'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
-import { GetTransactionByIdParams } from '../../repositories/postgres'
 import { ITransactionResponse } from '../../types'
 import { GetTransactionByIdController } from './get-by-id.transaction'
 
 describe('GetTransactionByIdController', () => {
+  const transaction = {
+    id: faker.string.uuid(),
+    user_id: faker.string.uuid(),
+    name: faker.person.firstName(),
+    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
+    amount: Number(faker.finance.amount()),
+    date: faker.date.recent().toISOString(),
+    created_at: faker.date.recent().toISOString(),
+    updated_at: faker.date.recent().toISOString(),
+  }
   class GetTransactionByIdUseCaseStub {
-    execute = jest.fn(
-      async (
-        _params: GetTransactionByIdParams,
-      ): Promise<ITransactionResponse> => ({
-        id: faker.string.uuid(),
-        user_id: faker.string.uuid(),
-        name: faker.person.firstName(),
-        type: 'INCOME',
-        amount: 100,
-        date: faker.date.recent().toISOString(),
-      }),
-    )
+    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
   }
 
   const makeSut = () => {
@@ -26,10 +24,6 @@ describe('GetTransactionByIdController', () => {
     const sut = new GetTransactionByIdController(getTransactionByIdUseCaseStub)
     return { sut, getTransactionByIdUseCaseStub }
   }
-
-  const makeHttpRequest = () => ({
-    params: { id: faker.string.uuid() },
-  })
 
   it('should return 200 when the transaction is found', async () => {
     // arrange
