@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
+import { ITransactionResponse } from '../../types'
 import { CreateTransactionUseCase } from './create.transaction'
 
 describe('CreateTransactionUseCase', () => {
@@ -10,6 +11,8 @@ describe('CreateTransactionUseCase', () => {
     type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
     amount: Number(faker.finance.amount()),
     date: faker.date.recent().toISOString(),
+    created_at: faker.date.recent().toISOString(),
+    updated_at: faker.date.recent().toISOString(),
   }
 
   const user = {
@@ -22,7 +25,7 @@ describe('CreateTransactionUseCase', () => {
   const generatedId = faker.string.uuid()
 
   class CreateTransactionRepositoryStub {
-    execute = jest.fn(async () => transaction)
+    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
   }
 
   class GetUserByIdRepositoryStub {
@@ -92,12 +95,12 @@ describe('CreateTransactionUseCase', () => {
   it('should call CreateTransactionRepository with the correct parameters', async () => {
     // arrange
     const { sut, createTransactionRepository } = makeSut()
-
+    const executeSpy = jest.spyOn(createTransactionRepository, 'execute')
     // act
     await sut.execute(transaction)
 
     // assert
-    expect(createTransactionRepository.execute).toHaveBeenCalledWith({
+    expect(executeSpy).toHaveBeenCalledWith({
       ...transaction,
       id: generatedId,
     })
@@ -106,13 +109,24 @@ describe('CreateTransactionUseCase', () => {
   it('should call GetUserByIdRepository with the correct parameters', async () => {
     // arrange
     const { sut, getUserByIdRepository } = makeSut()
-
+    const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
     // act
     await sut.execute(transaction)
 
     // assert
-    expect(getUserByIdRepository.execute).toHaveBeenCalledWith({
+    expect(executeSpy).toHaveBeenCalledWith({
       id: transaction.user_id,
     })
+  })
+
+  it('should call IdGeneratorAdapter with the correct parameters', async () => {
+    // arrange
+    const { sut, idGeneratorAdapter } = makeSut()
+    const executeSpy = jest.spyOn(idGeneratorAdapter, 'execute')
+    // act
+    await sut.execute(transaction)
+
+    // assert
+    expect(executeSpy).toHaveBeenCalled()
   })
 })
