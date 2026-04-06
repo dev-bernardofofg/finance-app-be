@@ -14,7 +14,10 @@ export class PostgresDeleteTransactionRepository implements IPostgresDeleteTrans
           id: transactionId,
         },
       })
-      return mapTransactionFromDatabase(deletedTransaction)
+      return mapTransactionFromDatabase({
+        ...deletedTransaction,
+        date: deletedTransaction.date.toISOString(),
+      })
     } catch (error) {
       return null
     }
