@@ -1,9 +1,10 @@
-import { Request, Response } from 'express'
-import { UserNotFoundError } from '../../errors/user.ts'
-import { GetUserByEmailParams } from '../../repositories/postgres/index.ts'
-import { getEmailUserParamsSchema } from '../../types/user.type.ts'
-import { IGetUserByEmailUseCase } from '../../use-cases/user/index.ts'
-import { responseHelper } from '../helpers/http.ts'
+import { Request } from 'express'
+import { ZodError } from 'zod'
+import { EmailUserNotFoundError } from '../../errors/user'
+import { GetUserByEmailParams } from '../../repositories/postgres/index'
+import { getEmailUserParamsSchema } from '../../types/index'
+import { IGetUserByEmailUseCase } from '../../use-cases/user/index'
+import { HttpResponse, responseHelper } from '../helpers/http'
 
 export class GetUserByEmailController {
   private getUserByEmailUseCase: IGetUserByEmailUseCase
@@ -11,22 +12,25 @@ export class GetUserByEmailController {
     this.getUserByEmailUseCase = getUserByEmailUseCase
   }
 
-  async execute(req: Request, res: Response) {
+  async execute(req: Pick<Request, 'query'>, res: HttpResponse) {
     const params = req.query as Partial<GetUserByEmailParams>
 
-    const { email } = await getEmailUserParamsSchema.parseAsync(params)
-
-    if (!email) {
-      return responseHelper.badRequest(res, 'O email é obrigatório')
-    }
-
     try {
+      const { email } = await getEmailUserParamsSchema.parseAsync(params)
+
+      if (!email) {
+        return responseHelper.badRequest(res, 'O email é obrigatório')
+      }
+
       const user = await this.getUserByEmailUseCase.execute(
         params as GetUserByEmailParams,
       )
       return responseHelper.ok(res, user)
     } catch (error) {
-      if (error instanceof UserNotFoundError) {
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(res, error.issues[0].message)
+      }
+      if (error instanceof EmailUserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }
       return responseHelper.internalServerError(res, 'Erro ao buscar usuário')
