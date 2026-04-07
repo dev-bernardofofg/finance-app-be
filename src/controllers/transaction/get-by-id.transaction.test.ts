@@ -28,7 +28,7 @@ describe('GetTransactionByIdController', () => {
   it('should return 200 when the transaction is found', async () => {
     // arrange
     const { sut } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transaction.id })
     const { response } = makeHttpResponse()
 
     // act
