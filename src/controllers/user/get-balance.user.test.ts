@@ -63,6 +63,23 @@ describe('GetBalanceUserController', () => {
     expect(result).toBe(response)
   })
 
+  it('should return 400 when the user id is missing', async () => {
+    // arrange
+    const { stub } = makeSut()
+    const httpRequest = makeHttpRequestById({ id: undefined })
+    const { response } = makeHttpResponse()
+
+    // act
+    const result = await stub.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID do usuário é obrigatório',
+    })
+    expect(result).toBe(response)
+  })
+
   it('should return 404 when the balance is not found', async () => {
     // arrange
     const { stub, getBalanceUserUseCaseStub } = makeSut()

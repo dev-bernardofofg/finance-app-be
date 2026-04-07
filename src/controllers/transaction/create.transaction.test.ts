@@ -33,10 +33,6 @@ describe('CreateTransactionController', () => {
     return { sut, createTransactionUseCaseStub }
   }
 
-  // Partial<CreateTransactionParams> permite sobrescrever só o campo que cada
-  // teste precisa mudar — ex: makeHttpRequest({ amount: 0 }) para testar validação do valor igual a 0.
-  // date é string ISO aqui porque o schema Zod espera z.string().datetime().
-  // O controller converte para Date internamente: new Date(params.date).
   const makeHttpRequest = (body?: Partial<CreateTransactionParams>) =>
     ({
       body: {
@@ -70,7 +66,6 @@ describe('CreateTransactionController', () => {
   it('should return 400 when the sent data is invalid', async () => {
     // arrange
     const { sut } = makeSut()
-    // amount: 0 dispara o .min(1) do Zod → ZodError → controller retorna 400
     const httpRequest = makeHttpRequest({ amount: 0 })
     const { response } = makeHttpResponse()
 

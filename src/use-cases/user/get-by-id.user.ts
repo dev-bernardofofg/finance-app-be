@@ -1,12 +1,9 @@
 import { UserNotFoundError } from '../../errors/user'
-import {
-  GetUserByIdParams,
-  IPostgresGetUserByIdRepository,
-} from '../../repositories/postgres'
+import { IPostgresGetUserByIdRepository } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
 
 export interface IGetUserByIdUseCase {
-  execute(params: GetUserByIdParams): Promise<UserResponse>
+  execute(id: string): Promise<UserResponse>
 }
 
 export class GetUserByIdUseCase implements IGetUserByIdUseCase {
@@ -15,10 +12,10 @@ export class GetUserByIdUseCase implements IGetUserByIdUseCase {
     this.getUserByIdRepository = getUserByIdRepository
   }
 
-  async execute(params: GetUserByIdParams) {
-    const user = await this.getUserByIdRepository.execute(params)
+  async execute(id: string) {
+    const user = await this.getUserByIdRepository.execute({ id })
     if (!user) {
-      throw new UserNotFoundError(params.id)
+      throw new UserNotFoundError(id)
     }
     return user
   }

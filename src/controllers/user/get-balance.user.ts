@@ -1,6 +1,8 @@
 import { Request } from 'express'
+import { ZodError } from 'zod'
 import { UserNotFoundError } from '../../errors/user'
-import { getBalanceUserParamsSchema } from '../../types'
+import { GetUserByIdParams } from '../../repositories/postgres'
+import { getUserIdParamsSchema } from '../../types'
 import { IGetBalanceUserUseCase } from '../../use-cases/user'
 import { HttpResponse, responseHelper } from '../helpers/http'
 
@@ -11,9 +13,10 @@ export class GetBalanceUserController {
   }
 
   async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
-    const { id } = await getBalanceUserParamsSchema.parseAsync(req.params)
-
     try {
+      const params = req.params as Partial<GetUserByIdParams>
+      const { id } = await getUserIdParamsSchema.parseAsync(params)
+
       const balance = await this.getBalanceUserUseCase.execute(id)
 
       if (!balance) {
@@ -22,6 +25,9 @@ export class GetBalanceUserController {
 
       return responseHelper.ok(res, balance)
     } catch (error) {
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(res, error.issues[0].message)
+      }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }

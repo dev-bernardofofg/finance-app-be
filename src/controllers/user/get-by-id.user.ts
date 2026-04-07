@@ -1,9 +1,10 @@
 import { Request } from 'express'
+import { ZodError } from 'zod'
 import { UserNotFoundError } from '../../errors/user'
 import { GetUserByIdParams } from '../../repositories/postgres'
+import { getUserIdParamsSchema } from '../../types'
 import { IGetUserByIdUseCase } from '../../use-cases/user'
 import { HttpResponse, responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 
 export class GetUserByIdController {
   private getUserByIdUseCase: IGetUserByIdUseCase
@@ -12,18 +13,17 @@ export class GetUserByIdController {
   }
 
   async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
-    const params = req.params as Partial<GetUserByIdParams>
-
-    const invalidIdResponse = validatorHelpers.idIsValid(params.id ?? '', res)
-    if (invalidIdResponse) return invalidIdResponse
-
     try {
-      const user = await this.getUserByIdUseCase.execute(
-        params as GetUserByIdParams,
-      )
+      const params = req.params as Partial<GetUserByIdParams>
+      const { id } = await getUserIdParamsSchema.parseAsync(params)
+
+      const user = await this.getUserByIdUseCase.execute(id)
 
       return responseHelper.ok(res, user)
     } catch (error) {
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(res, error.issues[0].message)
+      }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
       }

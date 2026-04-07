@@ -14,6 +14,7 @@ export const makeHttpRequestById = (params?: {
   id?: string
 }): Pick<Request, 'params'> => ({
   params: {
-    id: params?.id ?? faker.string.uuid(),
-  },
+    id: faker.string.uuid(),
+    ...params,
+  } as Record<string, string>,
 })

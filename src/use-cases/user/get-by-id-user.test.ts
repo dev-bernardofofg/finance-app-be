@@ -28,7 +28,7 @@ describe('GetByIdUserUseCase', () => {
     getUserByIdRepository.execute.mockResolvedValueOnce(user)
 
     // act
-    const result = await sut.execute({ id: user.id })
+    const result = await sut.execute(user.id)
 
     // assert
     expect(getUserByIdRepository.execute).toHaveBeenCalledWith({ id: user.id })
@@ -41,7 +41,7 @@ describe('GetByIdUserUseCase', () => {
     getUserByIdRepository.execute.mockResolvedValueOnce(null as never)
 
     // act
-    const promise = sut.execute({ id: faker.string.uuid() })
+    const promise = sut.execute(faker.string.uuid())
 
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
@@ -54,7 +54,7 @@ describe('GetByIdUserUseCase', () => {
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
 
     // act
-    await sut.execute({ id: user.id })
+    await sut.execute(user.id)
 
     // assert
     expect(executeSpy).toHaveBeenCalledWith({ id: user.id })
@@ -67,7 +67,7 @@ describe('GetByIdUserUseCase', () => {
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
 
     // act
-    await sut.execute({ id: user.id })
+    await sut.execute(user.id)
 
     // assert
     expect(executeSpy).toHaveBeenCalledWith({ id: user.id })
@@ -79,7 +79,7 @@ describe('GetByIdUserUseCase', () => {
     getUserByIdRepository.execute.mockRejectedValueOnce(new Error())
 
     // act
-    const promise = sut.execute({ id: faker.string.uuid() })
+    const promise = sut.execute(faker.string.uuid())
 
     // assert
     await expect(promise).rejects.toThrow(Error)

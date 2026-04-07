@@ -2,8 +2,6 @@ import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
 import { UserResponse } from '../../types'
-import { responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
 import { GetUserByIdController } from './get-by-id.user'
 
 describe('GetUserByIdController', () => {
@@ -37,9 +35,7 @@ describe('GetUserByIdController', () => {
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith({
-      id: user.id,
-    })
+    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith(user.id)
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
       expect.objectContaining({ id: user.id }),
@@ -49,42 +45,35 @@ describe('GetUserByIdController', () => {
 
   it('should return 400 when the user id is missing', async () => {
     // arrange
-    const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: '' })
+    const { sut } = makeSut()
+    const httpRequest = makeHttpRequestById({ id: undefined })
     const { response } = makeHttpResponse()
 
     // act
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByIdUseCaseStub.execute).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID do usuário é obrigatório',
+    })
     expect(result).toBe(response)
   })
 
   it('should return 400 when the user id is invalid', async () => {
-    const { sut, getUserByIdUseCaseStub } = makeSut()
+    // arrange
+    const { sut } = makeSut()
     const httpRequest = makeHttpRequestById({ id: 'invalid-id' })
     const { response } = makeHttpResponse()
 
-    jest
-      .spyOn(validatorHelpers, 'idIsValid')
-      .mockReturnValueOnce(
-        responseHelper.badRequest(
-          response,
-          'O ID não é válido. Por favor, informe um ID válido.',
-        ),
-      )
-
+    // act
     const result = await sut.execute(httpRequest, response)
 
-    expect(getUserByIdUseCaseStub.execute).not.toHaveBeenCalled()
+    // assert
     expect(response.status).toHaveBeenCalledWith(400)
-    expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'O ID não é válido. Por favor, informe um ID válido.',
-      }),
-    )
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID não é válido. Por favor, informe um ID válido.',
+    })
     expect(result).toBe(response)
   })
 
@@ -102,9 +91,9 @@ describe('GetUserByIdController', () => {
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith({
-      id: httpRequest.params.id,
-    })
+    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith(
+      httpRequest.params.id,
+    )
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
       message: `Usuário com ID ${httpRequest.params.id} não encontrado.`,
@@ -142,6 +131,6 @@ describe('GetUserByIdController', () => {
     await sut.execute(httpRequest, response)
 
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ id: user.id })
+    expect(executeSpy).toHaveBeenCalledWith(user.id)
   })
 })

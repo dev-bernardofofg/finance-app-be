@@ -42,8 +42,10 @@ export const updateUserSchema = z
 export type CreateUserParams = z.infer<typeof createUserSchema>
 export type UpdateUserParams = z.infer<typeof updateUserSchema>
 
-export const getBalanceUserParamsSchema = z.object({
-  id: z.string().uuid('O ID do usuário deve ser um UUID válido'),
+export const getUserIdParamsSchema = z.object({
+  id: z
+    .string({ error: 'O ID do usuário é obrigatório' })
+    .uuid('O ID não é válido. Por favor, informe um ID válido.'),
 })
 
 export const getEmailUserParamsSchema = z.object({
