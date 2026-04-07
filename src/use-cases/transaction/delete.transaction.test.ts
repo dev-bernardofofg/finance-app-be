@@ -50,20 +50,26 @@ describe('DeleteTransactionUseCase', () => {
     expect(result).toEqual(null)
   })
 
-  it('should propagate unexpected errors', async () => {
+  it('should call DeleteTransactionRepository with the correct parameters', async () => {
     // arrange
     const { sut, deleteTransactionRepository } = makeSut()
     const transactionId = faker.string.uuid()
-    const unexpectedError = new Error('unexpected')
-    deleteTransactionRepository.execute.mockRejectedValueOnce(unexpectedError)
-
+    const executeSpy = jest.spyOn(deleteTransactionRepository, 'execute')
     // act
-    const promise = sut.execute(transactionId)
-
+    await sut.execute(transactionId)
     // assert
-    await expect(promise).rejects.toThrow(unexpectedError)
-    expect(deleteTransactionRepository.execute).toHaveBeenCalledWith(
-      transactionId,
-    )
+    expect(executeSpy).toHaveBeenCalledWith(transactionId)
+  })
+
+  it('should call DeleteTransactionRepository throws', async () => {
+    // arrange
+    const { sut, deleteTransactionRepository } = makeSut()
+    jest
+      .spyOn(deleteTransactionRepository, 'execute')
+      .mockRejectedValueOnce(new Error())
+    // act
+    const promise = sut.execute(transaction.id)
+    // assert
+    await expect(promise).rejects.toThrow(Error)
   })
 })
