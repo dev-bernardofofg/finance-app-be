@@ -1,22 +1,14 @@
-import { faker } from '@faker-js/faker'
 import { TransactionNotFoundError } from '../../errors/transaction'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
+import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
 import { GetTransactionByIdController } from './get-by-id.transaction'
 
 describe('GetTransactionByIdController', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-    created_at: faker.date.recent().toISOString(),
-    updated_at: faker.date.recent().toISOString(),
-  }
   class GetTransactionByIdUseCaseStub {
-    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
+    execute = jest.fn(
+      async (): Promise<ITransactionResponse> => transactionFixture,
+    )
   }
 
   const makeSut = () => {
@@ -28,7 +20,7 @@ describe('GetTransactionByIdController', () => {
   it('should return 200 when the transaction is found', async () => {
     // arrange
     const { sut } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: transaction.id })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
 
     // act
@@ -59,7 +51,7 @@ describe('GetTransactionByIdController', () => {
   it('should return 404 when the transaction is not found', async () => {
     // arrange
     const { sut, getTransactionByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
     getTransactionByIdUseCaseStub.execute.mockRejectedValueOnce(
       new TransactionNotFoundError(httpRequest.params.id),
@@ -79,7 +71,7 @@ describe('GetTransactionByIdController', () => {
   it('should return 500 when an unexpected error occurs', async () => {
     // arrange
     const { sut, getTransactionByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
     getTransactionByIdUseCaseStub.execute.mockRejectedValueOnce(new Error())
 

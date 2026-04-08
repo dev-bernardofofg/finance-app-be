@@ -1,21 +1,12 @@
-import { faker } from '@faker-js/faker'
+import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
 import { GetTransactionByIdUseCase } from './get-by-id.transaction'
 
 describe('GetTransactionByIdUseCase', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-    created_at: faker.date.recent().toISOString(),
-    updated_at: faker.date.recent().toISOString(),
-  }
-
   class GetTransactionByIdRepositoryStub {
-    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
+    execute = jest.fn(
+      async (): Promise<ITransactionResponse> => transactionFixture,
+    )
   }
 
   const makeSut = () => {
@@ -29,23 +20,22 @@ describe('GetTransactionByIdUseCase', () => {
     const { sut } = makeSut()
 
     // act
-    const result = await sut.execute(transaction.id)
+    const result = await sut.execute(transactionFixture.id)
 
     // assert
-    expect(result).toEqual(transaction)
+    expect(result).toEqual(transactionFixture)
   })
 
   it('should throw a TransactionNotFoundError if the transaction is not found', async () => {
     // arrange
     const { sut, getTransactionByIdRepository } = makeSut()
-    const transactionId = faker.string.uuid()
     getTransactionByIdRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const result = await sut.execute(transactionId)
+    const result = await sut.execute(transactionFixture.id)
 
     // assert
     expect(getTransactionByIdRepository.execute).toHaveBeenCalledWith({
-      transactionId: transactionId,
+      transactionId: transactionFixture.id,
     })
     expect(result).toEqual(null)
   })
@@ -53,25 +43,25 @@ describe('GetTransactionByIdUseCase', () => {
   it('should call GetTransactionByIdRepository with the correct parameters', async () => {
     // arrange
     const { sut, getTransactionByIdRepository } = makeSut()
-    const transactionId = faker.string.uuid()
     const executeSpy = jest.spyOn(getTransactionByIdRepository, 'execute')
     // act
-    await sut.execute(transactionId)
+    await sut.execute(transactionFixture.id)
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ transactionId: transactionId })
+    expect(executeSpy).toHaveBeenCalledWith({
+      transactionId: transactionFixture.id,
+    })
   })
 
   it('should propagate unexpected errors', async () => {
     // arrange
     const { sut, getTransactionByIdRepository } = makeSut()
-    const transactionId = faker.string.uuid()
     getTransactionByIdRepository.execute.mockRejectedValueOnce(new Error())
     // act
-    const result = sut.execute(transactionId)
+    const result = sut.execute(transactionFixture.id)
     // assert
     await expect(result).rejects.toThrow(Error)
     expect(getTransactionByIdRepository.execute).toHaveBeenCalledWith({
-      transactionId: transactionId,
+      transactionId: transactionFixture.id,
     })
   })
 })

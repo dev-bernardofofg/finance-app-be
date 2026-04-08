@@ -1,13 +1,12 @@
 import { faker } from '@faker-js/faker'
 import { EmailAlreadyInUseError } from '../../errors/user'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { CreateUserUseCase } from './create.user'
 
 describe('CreateUserUseCase', () => {
   class GetUserByEmailRepositoryStub {
-    execute = jest.fn(async (): Promise<UserResponse | null> => {
-      return null
-    })
+    execute = jest.fn(async (): Promise<UserResponse | null> => null)
   }
 
   class CreateUserRepositoryStub {
@@ -28,14 +27,7 @@ describe('CreateUserUseCase', () => {
     })
   }
 
-  const makeHttpRequest = () => {
-    return {
-      first_name: faker.person.firstName(),
-      last_name: faker.person.lastName(),
-      email: faker.internet.email(),
-      password: faker.internet.password({ length: 6 }),
-    }
-  }
+  const makeHttpRequest = () => userFixture
 
   const makeSut = () => {
     const getUserByEmailRepository = new GetUserByEmailRepositoryStub()

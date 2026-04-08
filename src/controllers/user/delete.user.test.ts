@@ -1,20 +1,15 @@
 import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpRequestById } from '../../helpers/test'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { HttpResponse, responseHelper } from '../helpers/http'
 import { validatorHelpers } from '../helpers/validator'
 import { DeleteUserController } from './delete.user'
 
 describe('DeleteUserController', () => {
-  const user = {
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-  }
   class DeleteUserUseCaseStub {
-    execute = jest.fn(async (): Promise<UserResponse> => user)
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
 
   const makeSut = () => {
@@ -34,15 +29,15 @@ describe('DeleteUserController', () => {
   it('should return 200 when user is deleted successfully', async () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: user.id })
+    const httpRequest = makeHttpRequestById({ id: userFixture.id })
     const { response } = makeHttpResponse()
     // act
     const result = await sut.execute(httpRequest, response)
     // assert
-    expect(deleteUserUseCaseStub.execute).toHaveBeenCalledWith(user.id)
+    expect(deleteUserUseCaseStub.execute).toHaveBeenCalledWith(userFixture.id)
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ id: user.id }),
+      expect.objectContaining({ id: userFixture.id }),
     )
     expect(result).toBe(response)
   })

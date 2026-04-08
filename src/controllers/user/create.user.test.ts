@@ -2,18 +2,21 @@ import { faker } from '@faker-js/faker'
 import { Request } from 'express'
 import { EmailAlreadyInUseError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
+import { userFixtureWithoutId } from '../../test/fixtures/user'
 import { CreateUserParams, UserResponse } from '../../types'
 import { CreateUserController } from './create.user'
 
 describe('CreateUserController', () => {
   class CreateUserUseCaseStub {
     execute = jest.fn(
-      async (user: CreateUserParams): Promise<UserResponse> => ({
-        id: 'user-id',
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-      }),
+      async (userParams: CreateUserParams): Promise<UserResponse> => {
+        return {
+          id: faker.string.uuid(),
+          first_name: userParams.first_name,
+          last_name: userParams.last_name,
+          email: userParams.email,
+        }
+      },
     )
   }
 
@@ -26,10 +29,7 @@ describe('CreateUserController', () => {
   const makeHttpRequest = (body?: Partial<CreateUserParams>) =>
     ({
       body: {
-        first_name: faker.person.firstName(),
-        last_name: faker.person.lastName(),
-        email: faker.internet.email(),
-        password: faker.internet.password({ length: 6 }),
+        ...userFixtureWithoutId,
         ...body,
       },
     }) as Request

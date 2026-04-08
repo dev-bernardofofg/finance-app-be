@@ -1,17 +1,10 @@
-import { faker } from '@faker-js/faker'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { DeleteUserUseCase } from './delete.user'
 
 describe('DeleteUserUseCase', () => {
-  const makeUser = (): UserResponse => ({
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-  })
-
   class DeleteUserRepositoryStub {
-    execute = jest.fn(async (): Promise<UserResponse | null> => makeUser())
+    execute = jest.fn(async (): Promise<UserResponse | null> => userFixture)
   }
 
   const makeSut = () => {
@@ -27,56 +20,52 @@ describe('DeleteUserUseCase', () => {
   it('should delete user successfully', async () => {
     // arrange
     const { sut, deleteUserRepository } = makeSut()
-    const user = makeUser()
-    deleteUserRepository.execute.mockResolvedValueOnce(user)
+    deleteUserRepository.execute.mockResolvedValueOnce(userFixture)
 
     // act
-    const result = await sut.execute(user.id)
+    const result = await sut.execute(userFixture.id)
 
     // assert
-    expect(deleteUserRepository.execute).toHaveBeenCalledWith(user.id)
-    expect(result).toEqual(user)
+    expect(deleteUserRepository.execute).toHaveBeenCalledWith(userFixture.id)
+    expect(result).toEqual(userFixture)
   })
 
   it('should call DeleteUserRepository with correct userId', async () => {
     // arrange
     const { sut, deleteUserRepository } = makeSut()
-    const user = makeUser()
-    deleteUserRepository.execute.mockResolvedValueOnce(user)
+    deleteUserRepository.execute.mockResolvedValueOnce(userFixture)
 
     // act
-    await sut.execute(user.id)
+    await sut.execute(userFixture.id)
 
     // assert
-    expect(deleteUserRepository.execute).toHaveBeenCalledWith(user.id)
+    expect(deleteUserRepository.execute).toHaveBeenCalledWith(userFixture.id)
   })
 
   it('should return null when repository returns null', async () => {
     // arrange
     const { sut, deleteUserRepository } = makeSut()
-    const user = makeUser()
     deleteUserRepository.execute.mockResolvedValueOnce(null)
 
     // act
-    const result = await sut.execute(user.id)
+    const result = await sut.execute(userFixture.id)
 
     // assert
     expect(result).toEqual(null)
-    expect(deleteUserRepository.execute).toHaveBeenCalledWith(user.id)
+    expect(deleteUserRepository.execute).toHaveBeenCalledWith(userFixture.id)
   })
 
   it('should propagate unexpected errors', async () => {
     // arrange
     const { sut, deleteUserRepository } = makeSut()
-    const user = makeUser()
     const unexpectedError = new Error('unexpected')
     deleteUserRepository.execute.mockRejectedValueOnce(unexpectedError)
 
     // act
-    const result = sut.execute(user.id)
+    const result = sut.execute(userFixture.id)
 
     // assert
     await expect(result).rejects.toThrow(unexpectedError)
-    expect(deleteUserRepository.execute).toHaveBeenCalledWith(user.id)
+    expect(deleteUserRepository.execute).toHaveBeenCalledWith(userFixture.id)
   })
 })

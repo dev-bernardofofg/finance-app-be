@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { EmailAlreadyInUseError } from '../../errors/user'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { UpdateUserUseCase } from './update.user'
 
@@ -15,16 +16,8 @@ describe('UpdateUserUseCase', () => {
   }
 
   class UpdateUserRepositoryStub {
-    execute = jest.fn(async (): Promise<UserResponse> => makeUser())
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
-
-  const makeUser = () => ({
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-    password: faker.internet.password({ length: 6 }),
-  })
 
   const makeSut = () => {
     const getUserByEmailRepository = new GetUserByEmailRepositoryStub()
@@ -47,72 +40,68 @@ describe('UpdateUserUseCase', () => {
   it('should update the user successfully (without email and password)', async () => {
     // arrange
     const { sut, updateUserRepository } = makeSut()
-    const user = makeUser()
-    updateUserRepository.execute.mockResolvedValueOnce(user)
+    updateUserRepository.execute.mockResolvedValueOnce(userFixture)
     const updateUserParams = {
       first_name: faker.person.firstName(),
       last_name: faker.person.lastName(),
     }
     // act
-    const result = await sut.execute(user.id, updateUserParams)
+    const result = await sut.execute(userFixture.id, updateUserParams)
 
     // assert
-    expect(result).toEqual(user)
+    expect(result).toEqual(userFixture)
   })
 
   it('should update the user successfully (with email and password)', async () => {
     // arrange
     const { sut, updateUserRepository } = makeSut()
-    const user = makeUser()
-    updateUserRepository.execute.mockResolvedValueOnce(user)
+    updateUserRepository.execute.mockResolvedValueOnce(userFixture)
     const updateUserParams = {
       email: faker.internet.email(),
       password: faker.internet.password({ length: 6 }),
     }
     // act
-    const result = await sut.execute(user.id, updateUserParams)
+    const result = await sut.execute(userFixture.id, updateUserParams)
 
     // assert
-    expect(result).toEqual(user)
+    expect(result).toEqual(userFixture)
   })
 
   it('should update the user successfully (with email)', async () => {
     // arrange
     const { sut, updateUserRepository } = makeSut()
-    const user = makeUser()
-    updateUserRepository.execute.mockResolvedValueOnce(user)
+
+    updateUserRepository.execute.mockResolvedValueOnce(userFixture)
     const updateUserParams = {
       email: faker.internet.email(),
     }
     // act
-    const result = await sut.execute(user.id, updateUserParams)
+    const result = await sut.execute(userFixture.id, updateUserParams)
 
     // assert
-    expect(result).toEqual(user)
+    expect(result).toEqual(userFixture)
   })
 
   it('should update the user successfully (with password)', async () => {
     // arrange
     const { sut, updateUserRepository, passwordHasherAdapter } = makeSut()
-    const user = makeUser()
-    updateUserRepository.execute.mockResolvedValueOnce(user)
+    updateUserRepository.execute.mockResolvedValueOnce(userFixture)
     const originalPassword = faker.internet.password({ length: 6 })
     const updateUserParams = {
       password: originalPassword,
     }
 
     // act
-    const result = await sut.execute(user.id, updateUserParams)
+    const result = await sut.execute(userFixture.id, updateUserParams)
 
     // assert
-    expect(result).toEqual(user)
+    expect(result).toEqual(userFixture)
     expect(passwordHasherAdapter.execute).toHaveBeenCalledWith(originalPassword)
   })
 
   it('should return null when user is not found', async () => {
     // arrange
     const { sut, updateUserRepository } = makeSut()
-    const user = makeUser()
     updateUserRepository.execute.mockResolvedValueOnce(null as never)
     const updateUserParams = {
       first_name: faker.person.firstName(),
@@ -120,7 +109,7 @@ describe('UpdateUserUseCase', () => {
     }
 
     // act
-    const result = await sut.execute(user.id, updateUserParams)
+    const result = await sut.execute(userFixture.id, updateUserParams)
 
     // assert
     expect(result).toEqual(null)
@@ -129,35 +118,36 @@ describe('UpdateUserUseCase', () => {
   it('should throw EmailAlreadyInUseError if the email is already in use', async () => {
     // arrange
     const { sut, getUserByEmailRepository } = makeSut()
-    const user = makeUser()
-    const otherUser = makeUser()
+    const anotherUser = {
+      id: faker.string.uuid(),
+      email: faker.internet.email(),
+      first_name: faker.person.firstName(),
+      last_name: faker.person.lastName(),
+      created_at: new Date(),
+      updated_at: new Date(),
+    } as UserResponse
     const executeSpy = jest.spyOn(getUserByEmailRepository, 'execute')
-    executeSpy.mockResolvedValueOnce(otherUser)
-
-    const updateUserParams = {
-      email: otherUser.email,
-    }
+    executeSpy.mockResolvedValueOnce(anotherUser)
 
     // act
-    const result = sut.execute(user.id, updateUserParams)
+    const result = sut.execute(userFixture.id, { email: anotherUser.email })
 
     // assert
     await expect(result).rejects.toThrow(
-      new EmailAlreadyInUseError(updateUserParams.email),
+      new EmailAlreadyInUseError(anotherUser.email),
     )
   })
 
   it('should throw error if GetUserByEmailRepository throws error', async () => {
     // arrange
     const { sut, getUserByEmailRepository } = makeSut()
-    const user = makeUser()
     getUserByEmailRepository.execute.mockRejectedValueOnce(new Error())
     const updateUserParams = {
       email: faker.internet.email(),
     }
 
     // act
-    const result = sut.execute(user.id, updateUserParams)
+    const result = sut.execute(userFixture.id, updateUserParams)
 
     // assert
     await expect(result).rejects.toThrow(Error)
@@ -166,14 +156,13 @@ describe('UpdateUserUseCase', () => {
   it('should throw error if UpdateUserRepository throws error', async () => {
     // arrange
     const { sut, updateUserRepository } = makeSut()
-    const user = makeUser()
     updateUserRepository.execute.mockRejectedValueOnce(new Error())
     const updateUserParams = {
       email: faker.internet.email(),
     }
 
     // act
-    const result = sut.execute(user.id, updateUserParams)
+    const result = sut.execute(userFixture.id, updateUserParams)
 
     // assert
     await expect(result).rejects.toThrow(Error)
@@ -182,14 +171,13 @@ describe('UpdateUserUseCase', () => {
   it('should call GetUserByEmailRepository with the correct parameters', async () => {
     // arrange
     const { sut, getUserByEmailRepository } = makeSut()
-    const user = makeUser()
-    getUserByEmailRepository.execute.mockResolvedValueOnce(user)
+    getUserByEmailRepository.execute.mockResolvedValueOnce(userFixture)
     const updateUserParams = {
       email: faker.internet.email(),
     }
 
     // act
-    await sut.execute(user.id, updateUserParams)
+    await sut.execute(userFixture.id, updateUserParams)
 
     // assert
     expect(getUserByEmailRepository.execute).toHaveBeenCalledWith({
@@ -200,8 +188,7 @@ describe('UpdateUserUseCase', () => {
   it('should call UpdateUserRepository with the correct parameters', async () => {
     // arrange
     const { sut, updateUserRepository } = makeSut()
-    const user = makeUser()
-    updateUserRepository.execute.mockResolvedValueOnce(user)
+    updateUserRepository.execute.mockResolvedValueOnce(userFixture)
     const updateUserParams = {
       first_name: faker.person.firstName(),
       last_name: faker.person.lastName(),
@@ -210,11 +197,11 @@ describe('UpdateUserUseCase', () => {
     }
 
     // act
-    await sut.execute(user.id, updateUserParams)
+    await sut.execute(userFixture.id, updateUserParams)
 
     // assert
     expect(updateUserRepository.execute).toHaveBeenCalledWith(
-      user.id,
+      userFixture.id,
       updateUserParams,
     )
   })

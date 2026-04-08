@@ -1,31 +1,22 @@
-import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
+import { idFixture } from '../../test/fixtures/id'
+import { transactionFixture } from '../../test/fixtures/transaction'
+import { userFixture } from '../../test/fixtures/user'
 import { ITransactionResponse } from '../../types'
 import { CreateTransactionUseCase } from './create.transaction'
 
 describe('CreateTransactionUseCase', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-    created_at: faker.date.recent().toISOString(),
-    updated_at: faker.date.recent().toISOString(),
-  }
-
   const user = {
-    id: transaction.user_id,
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
+    id: transactionFixture.user_id,
+    first_name: userFixture.first_name,
+    last_name: userFixture.last_name,
+    email: userFixture.email,
   }
-
-  const generatedId = faker.string.uuid()
 
   class CreateTransactionRepositoryStub {
-    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
+    execute = jest.fn(
+      async (): Promise<ITransactionResponse> => transactionFixture,
+    )
   }
 
   class GetUserByIdRepositoryStub {
@@ -33,7 +24,7 @@ describe('CreateTransactionUseCase', () => {
   }
 
   class IdGeneratorAdapterStub {
-    execute = jest.fn(async () => generatedId)
+    execute = jest.fn(async () => idFixture)
   }
 
   const makeSut = () => {
@@ -60,10 +51,10 @@ describe('CreateTransactionUseCase', () => {
     const { sut } = makeSut()
 
     // act
-    const result = await sut.execute(transaction)
+    const result = await sut.execute(transactionFixture)
 
     // assert
-    expect(result).toEqual(transaction)
+    expect(result).toEqual(transactionFixture)
   })
 
   it('should throw a UserNotFoundError if the user is not found', async () => {
@@ -72,11 +63,11 @@ describe('CreateTransactionUseCase', () => {
     getUserByIdRepository.execute.mockResolvedValueOnce(null as never)
 
     // act
-    const result = sut.execute(transaction)
+    const result = sut.execute(transactionFixture)
 
     // assert
     await expect(result).rejects.toThrow(
-      new UserNotFoundError(transaction.user_id),
+      new UserNotFoundError(transactionFixture.user_id),
     )
   })
 
@@ -86,7 +77,7 @@ describe('CreateTransactionUseCase', () => {
     idGeneratorAdapter.execute.mockRejectedValueOnce(new Error())
 
     // act
-    const result = sut.execute(transaction)
+    const result = sut.execute(transactionFixture)
 
     // assert
     await expect(result).rejects.toThrow(Error)
@@ -97,12 +88,12 @@ describe('CreateTransactionUseCase', () => {
     const { sut, createTransactionRepository } = makeSut()
     const executeSpy = jest.spyOn(createTransactionRepository, 'execute')
     // act
-    await sut.execute(transaction)
+    await sut.execute(transactionFixture)
 
     // assert
     expect(executeSpy).toHaveBeenCalledWith({
-      ...transaction,
-      id: generatedId,
+      ...transactionFixture,
+      id: idFixture,
     })
   })
 
@@ -111,11 +102,11 @@ describe('CreateTransactionUseCase', () => {
     const { sut, getUserByIdRepository } = makeSut()
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
     // act
-    await sut.execute(transaction)
+    await sut.execute(transactionFixture)
 
     // assert
     expect(executeSpy).toHaveBeenCalledWith({
-      id: transaction.user_id,
+      id: transactionFixture.user_id,
     })
   })
 
@@ -124,7 +115,7 @@ describe('CreateTransactionUseCase', () => {
     const { sut, idGeneratorAdapter } = makeSut()
     const executeSpy = jest.spyOn(idGeneratorAdapter, 'execute')
     // act
-    await sut.execute(transaction)
+    await sut.execute(transactionFixture)
 
     // assert
     expect(executeSpy).toHaveBeenCalled()

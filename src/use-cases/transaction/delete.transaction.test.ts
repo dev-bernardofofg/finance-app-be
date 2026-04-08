@@ -1,21 +1,12 @@
-import { faker } from '@faker-js/faker'
+import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
 import { DeleteTransactionUseCase } from './delete.transaction'
 
 describe('DeleteTransactionUseCase', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-    created_at: faker.date.recent().toISOString(),
-    updated_at: faker.date.recent().toISOString(),
-  }
-
   class DeleteTransactionRepositoryStub {
-    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
+    execute = jest.fn(
+      async (): Promise<ITransactionResponse> => transactionFixture,
+    )
   }
   const makeSut = () => {
     const deleteTransactionRepository = new DeleteTransactionRepositoryStub()
@@ -26,26 +17,24 @@ describe('DeleteTransactionUseCase', () => {
   it('should delete a transaction', async () => {
     // arrange
     const { sut } = makeSut()
-    const transactionId = transaction.id
 
     // act
-    const result = await sut.execute(transactionId)
+    const result = await sut.execute(transactionFixture.id)
 
     // assert
-    expect(result).toEqual(transaction)
+    expect(result).toEqual(transactionFixture)
   })
 
   it('should return null when the transaction is not found', async () => {
     // arrange
     const { sut, deleteTransactionRepository } = makeSut()
-    const transactionId = faker.string.uuid()
     deleteTransactionRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const result = await sut.execute(transactionId)
+    const result = await sut.execute(transactionFixture.id)
 
     // assert
     expect(deleteTransactionRepository.execute).toHaveBeenCalledWith(
-      transactionId,
+      transactionFixture.id,
     )
     expect(result).toEqual(null)
   })
@@ -53,12 +42,11 @@ describe('DeleteTransactionUseCase', () => {
   it('should call DeleteTransactionRepository with the correct parameters', async () => {
     // arrange
     const { sut, deleteTransactionRepository } = makeSut()
-    const transactionId = faker.string.uuid()
     const executeSpy = jest.spyOn(deleteTransactionRepository, 'execute')
     // act
-    await sut.execute(transactionId)
+    await sut.execute(transactionFixture.id)
     // assert
-    expect(executeSpy).toHaveBeenCalledWith(transactionId)
+    expect(executeSpy).toHaveBeenCalledWith(transactionFixture.id)
   })
 
   it('should call DeleteTransactionRepository throws', async () => {
@@ -68,7 +56,7 @@ describe('DeleteTransactionUseCase', () => {
       .spyOn(deleteTransactionRepository, 'execute')
       .mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute(transaction.id)
+    const promise = sut.execute(transactionFixture.id)
     // assert
     await expect(promise).rejects.toThrow(Error)
   })

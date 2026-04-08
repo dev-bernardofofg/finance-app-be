@@ -1,23 +1,13 @@
-import { faker } from '@faker-js/faker'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
+import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
 import { DeleteTransactionController } from './delete.transaction'
 
 describe('DeleteTransactionController', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-    created_at: faker.date.recent().toISOString(),
-    updated_at: faker.date.recent().toISOString(),
-  }
   class DeleteTransactionUseCaseStub {
     execute = jest.fn(
       async (_transactionId: string): Promise<ITransactionResponse> =>
-        transaction,
+        transactionFixture,
     )
   }
 
@@ -30,7 +20,7 @@ describe('DeleteTransactionController', () => {
   it('should return 200 when the transaction is deleted successfully', async () => {
     // arrange
     const { sut } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
 
     // act
@@ -61,7 +51,7 @@ describe('DeleteTransactionController', () => {
   it('should return 404 when the transaction is not found', async () => {
     // arrange
     const { sut, deleteTransactionUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
     deleteTransactionUseCaseStub.execute.mockResolvedValueOnce(null as never)
 
@@ -79,7 +69,7 @@ describe('DeleteTransactionController', () => {
   it('should return 500 when an unexpected error occurs', async () => {
     // arrange
     const { sut, deleteTransactionUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
     deleteTransactionUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
@@ -97,7 +87,7 @@ describe('DeleteTransactionController', () => {
   it('should call DeleteTransactionUseCase with the correct parameters', async () => {
     // arrange
     const { sut, deleteTransactionUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequestById({ id: faker.string.uuid() })
+    const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
     const executeSpy = jest.spyOn(deleteTransactionUseCaseStub, 'execute')
 

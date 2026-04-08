@@ -2,6 +2,7 @@ import { faker } from '@faker-js/faker'
 import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { UpdateUserParams, UserFields } from '../../repositories/postgres'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { UpdateUserController } from './update.user'
 
@@ -28,7 +29,7 @@ describe('UpdateUserController', () => {
 
   const makeHttpRequest = (
     body?: Partial<UpdateUserParams & { unallowed_field?: string }>,
-    id: string = faker.string.uuid(),
+    id: string = userFixture.id,
   ) => ({
     body: {
       first_name: faker.person.firstName(),
@@ -177,10 +178,9 @@ describe('UpdateUserController', () => {
   it('should return 400 when the body has no fields to update', async () => {
     // arrange
     const { sut } = makeSut()
-    const userId = faker.string.uuid()
     const httpRequest = {
       body: {},
-      params: { id: userId },
+      params: { id: userFixture.id },
     }
     const { response } = makeHttpResponse()
 
@@ -273,11 +273,10 @@ describe('UpdateUserController', () => {
   it('should return 409 when the email is already in use', async () => {
     // arrange
     const { sut, updateUserUseCaseStub } = makeSut()
-    const email = faker.internet.email()
-    const httpRequest = makeHttpRequest({ email })
+    const httpRequest = makeHttpRequest({ email: userFixture.email })
     const { response } = makeHttpResponse()
     updateUserUseCaseStub.execute.mockRejectedValueOnce(
-      new EmailAlreadyInUseError(email),
+      new EmailAlreadyInUseError(userFixture.email),
     )
 
     // act
@@ -286,7 +285,7 @@ describe('UpdateUserController', () => {
     // assert
     expect(response.status).toHaveBeenCalledWith(409)
     expect(response.json).toHaveBeenCalledWith({
-      message: `O email ${email} já está em uso.`,
+      message: `O email ${userFixture.email} já está em uso.`,
     })
     expect(result).toBe(response)
   })

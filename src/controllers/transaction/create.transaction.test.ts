@@ -1,7 +1,10 @@
-import { faker } from '@faker-js/faker'
 import { Request } from 'express'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
+import {
+  transactionFixture,
+  transactionFixtureWithoutId,
+} from '../../test/fixtures/transaction'
 import {
   CreateTransactionParams,
   ITransactionParams,
@@ -10,20 +13,10 @@ import {
 import { CreateTransactionController } from './create.transaction'
 
 describe('CreateTransactionController', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-    created_at: faker.date.recent().toISOString(),
-    updated_at: faker.date.recent().toISOString(),
-  }
   class CreateTransactionUseCaseStub {
     execute = jest.fn(
       async (_params: ITransactionParams): Promise<ITransactionResponse> =>
-        transaction,
+        transactionFixture,
     )
   }
 
@@ -36,15 +29,7 @@ describe('CreateTransactionController', () => {
   const makeHttpRequest = (body?: Partial<CreateTransactionParams>) =>
     ({
       body: {
-        user_id: faker.string.uuid(),
-        name: faker.commerce.productName(),
-        type: faker.helpers.arrayElement([
-          'INCOME',
-          'EXPENSE',
-          'INVESTMENT',
-        ] as const),
-        amount: faker.number.int({ min: 1, max: 100000 }),
-        date: faker.date.recent().toISOString(),
+        ...transactionFixtureWithoutId,
         ...body,
       },
     }) as Request
@@ -154,10 +139,8 @@ describe('CreateTransactionController', () => {
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
-    const userId = httpRequest.body.user_id as string
+    const userId = httpRequest.body.user_id
 
-    // mockRejectedValueOnce simula o use case lançando um erro na próxima chamada.
-    // "Once" significa que só afeta a próxima execução — depois volta ao comportamento padrão.
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(
       new UserNotFoundError(userId),
     )
@@ -179,8 +162,6 @@ describe('CreateTransactionController', () => {
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
-    // new Error() genérico não é ZodError nem UserNotFoundError,
-    // então cai no último catch do controller → 500
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
     // act

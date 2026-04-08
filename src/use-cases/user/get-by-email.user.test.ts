@@ -1,18 +1,11 @@
-import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { GetUserByEmailUseCase } from './get-by-email.user'
 
 describe('GetUserByEmailUseCase', () => {
-  const user = {
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-  }
-
   class GetUserByEmailRepositoryStub {
-    execute = jest.fn(async (): Promise<UserResponse> => user)
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
 
   const makeSut = () => {
@@ -25,13 +18,13 @@ describe('GetUserByEmailUseCase', () => {
     // arrange
     const { sut, getUserByEmailRepository } = makeSut()
     // act
-    const result = await sut.execute({ email: user.email })
+    const result = await sut.execute({ email: userFixture.email })
 
     // assert
     expect(getUserByEmailRepository.execute).toHaveBeenCalledWith({
-      email: user.email,
+      email: userFixture.email,
     })
-    expect(result).toEqual(user)
+    expect(result).toEqual(userFixture)
   })
 
   it('should throw UserNotFoundError if user not found', async () => {
@@ -39,7 +32,7 @@ describe('GetUserByEmailUseCase', () => {
     const { sut, getUserByEmailRepository } = makeSut()
     getUserByEmailRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const promise = sut.execute({ email: faker.internet.email() })
+    const promise = sut.execute({ email: userFixture.email })
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
   })
@@ -49,9 +42,9 @@ describe('GetUserByEmailUseCase', () => {
     const { sut, getUserByEmailRepository } = makeSut()
     const executeSpy = jest.spyOn(getUserByEmailRepository, 'execute')
     // act
-    await sut.execute({ email: user.email })
+    await sut.execute({ email: userFixture.email })
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ email: user.email })
+    expect(executeSpy).toHaveBeenCalledWith({ email: userFixture.email })
   })
 
   it('should propagate unexpected errors', async () => {
@@ -59,7 +52,7 @@ describe('GetUserByEmailUseCase', () => {
     const { sut, getUserByEmailRepository } = makeSut()
     getUserByEmailRepository.execute.mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute({ email: user.email })
+    const promise = sut.execute({ email: userFixture.email })
     // assert
     await expect(promise).rejects.toThrow(Error)
   })

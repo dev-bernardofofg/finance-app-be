@@ -1,18 +1,13 @@
 import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { GetUserByIdController } from './get-by-id.user'
 
 describe('GetUserByIdController', () => {
-  const user = {
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-  }
   class GetUserByIdUseCaseStub {
-    execute = jest.fn(async (): Promise<UserResponse> => user)
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
 
   const makeSut = () => {
@@ -28,17 +23,17 @@ describe('GetUserByIdController', () => {
   it('should return 200 when getting user by id', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest(user.id)
+    const httpRequest = makeHttpRequest(userFixture.id)
     const { response } = makeHttpResponse()
 
     // act
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith(user.id)
+    expect(getUserByIdUseCaseStub.execute).toHaveBeenCalledWith(userFixture.id)
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({ id: user.id }),
+      expect.objectContaining({ id: userFixture.id }),
     )
     expect(result).toBe(response)
   })
@@ -123,7 +118,7 @@ describe('GetUserByIdController', () => {
   it('should call GetUserByIdUseCase with the correct parameters', async () => {
     // arrange
     const { sut, getUserByIdUseCaseStub } = makeSut()
-    const httpRequest = makeHttpRequest(user.id)
+    const httpRequest = makeHttpRequest(userFixture.id)
     const { response } = makeHttpResponse()
     const executeSpy = jest.spyOn(getUserByIdUseCaseStub, 'execute')
 
@@ -131,6 +126,6 @@ describe('GetUserByIdController', () => {
     await sut.execute(httpRequest, response)
 
     // assert
-    expect(executeSpy).toHaveBeenCalledWith(user.id)
+    expect(executeSpy).toHaveBeenCalledWith(userFixture.id)
   })
 })

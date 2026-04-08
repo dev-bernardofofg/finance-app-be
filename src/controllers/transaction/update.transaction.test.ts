@@ -1,28 +1,21 @@
-import { faker } from '@faker-js/faker'
 import { Request } from 'express'
 import { makeHttpResponse } from '../../helpers/test'
+import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
 import { UpdateTransactionController } from './update.transaction'
 
 describe('UpdateTransactionController', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: faker.number.int({ min: 1, max: 100000 }),
-    date: faker.date.recent().toISOString(),
-  }
-
   const updateBody = {
-    name: transaction.name,
-    type: transaction.type,
-    amount: transaction.amount,
-    date: transaction.date,
+    name: transactionFixture.name,
+    type: transactionFixture.type,
+    amount: transactionFixture.amount,
+    date: transactionFixture.date,
   }
 
   class UpdateTransactionUseCaseStub {
-    execute = jest.fn(async (): Promise<ITransactionResponse> => transaction)
+    execute = jest.fn(
+      async (): Promise<ITransactionResponse> => transactionFixture,
+    )
   }
 
   const makeSut = () => {
@@ -33,7 +26,7 @@ describe('UpdateTransactionController', () => {
 
   const makeHttpRequest = (params?: { id: string }) =>
     ({
-      params: { id: params?.id ?? faker.string.uuid() },
+      params: { id: params?.id ?? transactionFixture.id },
       body: updateBody,
     }) as Pick<Request, 'params' | 'body'>
 
@@ -50,7 +43,7 @@ describe('UpdateTransactionController', () => {
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
       expect.objectContaining({
-        ...transaction,
+        ...transactionFixture,
       }),
     )
     expect(result).toBe(response)
@@ -77,7 +70,7 @@ describe('UpdateTransactionController', () => {
     // arrange
     const { sut } = makeSut()
     const httpRequest = {
-      params: { id: faker.string.uuid() },
+      params: { id: transactionFixture.id },
       body: { ...updateBody, amount: 0 },
     } as Pick<Request, 'params' | 'body'>
     const { response } = makeHttpResponse()
@@ -97,7 +90,7 @@ describe('UpdateTransactionController', () => {
     // arrange
     const { sut } = makeSut()
     const httpRequest = {
-      params: { id: faker.string.uuid() },
+      params: { id: transactionFixture.id },
       body: null,
     }
     const { response } = makeHttpResponse()
@@ -114,7 +107,7 @@ describe('UpdateTransactionController', () => {
     // arrange
     const { sut } = makeSut()
     const httpRequest = {
-      params: { id: faker.string.uuid() },
+      params: { id: transactionFixture.id },
       body: { ...updateBody, unallowed_field: '123' },
     } as Pick<Request, 'params' | 'body'>
     const { response } = makeHttpResponse()

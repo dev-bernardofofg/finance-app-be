@@ -1,31 +1,20 @@
-import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
 import { GetBalanceUserResponse } from '../../repositories/postgres'
+import { balanceFixture } from '../../test/fixtures/balance'
+import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { GetBalanceUserUseCase } from './get-balance.user'
 
 describe('GetBalanceUserUseCase', () => {
   class GetBalanceUserUseCaseStub {
     execute = jest.fn(
-      async (): Promise<GetBalanceUserResponse> => ({
-        total_income: Number(faker.finance.amount()),
-        total_expenses: Number(faker.finance.amount()),
-        total_investments: Number(faker.finance.amount()),
-        balance: Number(faker.finance.amount()),
-      }),
+      async (): Promise<GetBalanceUserResponse> => balanceFixture,
     )
   }
 
   class GetUserByIdRepositoryStub {
-    execute = jest.fn(async (): Promise<UserResponse> => makeUser())
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
-
-  const makeUser = () => ({
-    id: faker.string.uuid(),
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-  })
 
   const makeSut = () => {
     const getBalanceUserUseCaseStub = new GetBalanceUserUseCaseStub()
@@ -40,16 +29,17 @@ describe('GetBalanceUserUseCase', () => {
   it('should return the balance of the user', async () => {
     // arrange
     const { sut, getBalanceUserUseCaseStub, getUserByIdRepository } = makeSut()
-    const user = makeUser()
-    getUserByIdRepository.execute.mockResolvedValueOnce(user)
+    getUserByIdRepository.execute.mockResolvedValueOnce(userFixture)
 
     // act
-    const balance = await sut.execute(user.id)
+    const balance = await sut.execute(userFixture.id)
 
     // assert
-    expect(getUserByIdRepository.execute).toHaveBeenCalledWith({ id: user.id })
+    expect(getUserByIdRepository.execute).toHaveBeenCalledWith({
+      id: userFixture.id,
+    })
     expect(getBalanceUserUseCaseStub.execute).toHaveBeenCalledWith({
-      id: user.id,
+      id: userFixture.id,
     })
     expect(balance).toBeTruthy()
   })
@@ -60,7 +50,7 @@ describe('GetBalanceUserUseCase', () => {
     getUserByIdRepository.execute.mockResolvedValueOnce(null as never)
 
     // act
-    const promise = sut.execute(makeUser().id)
+    const promise = sut.execute(userFixture.id)
 
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
@@ -69,27 +59,25 @@ describe('GetBalanceUserUseCase', () => {
   it('should call GetUserByIdRepository with the correct parameters', async () => {
     // arrange
     const { sut, getUserByIdRepository } = makeSut()
-    const user = makeUser()
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
 
     // act
-    await sut.execute(user.id)
+    await sut.execute(userFixture.id)
 
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ id: user.id })
+    expect(executeSpy).toHaveBeenCalledWith({ id: userFixture.id })
   })
 
   it('should call GetBalanceUserUseCase with the correct parameters', async () => {
     // arrange
     const { sut, getBalanceUserUseCaseStub } = makeSut()
-    const user = makeUser()
     const executeSpy = jest.spyOn(getBalanceUserUseCaseStub, 'execute')
 
     // act
-    await sut.execute(user.id)
+    await sut.execute(userFixture.id)
 
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ id: user.id })
+    expect(executeSpy).toHaveBeenCalledWith({ id: userFixture.id })
   })
 
   it('should throw error if GetBalanceUserUseCase throws error', async () => {
@@ -98,7 +86,7 @@ describe('GetBalanceUserUseCase', () => {
     getBalanceUserUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
     // act
-    const promise = sut.execute(makeUser().id)
+    const promise = sut.execute(userFixture.id)
 
     // assert
     await expect(promise).rejects.toThrow(Error)

@@ -1,16 +1,12 @@
-import { faker } from '@faker-js/faker'
 import { EmailUserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
+import { userFixture } from '../../test/fixtures/user'
+import { UserResponse } from '../../types'
 import { GetUserByEmailController } from './get-by-email.user'
 
 describe('GetUserByEmailController', () => {
   class GetUserByEmailUseCaseStub {
-    execute = jest.fn(async (params: { email: string }) => ({
-      id: faker.string.uuid(),
-      first_name: faker.person.firstName(),
-      last_name: faker.person.lastName(),
-      email: params.email,
-    }))
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
 
   const makeSut = () => {
@@ -21,7 +17,7 @@ describe('GetUserByEmailController', () => {
 
   const makeHttpRequest = () => ({
     query: {
-      email: faker.internet.email(),
+      email: userFixture.email,
     },
   })
 

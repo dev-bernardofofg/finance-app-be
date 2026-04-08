@@ -1,33 +1,18 @@
-import { faker } from '@faker-js/faker'
 import { UserNotFoundError } from '../../errors/user'
+import { transactionFixture } from '../../test/fixtures/transaction'
+import { userFixture } from '../../test/fixtures/user'
 import { ITransactionResponse, UserResponse } from '../../types'
 import { GetTransactionByUserIdUseCase } from './get-by-user-id.transaction'
 
 describe('GetTransactionByUserIdUseCase', () => {
-  const transaction = {
-    id: faker.string.uuid(),
-    user_id: faker.string.uuid(),
-    name: faker.person.firstName(),
-    type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
-    amount: Number(faker.finance.amount()),
-    date: faker.date.recent().toISOString(),
-  }
-
-  const user = {
-    id: transaction.user_id,
-    first_name: faker.person.firstName(),
-    last_name: faker.person.lastName(),
-    email: faker.internet.email(),
-  }
-
   class GetTransactionByUserIdRepositoryStub {
     execute = jest.fn(
-      async (): Promise<ITransactionResponse[]> => [transaction],
+      async (): Promise<ITransactionResponse[]> => [transactionFixture],
     )
   }
 
   class GetUserByIdRepositoryStub {
-    execute = jest.fn(async (): Promise<UserResponse> => user)
+    execute = jest.fn(async (): Promise<UserResponse> => userFixture)
   }
 
   const makeSut = () => {
@@ -46,15 +31,15 @@ describe('GetTransactionByUserIdUseCase', () => {
     const { sut, getTransactionByUserIdRepository, getUserByIdRepository } =
       makeSut()
     // act
-    const result = await sut.execute({ userId: transaction.user_id })
+    const result = await sut.execute({ userId: transactionFixture.user_id })
     // assert
     expect(getTransactionByUserIdRepository.execute).toHaveBeenCalledWith(
-      transaction.user_id,
+      transactionFixture.user_id,
     )
     expect(getUserByIdRepository.execute).toHaveBeenCalledWith({
-      id: transaction.user_id,
+      id: transactionFixture.user_id,
     })
-    expect(result).toEqual([transaction])
+    expect(result).toEqual([transactionFixture])
   })
 
   it('should throw UserNotFoundError if user not found', async () => {
@@ -62,7 +47,7 @@ describe('GetTransactionByUserIdUseCase', () => {
     const { sut, getUserByIdRepository } = makeSut()
     getUserByIdRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const promise = sut.execute({ userId: transaction.user_id })
+    const promise = sut.execute({ userId: transactionFixture.user_id })
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
   })
@@ -70,23 +55,21 @@ describe('GetTransactionByUserIdUseCase', () => {
   it('should call GetTransactionByUserIdRepository with the correct parameters', async () => {
     // arrange
     const { sut, getTransactionByUserIdRepository } = makeSut()
-    const userId = faker.string.uuid()
     const executeSpy = jest.spyOn(getTransactionByUserIdRepository, 'execute')
     // act
-    await sut.execute({ userId })
+    await sut.execute({ userId: userFixture.id })
     // assert
-    expect(executeSpy).toHaveBeenCalledWith(userId)
+    expect(executeSpy).toHaveBeenCalledWith(userFixture.id)
   })
 
   it('should call GetUserByIdRepository with the correct parameters', async () => {
     // arrange
     const { sut, getUserByIdRepository } = makeSut()
-    const userId = faker.string.uuid()
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
     // act
-    await sut.execute({ userId })
+    await sut.execute({ userId: userFixture.id })
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ id: userId })
+    expect(executeSpy).toHaveBeenCalledWith({ id: userFixture.id })
   })
 
   it('should propagate unexpected errors', async () => {
@@ -96,7 +79,7 @@ describe('GetTransactionByUserIdUseCase', () => {
     getTransactionByUserIdRepository.execute.mockRejectedValueOnce(new Error())
     getUserByIdRepository.execute.mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute({ userId: transaction.user_id })
+    const promise = sut.execute({ userId: userFixture.id })
     // assert
     await expect(promise).rejects.toThrow(Error)
   })
