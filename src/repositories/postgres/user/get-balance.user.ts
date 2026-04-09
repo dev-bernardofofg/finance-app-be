@@ -1,3 +1,4 @@
+import { TransactionType } from '../../../../generated/prisma/enums'
 import { toNumberFromDatabase } from '../../../helpers/money'
 import { prisma } from '../../../prisma/prisma'
 
@@ -20,15 +21,15 @@ export class PostgresGetBalanceUserRepository implements IGetBalanceUserReposito
   async execute(params: GetBalanceUserParams): Promise<GetBalanceUserResponse> {
     const [income, expense, investment] = await Promise.all([
       prisma.transaction.aggregate({
-        where: { user_id: params.id, type: 'INCOME' },
+        where: { user_id: params.id, type: TransactionType.INCOME },
         _sum: { amount: true },
       }),
       prisma.transaction.aggregate({
-        where: { user_id: params.id, type: 'EXPENSE' },
+        where: { user_id: params.id, type: TransactionType.EXPENSE },
         _sum: { amount: true },
       }),
       prisma.transaction.aggregate({
-        where: { user_id: params.id, type: 'INVESTMENT' },
+        where: { user_id: params.id, type: TransactionType.INVESTMENT },
         _sum: { amount: true },
       }),
     ])

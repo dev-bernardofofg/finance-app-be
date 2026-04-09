@@ -12,7 +12,7 @@ describe('PostgresDeleteUserRepository', () => {
     // act
     const result = await sut.execute(userFixture.id)
     // assert
-    expect(result).toMatchObject(userFixture)
+    expect(result).toEqual(expect.objectContaining(userFixture))
   })
 
   it('should call Prisma to correct parameters', async () => {
@@ -21,11 +21,11 @@ describe('PostgresDeleteUserRepository', () => {
       data: userFixture,
     })
     const sut = new PostgresDeleteUserRepository()
-    const deleteUserSpy = jest.spyOn(prisma.user, 'delete')
+    const prismaSpy = jest.spyOn(prisma.user, 'delete')
     // act
     await sut.execute(userFixture.id)
     // assert
-    expect(deleteUserSpy).toHaveBeenCalledWith({
+    expect(prismaSpy).toHaveBeenCalledWith({
       where: { id: userFixture.id },
     })
   })
