@@ -6,7 +6,7 @@ const config: Config = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
-  testMatch: ['**/*.test.ts', '**/*.spec.ts'],
+  testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/src/**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   moduleNameMapper: {
     '^(\\.\\.?\\/.+)\\.js$': '$1',
@@ -15,6 +15,7 @@ const config: Config = {
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
   globalSetup: '<rootDir>/jest.global-setup.ts',
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.after.end.ts'],
   forceExit: true,
 }
 

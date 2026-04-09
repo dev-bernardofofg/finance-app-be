@@ -1,4 +1,4 @@
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../prisma/prisma'
 import { ITransactionResponse } from '../../../types'
 import { mapTransactionFromDatabase } from './mapper'
 

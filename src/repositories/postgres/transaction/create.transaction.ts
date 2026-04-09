@@ -1,5 +1,5 @@
 import { TransactionType } from '../../../../generated/prisma/enums'
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../prisma/prisma'
 import { ITransactionParams, ITransactionResponse } from '../../../types'
 import { mapTransactionFromDatabase } from './mapper'
 
@@ -23,7 +23,9 @@ export class PostgresCreateTransactionRepository implements IPostgresCreateTrans
         date: createTransactionParams.date,
       },
     })
-
-    return mapTransactionFromDatabase(createdTransactionByPrisma)
+    return mapTransactionFromDatabase({
+      ...createdTransactionByPrisma,
+      date: createdTransactionByPrisma.date.toISOString(),
+    })
   }
 }

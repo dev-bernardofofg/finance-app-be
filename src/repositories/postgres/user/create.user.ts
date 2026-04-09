@@ -1,4 +1,4 @@
-import { prisma } from '../../../../prisma/prisma'
+import { prisma } from '../../../prisma/prisma'
 import { ICreateUserParams, UserResponse } from '../../../types'
 
 export interface IPostgresCreateUserRepository {

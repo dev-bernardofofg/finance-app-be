@@ -1,5 +1,5 @@
-import { prisma } from '../../../../prisma/prisma'
 import { toNumberFromDatabase } from '../../../helpers/money'
+import { prisma } from '../../../prisma/prisma'
 
 export interface GetBalanceUserParams {
   id: string
