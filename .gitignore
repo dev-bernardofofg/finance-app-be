@@ -1,6 +1,6 @@
 node_modules
 .postgres
-.env
+.env*
 .env
 /src/generated/prisma
 /coverage

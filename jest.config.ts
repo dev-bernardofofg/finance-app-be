@@ -2,13 +2,15 @@ import type { Config } from 'jest'
 
 const config: Config = {
   testEnvironment: 'node',
-  preset: 'ts-jest/presets/default-esm',
-  extensionsToTreatAsEsm: ['.ts'],
+  preset: 'ts-jest',
   transform: {
-    '^.+\\.ts$': ['ts-jest', { useESM: true }],
+    '^.+\\.ts$': 'ts-jest',
   },
   testMatch: ['**/*.test.ts', '**/*.spec.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
+  moduleNameMapper: {
+    '^(\\.\\.?\\/.+)\\.js$': '$1',
+  },
   collectCoverageFrom: ['src/**/*.ts', '!src/**/index.ts'],
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
