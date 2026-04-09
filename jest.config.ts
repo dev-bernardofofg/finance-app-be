@@ -14,6 +14,8 @@ const config: Config = {
   collectCoverageFrom: ['src/**/*.ts', '!src/**/index.ts'],
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
+  globalSetup: '<rootDir>/jest.global-setup.ts',
+  forceExit: true,
 }
 
 export default config
