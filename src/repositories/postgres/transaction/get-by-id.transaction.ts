@@ -1,3 +1,4 @@
+import { TransactionNotFoundError } from '../../../errors/transaction'
 import { prisma } from '../../../prisma/prisma'
 import { ITransactionResponse } from '../../../types'
 import { mapTransactionFromDatabase } from './mapper'
@@ -21,9 +22,7 @@ export class PostgresGetTransactionByIdRepository implements IPostgresGetTransac
         id: params.transactionId,
       },
     })
-    if (!transaction) {
-      return null
-    }
+    if (!transaction) throw new TransactionNotFoundError(params.transactionId)
     return mapTransactionFromDatabase({
       ...transaction,
       date: transaction.date.toISOString(),

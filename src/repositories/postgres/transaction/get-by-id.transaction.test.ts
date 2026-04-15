@@ -40,6 +40,15 @@ describe('PostgresGetTransactionByIdRepository', () => {
 
   it('should call Prisma with correct parameters', async () => {
     // arrange
+    await prisma.user.create({
+      data: userFixture,
+    })
+    await prisma.transaction.create({
+      data: {
+        ...transactionFixture,
+        user_id: userFixture.id,
+      },
+    })
     const sut = new PostgresGetTransactionByIdRepository()
     const prismaSpy = jest.spyOn(prisma.transaction, 'findUnique')
     // act
