@@ -4,9 +4,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "dotenv -e .env.test jest",
-    "test:watch": "dotenv -e .env.test jest --watch --passWithNoTests",
-    "test:coverage": "dotenv -e .env.test jest --passWithNoTests --silent --coverage",
+    "test": "dotenv -e .env.test jest --runInBand",
+    "test:watch": "dotenv -e .env.test jest --watch --passWithNoTests --runInBand",
+    "test:coverage": "dotenv -e .env.test jest --passWithNoTests --silent --coverage --runInBand",
     "postinstall": "npx husky install",
     "migrate": "tsx src/db/postgres/migrations/exec.ts",
     "start": "tsx src/server.ts",
