@@ -8,18 +8,14 @@ export interface IPostgresDeleteTransactionRepository {
 
 export class PostgresDeleteTransactionRepository implements IPostgresDeleteTransactionRepository {
   async execute(transactionId: string): Promise<ITransactionResponse | null> {
-    try {
-      const deletedTransaction = await prisma.transaction.delete({
-        where: {
-          id: transactionId,
-        },
-      })
-      return mapTransactionFromDatabase({
-        ...deletedTransaction,
-        date: deletedTransaction.date.toISOString(),
-      })
-    } catch (error) {
-      return null
-    }
+    const deletedTransaction = await prisma.transaction.delete({
+      where: {
+        id: transactionId,
+      },
+    })
+    return mapTransactionFromDatabase({
+      ...deletedTransaction,
+      date: deletedTransaction.date.toISOString(),
+    })
   }
 }

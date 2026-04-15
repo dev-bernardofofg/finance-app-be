@@ -20,7 +20,10 @@ export class PostgresGetTransactionsRepository implements IPostgresGetTransactio
       },
     })
     return transactions.map((transaction) =>
-      mapTransactionFromDatabase(transaction),
+      mapTransactionFromDatabase({
+        ...transaction,
+        date: transaction.date.toISOString(),
+      }),
     )
   }
 }

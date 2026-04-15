@@ -14,16 +14,15 @@ export class PostgresUpdateTransactionRepository implements IPostgresUpdateTrans
     transactionId: string,
     updateTransactionParams: ITransactionParams,
   ): Promise<ITransactionResponse | null> {
-    try {
-      const updatedTransaction = await prisma.transaction.update({
-        where: {
-          id: transactionId,
-        },
-        data: updateTransactionParams,
-      })
-      return mapTransactionFromDatabase(updatedTransaction)
-    } catch (error) {
-      return null
-    }
+    const updatedTransaction = await prisma.transaction.update({
+      where: {
+        id: transactionId,
+      },
+      data: updateTransactionParams,
+    })
+    return mapTransactionFromDatabase({
+      ...updatedTransaction,
+      date: updatedTransaction.date.toISOString(),
+    })
   }
 }

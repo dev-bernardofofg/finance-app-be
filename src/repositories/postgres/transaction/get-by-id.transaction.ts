@@ -16,18 +16,17 @@ export class PostgresGetTransactionByIdRepository implements IPostgresGetTransac
   async execute(
     params: GetTransactionByIdParams,
   ): Promise<ITransactionResponse | null> {
-    try {
-      const transaction = await prisma.transaction.findUnique({
-        where: {
-          id: params.transactionId,
-        },
-      })
-      if (!transaction) {
-        return null
-      }
-      return mapTransactionFromDatabase(transaction)
-    } catch (error) {
+    const transaction = await prisma.transaction.findUnique({
+      where: {
+        id: params.transactionId,
+      },
+    })
+    if (!transaction) {
       return null
     }
+    return mapTransactionFromDatabase({
+      ...transaction,
+      date: transaction.date.toISOString(),
+    })
   }
 }

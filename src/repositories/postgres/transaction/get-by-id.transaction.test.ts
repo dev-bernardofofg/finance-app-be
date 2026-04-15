@@ -2,10 +2,10 @@ import dayjs from 'dayjs'
 import { prisma } from '../../../prisma/prisma'
 import { transactionFixture } from '../../../test/fixtures/transaction'
 import { userFixture } from '../../../test/fixtures/user'
-import { PostgresDeleteTransactionRepository } from './delete.transaction'
+import { PostgresGetTransactionByIdRepository } from './get-by-id.transaction'
 
-describe('PostgresDeleteTransactionRepository', () => {
-  it('should delete a transaction successfully', async () => {
+describe('PostgresGetTransactionByIdRepository', () => {
+  it('should get a transaction by id successfully', async () => {
     // arrange
     await prisma.user.create({
       data: userFixture,
@@ -16,12 +16,13 @@ describe('PostgresDeleteTransactionRepository', () => {
         user_id: userFixture.id,
       },
     })
-    const sut = new PostgresDeleteTransactionRepository()
+    const sut = new PostgresGetTransactionByIdRepository()
     // act
-    const result = await sut.execute(transactionFixture.id)
+    const result = await sut.execute({ transactionId: transactionFixture.id })
     if (!result) throw new Error('Resultado nulo inesperado')
 
     // assert
+    expect(result.id).toBe(transactionFixture.id)
     expect(result.user_id).toBe(userFixture.id)
     expect(result.name).toBe(transactionFixture.name)
     expect(result.type).toBe(transactionFixture.type)
@@ -37,21 +38,12 @@ describe('PostgresDeleteTransactionRepository', () => {
     )
   })
 
-  it('should call Prisma to correct parameters', async () => {
+  it('should call Prisma with correct parameters', async () => {
     // arrange
-    await prisma.user.create({
-      data: userFixture,
-    })
-    await prisma.transaction.create({
-      data: {
-        ...transactionFixture,
-        user_id: userFixture.id,
-      },
-    })
-    const sut = new PostgresDeleteTransactionRepository()
-    const prismaSpy = jest.spyOn(prisma.transaction, 'delete')
+    const sut = new PostgresGetTransactionByIdRepository()
+    const prismaSpy = jest.spyOn(prisma.transaction, 'findUnique')
     // act
-    await sut.execute(transactionFixture.id)
+    await sut.execute({ transactionId: transactionFixture.id })
     // assert
     expect(prismaSpy).toHaveBeenCalledWith({
       where: { id: transactionFixture.id },
@@ -60,10 +52,12 @@ describe('PostgresDeleteTransactionRepository', () => {
 
   it('should throw if Prisma throws', async () => {
     // arrange
-    const sut = new PostgresDeleteTransactionRepository()
-    jest.spyOn(prisma.transaction, 'delete').mockRejectedValueOnce(new Error())
+    const sut = new PostgresGetTransactionByIdRepository()
+    jest
+      .spyOn(prisma.transaction, 'findUnique')
+      .mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute(transactionFixture.id)
+    const promise = sut.execute({ transactionId: transactionFixture.id })
     // assert
     await expect(promise).rejects.toThrow()
   })
