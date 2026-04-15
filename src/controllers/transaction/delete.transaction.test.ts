@@ -1,3 +1,4 @@
+import { TransactionNotFoundError } from '../../errors/transaction'
 import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
 import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
@@ -53,7 +54,9 @@ describe('DeleteTransactionController', () => {
     const { sut, deleteTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequestById({ id: transactionFixture.id })
     const { response } = makeHttpResponse()
-    deleteTransactionUseCaseStub.execute.mockResolvedValueOnce(null as never)
+    deleteTransactionUseCaseStub.execute.mockRejectedValueOnce(
+      new TransactionNotFoundError(transactionFixture.id),
+    )
 
     // act
     const result = await sut.execute(httpRequest, response)
@@ -61,7 +64,7 @@ describe('DeleteTransactionController', () => {
     // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: 'Transação não encontrada',
+      message: `Transação com ID ${transactionFixture.id} não encontrada.`,
     })
     expect(result).toBe(response)
   })

@@ -1,5 +1,6 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
+import { TransactionNotFoundError } from '../../errors/transaction'
 import { transactionIdParamSchema } from '../../types'
 import { IDeleteTransactionUseCase } from '../../use-cases/transaction/delete.transaction'
 import { HttpResponse, responseHelper } from '../helpers/http'
@@ -17,12 +18,11 @@ export class DeleteTransactionController {
       const transaction =
         await this.deleteTransactionUseCase.execute(transactionId)
 
-      if (!transaction) {
-        return responseHelper.notFound(res, 'Transação não encontrada')
-      }
-
       return responseHelper.ok(res, transaction)
     } catch (error) {
+      if (error instanceof TransactionNotFoundError) {
+        return responseHelper.notFound(res, error.message)
+      }
       if (error instanceof ZodError) {
         return responseHelper.badRequest(res, error.issues[0].message)
       }
