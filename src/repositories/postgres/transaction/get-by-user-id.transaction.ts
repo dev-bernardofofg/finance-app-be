@@ -12,17 +12,16 @@ export interface IPostgresGetTransactionByUserIdRepository {
 
 export class PostgresGetTransactionByUserIdRepository implements IPostgresGetTransactionByUserIdRepository {
   async execute(userId: string): Promise<ITransactionResponse[]> {
-    try {
-      const transactions = await prisma.transaction.findMany({
-        where: {
-          user_id: userId,
-        },
-      })
-      return transactions.map((transaction) =>
-        mapTransactionFromDatabase(transaction),
-      )
-    } catch (error) {
-      return []
-    }
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        user_id: userId,
+      },
+    })
+    return transactions.map((transaction) =>
+      mapTransactionFromDatabase({
+        ...transaction,
+        date: transaction.date.toISOString(),
+      }),
+    )
   }
 }
