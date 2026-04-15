@@ -1,7 +1,6 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
 import { EmailUserNotFoundError } from '../../errors/user'
-import { GetUserByEmailParams } from '../../repositories/postgres/index'
 import { getEmailUserParamsSchema } from '../../types/index'
 import { IGetUserByEmailUseCase } from '../../use-cases/user/index'
 import { HttpResponse, responseHelper } from '../helpers/http'
@@ -13,7 +12,7 @@ export class GetUserByEmailController {
   }
 
   async execute(req: Pick<Request, 'query'>, res: HttpResponse) {
-    const params = req.query as Partial<GetUserByEmailParams>
+    const params = req.query as Partial<{ email: string }>
 
     try {
       const { email } = await getEmailUserParamsSchema.parseAsync(params)
@@ -22,9 +21,7 @@ export class GetUserByEmailController {
         return responseHelper.badRequest(res, 'O email é obrigatório')
       }
 
-      const user = await this.getUserByEmailUseCase.execute(
-        params as GetUserByEmailParams,
-      )
+      const user = await this.getUserByEmailUseCase.execute(email)
       return responseHelper.ok(res, user)
     } catch (error) {
       if (error instanceof ZodError) {

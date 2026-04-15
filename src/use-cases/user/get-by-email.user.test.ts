@@ -18,12 +18,12 @@ describe('GetUserByEmailUseCase', () => {
     // arrange
     const { sut, getUserByEmailRepository } = makeSut()
     // act
-    const result = await sut.execute({ email: userFixture.email })
+    const result = await sut.execute(userFixture.email)
 
     // assert
-    expect(getUserByEmailRepository.execute).toHaveBeenCalledWith({
-      email: userFixture.email,
-    })
+    expect(getUserByEmailRepository.execute).toHaveBeenCalledWith(
+      userFixture.email,
+    )
     expect(result).toEqual(userFixture)
   })
 
@@ -32,7 +32,7 @@ describe('GetUserByEmailUseCase', () => {
     const { sut, getUserByEmailRepository } = makeSut()
     getUserByEmailRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const promise = sut.execute({ email: userFixture.email })
+    const promise = sut.execute(userFixture.email)
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
   })
@@ -42,9 +42,9 @@ describe('GetUserByEmailUseCase', () => {
     const { sut, getUserByEmailRepository } = makeSut()
     const executeSpy = jest.spyOn(getUserByEmailRepository, 'execute')
     // act
-    await sut.execute({ email: userFixture.email })
+    await sut.execute(userFixture.email)
     // assert
-    expect(executeSpy).toHaveBeenCalledWith({ email: userFixture.email })
+    expect(executeSpy).toHaveBeenCalledWith(userFixture.email)
   })
 
   it('should propagate unexpected errors', async () => {
@@ -52,7 +52,7 @@ describe('GetUserByEmailUseCase', () => {
     const { sut, getUserByEmailRepository } = makeSut()
     getUserByEmailRepository.execute.mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute({ email: userFixture.email })
+    const promise = sut.execute(userFixture.email)
     // assert
     await expect(promise).rejects.toThrow(Error)
   })

@@ -28,9 +28,9 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
   }
   async execute(userId: string, updateUserParams: UserFields) {
     if (updateUserParams.email) {
-      const userWithEmail = await this.getUserByEmailRepository.execute({
-        email: updateUserParams.email,
-      })
+      const userWithEmail = await this.getUserByEmailRepository.execute(
+        updateUserParams.email,
+      )
 
       if (userWithEmail && userWithEmail.id !== userId) {
         throw new EmailAlreadyInUseError(updateUserParams.email)

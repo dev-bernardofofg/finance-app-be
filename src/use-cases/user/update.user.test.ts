@@ -180,9 +180,9 @@ describe('UpdateUserUseCase', () => {
     await sut.execute(userFixture.id, updateUserParams)
 
     // assert
-    expect(getUserByEmailRepository.execute).toHaveBeenCalledWith({
-      email: updateUserParams.email,
-    })
+    expect(getUserByEmailRepository.execute).toHaveBeenCalledWith(
+      updateUserParams.email,
+    )
   })
 
   it('should call UpdateUserRepository with the correct parameters', async () => {

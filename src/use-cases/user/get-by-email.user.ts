@@ -1,12 +1,9 @@
 import { UserNotFoundError } from '../../errors/user'
-import {
-  GetUserByEmailParams,
-  IPostgresGetUserByEmailRepository,
-} from '../../repositories/postgres'
+import { IPostgresGetUserByEmailRepository } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
 
 export interface IGetUserByEmailUseCase {
-  execute(params: GetUserByEmailParams): Promise<UserResponse>
+  execute(email: string): Promise<UserResponse>
 }
 
 export class GetUserByEmailUseCase implements IGetUserByEmailUseCase {
@@ -15,10 +12,10 @@ export class GetUserByEmailUseCase implements IGetUserByEmailUseCase {
     this.getUserByEmailRepository = getUserByEmailRepository
   }
 
-  async execute(params: GetUserByEmailParams) {
-    const user = await this.getUserByEmailRepository.execute(params)
+  async execute(email: string) {
+    const user = await this.getUserByEmailRepository.execute(email)
     if (!user) {
-      throw new UserNotFoundError(params.email)
+      throw new UserNotFoundError(email)
     }
     return user
   }

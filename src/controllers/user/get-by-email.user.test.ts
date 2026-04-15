@@ -31,9 +31,9 @@ describe('GetUserByEmailController', () => {
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByEmailUseCaseStub.execute).toHaveBeenCalledWith({
-      email: httpRequest.query.email,
-    })
+    expect(getUserByEmailUseCaseStub.execute).toHaveBeenCalledWith(
+      httpRequest.query.email,
+    )
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith(
       expect.objectContaining({ email: httpRequest.query.email }),
@@ -90,10 +90,9 @@ describe('GetUserByEmailController', () => {
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByEmailUseCaseStub.execute).toHaveBeenCalledWith({
-      email: httpRequest.query.email,
-    })
-
+    expect(getUserByEmailUseCaseStub.execute).toHaveBeenCalledWith(
+      httpRequest.query.email,
+    )
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
       message: `Usuário com email ${httpRequest.query.email} não encontrado.`,
@@ -112,9 +111,9 @@ describe('GetUserByEmailController', () => {
     const result = await sut.execute(httpRequest, response)
 
     // assert
-    expect(getUserByEmailUseCaseStub.execute).toHaveBeenCalledWith({
-      email: httpRequest.query.email,
-    })
+    expect(getUserByEmailUseCaseStub.execute).toHaveBeenCalledWith(
+      httpRequest.query.email,
+    )
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao buscar usuário',

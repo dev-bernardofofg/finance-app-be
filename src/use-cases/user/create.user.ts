@@ -36,9 +36,9 @@ export class CreateUserUseCase implements ICreateUserUseCase {
   }
 
   async execute(createUserParams: CreateUserParams) {
-    const user = await this.getUserByEmailRepository.execute({
-      email: createUserParams.email,
-    })
+    const user = await this.getUserByEmailRepository.execute(
+      createUserParams.email,
+    )
     if (user) {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
