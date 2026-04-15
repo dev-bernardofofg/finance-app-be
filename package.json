@@ -43,6 +43,7 @@
     "@prisma/adapter-pg": "^7.4.2",
     "@prisma/client": "^7.4.2",
     "bcrypt": "^6.0.0",
+    "dayjs": "^1.11.20",
     "dotenv": "^17.2.3",
     "dotenv-cli": "^11.0.0",
     "express": "^5.1.0",
