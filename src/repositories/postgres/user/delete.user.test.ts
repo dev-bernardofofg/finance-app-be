@@ -1,3 +1,4 @@
+import { Prisma } from '../../../../generated/prisma/client'
 import { prisma } from '../../../prisma/prisma'
 import { userFixture } from '../../../test/fixtures/user'
 import { PostgresDeleteUserRepository } from './delete.user'
@@ -28,5 +29,29 @@ describe('PostgresDeleteUserRepository', () => {
     expect(prismaSpy).toHaveBeenCalledWith({
       where: { id: userFixture.id },
     })
+  })
+
+  it('should throw if Prisma throws', async () => {
+    // arrange
+    const sut = new PostgresDeleteUserRepository()
+    jest.spyOn(prisma.user, 'delete').mockRejectedValueOnce(new Error())
+    // act
+    const promise = sut.execute(userFixture.id)
+    // assert
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('should throw an error if the user is not found', async () => {
+    // arrange
+    const sut = new PostgresDeleteUserRepository()
+    jest.spyOn(prisma.user, 'delete').mockRejectedValueOnce(
+      new Prisma.PrismaClientKnownRequestError('', {
+        code: 'P2025',
+      } as never),
+    )
+    // act
+    const promise = sut.execute(userFixture.id)
+    // assert
+    await expect(promise).rejects.toThrow()
   })
 })

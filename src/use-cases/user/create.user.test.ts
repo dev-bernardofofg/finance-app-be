@@ -23,7 +23,7 @@ describe('CreateUserUseCase', () => {
 
   class IdGeneratorAdapterStub {
     execute = jest.fn(async () => {
-      return 'generated-id'
+      return 'generated-id' as `${string}-${string}-${string}-${string}-${string}`
     })
   }
 

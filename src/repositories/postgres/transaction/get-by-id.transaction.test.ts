@@ -1,4 +1,5 @@
 import dayjs from 'dayjs'
+import { TransactionNotFoundError } from '../../../errors/transaction'
 import { prisma } from '../../../prisma/prisma'
 import { transactionFixture } from '../../../test/fixtures/transaction'
 import { userFixture } from '../../../test/fixtures/user'
@@ -65,6 +66,20 @@ describe('PostgresGetTransactionByIdRepository', () => {
     jest
       .spyOn(prisma.transaction, 'findUnique')
       .mockRejectedValueOnce(new Error())
+    // act
+    const promise = sut.execute({ transactionId: transactionFixture.id })
+    // assert
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('should throw an error if the transaction is not found', async () => {
+    // arrange
+    const sut = new PostgresGetTransactionByIdRepository()
+    jest
+      .spyOn(prisma.transaction, 'findUnique')
+      .mockRejectedValueOnce(
+        new TransactionNotFoundError(transactionFixture.id),
+      )
     // act
     const promise = sut.execute({ transactionId: transactionFixture.id })
     // assert

@@ -24,7 +24,10 @@ describe('CreateTransactionUseCase', () => {
   }
 
   class IdGeneratorAdapterStub {
-    execute = jest.fn(async () => idFixture)
+    execute = jest.fn(
+      async () =>
+        idFixture as `${string}-${string}-${string}-${string}-${string}`,
+    )
   }
 
   const makeSut = () => {

@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { ZodError } from 'zod'
 import { UserNotFoundError } from '../../errors/user'
 import { makeHttpRequestById } from '../../helpers/test'
 import { userFixture } from '../../test/fixtures/user'
@@ -60,11 +61,9 @@ describe('DeleteUserController', () => {
     // assert
     expect(deleteUserUseCaseStub.execute).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(400)
-    expect(response.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'O ID não é válido. Por favor, informe um ID válido.',
-      }),
-    )
+    expect(response.json).toHaveBeenCalledWith({
+      message: 'O ID não é válido. Por favor, informe um ID válido.',
+    })
     expect(result).toBe(response)
   })
 
@@ -103,6 +102,25 @@ describe('DeleteUserController', () => {
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao deletar usuário',
     })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 when the use case throws a ZodError', async () => {
+    // arrange
+    const { sut, deleteUserUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequestById()
+    const { response } = makeHttpResponse()
+    const zodErrorMessage = 'Dado inválido recebido'
+    deleteUserUseCaseStub.execute.mockRejectedValueOnce(
+      new ZodError([
+        { code: 'custom', message: zodErrorMessage, path: ['id'] },
+      ]),
+    )
+    // act
+    const result = await sut.execute(httpRequest, response)
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({ message: zodErrorMessage })
     expect(result).toBe(response)
   })
 })
