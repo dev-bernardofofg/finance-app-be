@@ -4,5 +4,90 @@
     "title": "Finance App API",
     "version": "1.0.0",
     "description": "API do Finance App that allows you to manage your finances"
+  },
+  "paths": {
+    "/users": {
+      "post": {
+        "summary": "Create a new user",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User created successfully"
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "409": {
+            "description": "User already exists"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CreateUserParams": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "example": "John"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "password123"
+        }
+      },
+      "required": ["id", "first_name", "last_name", "email"]
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "first_name": {
+          "type": "string",
+          "example": "John"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "password123"
+        }
+      },
+      "required": ["id", "first_name", "last_name", "email"]
+    }
   }
 }
