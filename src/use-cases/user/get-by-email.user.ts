@@ -1,4 +1,4 @@
-import { UserNotFoundError } from '../../errors/user'
+import { EmailUserNotFoundError } from '../../errors/user'
 import { IPostgresGetUserByEmailRepository } from '../../repositories/postgres'
 import { UserResponse } from '../../types'
 
@@ -15,7 +15,7 @@ export class GetUserByEmailUseCase implements IGetUserByEmailUseCase {
   async execute(email: string) {
     const user = await this.getUserByEmailRepository.execute(email)
     if (!user) {
-      throw new UserNotFoundError(email)
+      throw new EmailUserNotFoundError(email)
     }
     return user
   }

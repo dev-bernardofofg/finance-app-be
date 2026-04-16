@@ -1,4 +1,4 @@
-import { UserNotFoundError } from '../../errors/user'
+import { EmailUserNotFoundError } from '../../errors/user'
 import { userFixture } from '../../test/fixtures/user'
 import { UserResponse } from '../../types'
 import { GetUserByEmailUseCase } from './get-by-email.user'
@@ -27,14 +27,14 @@ describe('GetUserByEmailUseCase', () => {
     expect(result).toEqual(userFixture)
   })
 
-  it('should throw UserNotFoundError if user not found', async () => {
+  it('should throw EmailUserNotFoundError if user not found', async () => {
     // arrange
     const { sut, getUserByEmailRepository } = makeSut()
     getUserByEmailRepository.execute.mockResolvedValueOnce(null as never)
     // act
     const promise = sut.execute(userFixture.email)
     // assert
-    await expect(promise).rejects.toThrow(UserNotFoundError)
+    await expect(promise).rejects.toThrow(EmailUserNotFoundError)
   })
 
   it('should call GetUserByEmailRepository with the correct parameters', async () => {
