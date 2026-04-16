@@ -22,16 +22,28 @@
         ],
         "responses": {
           "201": {
-            "description": "User created successfully"
+            "description": "User created successfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
           },
           "400": {
-            "description": "Invalid request body"
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
           },
           "409": {
-            "description": "User already exists"
+            "description": "Email already in use",
+            "schema": {
+              "$ref": "#/definitions/EmailAlreadyInUseError"
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
           }
         }
       },
@@ -43,9 +55,8 @@
             "in": "query",
             "name": "email",
             "required": true,
-            "schema": {
-              "$ref": "#/definitions/GetUserByEmailParams"
-            },
+            "type": "string",
+            "format": "email",
             "description": "The email of the user to get"
           }
         ],
@@ -57,13 +68,22 @@
             }
           },
           "400": {
-            "description": "Invalid request body"
+            "description": "Invalid request query",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
           },
           "404": {
-            "description": "User not found"
+            "description": "Email user not found",
+            "schema": {
+              "$ref": "#/definitions/EmailUserNotFoundError"
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
           }
         }
       }
@@ -92,42 +112,170 @@
             }
           },
           "400": {
-            "description": "Invalid request body"
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
           },
           "404": {
-            "description": "User not found"
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/UserNotFoundError"
+            }
           },
           "500": {
-            "description": "Internal server error"
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a user by ID",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the user to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User deleted successfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/UserNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a user by ID",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the user to update"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateUserParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User updated successfully",
+            "schema": {
+              "$ref": "#/definitions/UpdateUserResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/UserNotFoundError"
+            }
+          },
+          "409": {
+            "description": "Email already in use",
+            "schema": {
+              "$ref": "#/definitions/EmailAlreadyInUseError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}/balance": {
+      "get": {
+        "summary": "Get the balance of a user by ID",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the user to get the balance"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User balance found successfully",
+            "schema": {
+              "$ref": "#/definitions/UserBalance"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/UserNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
           }
         }
       }
     }
   },
   "definitions": {
-    "CreateUserParams": {
-      "type": "object",
-      "properties": {
-        "first_name": {
-          "type": "string",
-          "example": "John"
-        },
-        "last_name": {
-          "type": "string",
-          "example": "Doe"
-        },
-        "email": {
-          "type": "string",
-          "format": "email",
-          "example": "john.doe@example.com"
-        },
-        "password": {
-          "type": "string",
-          "example": "password123"
-        }
-      },
-      "required": ["id", "first_name", "last_name", "email"]
-    },
     "GetUserByEmailParams": {
       "type": "object",
       "properties": {
@@ -166,6 +314,124 @@
         }
       },
       "required": ["id", "first_name", "last_name", "email"]
+    },
+    "UserNotFoundError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "User not found"
+        }
+      }
+    },
+    "InvalidRequestBodyError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Campos inválidos: campos inválidos"
+        }
+      }
+    },
+    "EmailUserNotFoundError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Email user not found"
+        }
+      }
+    },
+    "UpdateUserParams": {
+      "type": "object",
+      "properties": {
+        "first_name": {
+          "type": "string",
+          "example": "John"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        }
+      }
+    },
+    "UpdateUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "first_name": {
+          "type": "string",
+          "example": "John"
+        },
+        "last_name": {
+          "type": "string",
+          "example": "Doe"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        }
+      },
+      "required": ["id", "first_name", "last_name", "email"]
+    },
+    "EmailAlreadyInUseError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "O email já está em uso"
+        }
+      }
+    },
+    "InternalServerError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Internal server error"
+        }
+      }
+    },
+    "GetUserIdParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        }
+      }
+    },
+    "UserBalance": {
+      "type": "object",
+      "properties": {
+        "total_income": {
+          "type": "number",
+          "example": 1000
+        },
+        "total_expenses": {
+          "type": "number",
+          "example": 1000
+        },
+        "total_investments": {
+          "type": "number",
+          "example": 1000
+        },
+        "balance": {
+          "type": "number",
+          "example": 1000
+        }
+      }
     }
   }
 }
