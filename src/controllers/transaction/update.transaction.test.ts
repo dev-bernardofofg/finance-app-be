@@ -1,6 +1,8 @@
 import { Request } from 'express'
+import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import { makeHttpResponse } from '../../helpers/test'
 import { transactionFixture } from '../../test/fixtures/transaction'
+import { userFixture } from '../../test/fixtures/user'
 import { ITransactionResponse } from '../../types'
 import { UpdateTransactionController } from './update.transaction'
 
@@ -155,6 +157,46 @@ describe('UpdateTransactionController', () => {
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao atualizar transação',
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 400 if UpdateUserUseCase throws EmailAlreadyInUseError', async () => {
+    // arrange
+    const { sut, updateTransactionUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest()
+    const { response } = makeHttpResponse()
+    updateTransactionUseCaseStub.execute.mockRejectedValueOnce(
+      new EmailAlreadyInUseError(userFixture.email),
+    )
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(400)
+    expect(response.json).toHaveBeenCalledWith({
+      message: `O email ${userFixture.email} já está em uso.`,
+    })
+    expect(result).toBe(response)
+  })
+
+  it('should return 404 if UpdateUserUseCase throws UserNotFoundError', async () => {
+    // arrange
+    const { sut, updateTransactionUseCaseStub } = makeSut()
+    const httpRequest = makeHttpRequest()
+    const { response } = makeHttpResponse()
+    updateTransactionUseCaseStub.execute.mockRejectedValueOnce(
+      new UserNotFoundError(userFixture.id),
+    )
+
+    // act
+    const result = await sut.execute(httpRequest, response)
+
+    // assert
+    expect(response.status).toHaveBeenCalledWith(404)
+    expect(response.json).toHaveBeenCalledWith({
+      message: `Usuário com ID ${userFixture.id} não encontrado.`,
     })
     expect(result).toBe(response)
   })

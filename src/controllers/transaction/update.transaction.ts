@@ -1,5 +1,7 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
+import { TransactionNotFoundError } from '../../errors/transaction'
+import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
 import {
   ITransactionParams,
   transactionIdParamSchema,
@@ -32,6 +34,15 @@ export class UpdateTransactionController {
     } catch (error) {
       if (error instanceof ZodError) {
         return responseHelper.badRequest(res, error.issues[0].message)
+      }
+      if (error instanceof TransactionNotFoundError) {
+        return responseHelper.notFound(res, error.message)
+      }
+      if (error instanceof UserNotFoundError) {
+        return responseHelper.notFound(res, error.message)
+      }
+      if (error instanceof EmailAlreadyInUseError) {
+        return responseHelper.badRequest(res, error.message)
       }
       return responseHelper.internalServerError(
         res,

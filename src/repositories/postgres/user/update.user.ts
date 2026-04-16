@@ -1,3 +1,5 @@
+import { Prisma } from '../../../../generated/prisma/client'
+import { UserNotFoundError } from '../../../errors/user'
 import { prisma } from '../../../prisma/prisma'
 import { UserResponse } from '../../../types'
 
@@ -23,9 +25,19 @@ export class PostgresUpdateUserRepository implements IPostgresUpdateUserReposito
     userId: string,
     updateUserParams: UserFields,
   ): Promise<UserResponse | null> {
-    return prisma.user.update({
-      where: { id: userId },
-      data: updateUserParams,
-    })
+    try {
+      return await prisma.user.update({
+        where: { id: userId },
+        data: updateUserParams,
+      })
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new UserNotFoundError(userId)
+      }
+      throw error
+    }
   }
 }

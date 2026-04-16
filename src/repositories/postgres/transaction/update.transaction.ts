@@ -1,3 +1,5 @@
+import { Prisma } from '../../../../generated/prisma/client'
+import { TransactionNotFoundError } from '../../../errors/transaction'
 import { prisma } from '../../../prisma/prisma'
 import { ITransactionParams, ITransactionResponse } from '../../../types'
 import { mapTransactionFromDatabase } from './mapper'
@@ -14,15 +16,25 @@ export class PostgresUpdateTransactionRepository implements IPostgresUpdateTrans
     transactionId: string,
     updateTransactionParams: ITransactionParams,
   ): Promise<ITransactionResponse | null> {
-    const updatedTransaction = await prisma.transaction.update({
-      where: {
-        id: transactionId,
-      },
-      data: updateTransactionParams,
-    })
-    return mapTransactionFromDatabase({
-      ...updatedTransaction,
-      date: updatedTransaction.date.toISOString(),
-    })
+    try {
+      const updatedTransaction = await prisma.transaction.update({
+        where: {
+          id: transactionId,
+        },
+        data: updateTransactionParams,
+      })
+      return mapTransactionFromDatabase({
+        ...updatedTransaction,
+        date: updatedTransaction.date.toISOString(),
+      })
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new TransactionNotFoundError(transactionId)
+      }
+      throw error
+    }
   }
 }

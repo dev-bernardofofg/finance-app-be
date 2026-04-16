@@ -25,17 +25,13 @@ export class UpdateUserController {
 
       const updatedUser = await this.updateUserUseCase.execute(userId, params)
 
-      if (!updatedUser) {
-        return responseHelper.notFound(res, 'Usuário não encontrado')
-      }
-
       return responseHelper.ok(res, updatedUser)
     } catch (error) {
-      if (error instanceof ZodError) {
-        return responseHelper.badRequest(res, error.issues[0].message)
-      }
       if (error instanceof UserNotFoundError) {
         return responseHelper.notFound(res, error.message)
+      }
+      if (error instanceof ZodError) {
+        return responseHelper.badRequest(res, error.issues[0].message)
       }
       if (error instanceof EmailAlreadyInUseError) {
         return responseHelper.conflict(res, error.message)

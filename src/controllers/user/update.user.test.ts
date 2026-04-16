@@ -237,8 +237,8 @@ describe('UpdateUserController', () => {
     const { sut, updateUserUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest(undefined)
     const { response } = makeHttpResponse()
-    updateUserUseCaseStub.execute.mockImplementationOnce(
-      async (): Promise<UserResponse> => null as never,
+    updateUserUseCaseStub.execute.mockRejectedValueOnce(
+      new UserNotFoundError(httpRequest.params.id as string),
     )
 
     // act
@@ -247,7 +247,7 @@ describe('UpdateUserController', () => {
     // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: 'Usuário não encontrado',
+      message: `Usuário com ID ${httpRequest.params.id} não encontrado.`,
     })
     expect(result).toBe(response)
   })
