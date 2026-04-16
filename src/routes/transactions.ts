@@ -13,6 +13,18 @@ transactionsRoutes.post('/', async (request: Request, response: Response) => {
   const createTransactionController = makeCreateTransactionController()
   return createTransactionController.execute(request, response)
 })
+transactionsRoutes.get(
+  '/user/:userId',
+  async (request: Request, response: Response) => {
+    const getTransactionByUserIdController =
+      makeGetTransactionByUserIdController()
+    return getTransactionByUserIdController.execute(
+      { query: { userId: request.params.userId } },
+      response,
+    )
+  },
+)
+
 transactionsRoutes.get('/:id', async (request: Request, response: Response) => {
   const getTransactionByIdController = makeGetTransactionByIdController()
   return getTransactionByIdController.execute(request, response)

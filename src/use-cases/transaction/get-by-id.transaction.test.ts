@@ -1,3 +1,4 @@
+import { TransactionNotFoundError } from '../../errors/transaction'
 import { transactionFixture } from '../../test/fixtures/transaction'
 import { ITransactionResponse } from '../../types'
 import { GetTransactionByIdUseCase } from './get-by-id.transaction'
@@ -31,13 +32,12 @@ describe('GetTransactionByIdUseCase', () => {
     const { sut, getTransactionByIdRepository } = makeSut()
     getTransactionByIdRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const result = await sut.execute(transactionFixture.id)
-
+    const promise = sut.execute(transactionFixture.id)
     // assert
+    await expect(promise).rejects.toThrow(TransactionNotFoundError)
     expect(getTransactionByIdRepository.execute).toHaveBeenCalledWith({
       transactionId: transactionFixture.id,
     })
-    expect(result).toEqual(null)
   })
 
   it('should call GetTransactionByIdRepository with the correct parameters', async () => {

@@ -15,7 +15,7 @@ export interface ITransactionResponse {
   name: string
   type: 'INCOME' | 'EXPENSE' | 'INVESTMENT'
   amount: number
-  date: string
+  date: string | Date
 }
 
 export const createTransactionSchema = z.object({

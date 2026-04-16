@@ -1,3 +1,4 @@
+import { TransactionNotFoundError } from '../../errors/transaction'
 import { IPostgresGetTransactionByIdRepository } from '../../repositories/postgres'
 import { ITransactionResponse } from '../../types'
 
@@ -18,7 +19,7 @@ export class GetTransactionByIdUseCase implements IGetTransactionByIdUseCase {
     })
 
     if (!transaction) {
-      return null
+      throw new TransactionNotFoundError(transactionId)
     }
 
     return transaction

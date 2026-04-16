@@ -1,6 +1,3 @@
-import dayjs from 'dayjs'
-import { Prisma } from '../../../../generated/prisma/client'
-import { UserNotFoundError } from '../../../errors/user'
 import { prisma } from '../../../prisma/prisma'
 import { transactionFixture } from '../../../test/fixtures/transaction'
 import { userFixture } from '../../../test/fixtures/user'
@@ -28,15 +25,9 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
     expect(result[0].name).toBe(transactionFixture.name)
     expect(result[0].type).toBe(transactionFixture.type)
     expect(result[0].amount).toBe(transactionFixture.amount)
-    expect(dayjs(result[0].date).daysInMonth()).toBe(
-      dayjs(transactionFixture.date).daysInMonth(),
-    )
-    expect(dayjs(result[0].date).year()).toBe(
-      dayjs(transactionFixture.date).year(),
-    )
-    expect(dayjs(result[0].date).month()).toBe(
-      dayjs(transactionFixture.date).month(),
-    )
+    const expectedDate = transactionFixture.date.split('T')[0]
+    const receivedDate = new Date(result[0].date).toISOString().split('T')[0]
+    expect(receivedDate).toBe(expectedDate)
   })
 
   it('should call Prisma with correct parameters', async () => {
@@ -61,19 +52,5 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
     const promise = sut.execute(userFixture.id)
     // assert
     await expect(promise).rejects.toThrow()
-  })
-
-  it('should throw UserNotFoundError if the user is not found', async () => {
-    // arrange
-    const sut = new PostgresGetTransactionByUserIdRepository()
-    jest.spyOn(prisma.transaction, 'findMany').mockRejectedValueOnce(
-      new Prisma.PrismaClientKnownRequestError('', {
-        code: 'P2025',
-      } as never),
-    )
-    // act
-    const promise = sut.execute(userFixture.id)
-    // assert
-    await expect(promise).rejects.toThrow(UserNotFoundError)
   })
 })

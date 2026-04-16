@@ -5,7 +5,7 @@ const Transaction = {
   name: faker.person.firstName(),
   type: faker.helpers.arrayElement(['INCOME', 'EXPENSE', 'INVESTMENT']),
   amount: faker.number.int({ min: 1, max: 100000 }),
-  date: faker.date.recent().toISOString(),
+  date: faker.date.anytime().toISOString(),
 }
 
 export const transactionFixture = {
