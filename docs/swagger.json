@@ -34,6 +34,38 @@
             "description": "Internal server error"
           }
         }
+      },
+      "get": {
+        "summary": "Get a user by email",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "email",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetUserByEmailParams"
+            },
+            "description": "The email of the user to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found successfully",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Invalid request body"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
       }
     },
     "/users/{id}": {
@@ -95,6 +127,17 @@
         }
       },
       "required": ["id", "first_name", "last_name", "email"]
+    },
+    "GetUserByEmailParams": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        }
+      },
+      "required": ["email"]
     },
     "User": {
       "type": "object",
