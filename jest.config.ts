@@ -15,9 +15,9 @@ const config: Config = {
   coverageDirectory: 'coverage',
   coverageProvider: 'v8',
   globalSetup: '<rootDir>/jest.global-setup.ts',
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.after.end.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.after.env.ts'],
   maxWorkers: 1,
-  forceExit: true,
+  // forceExit: true,
 }
 
 export default config

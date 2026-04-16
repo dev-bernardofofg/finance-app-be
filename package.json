@@ -1,12 +1,12 @@
 {
   "name": "finance-app-api",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "src/server.ts",
   "type": "module",
   "scripts": {
-    "test": "dotenv -e .env.test jest --runInBand",
-    "test:watch": "dotenv -e .env.test jest --watch --passWithNoTests --runInBand",
-    "test:coverage": "dotenv -e .env.test jest --passWithNoTests --silent --coverage --runInBand --detectOpenHandles",
+    "test": "dotenv -e .env.test -- node --experimental-vm-modules node_modules/jest/bin/jest.js --passWithNoTests  --runInBand --detectOpenHandles --forceExit",
+    "test:watch": "npm run test -- --watch",
+    "test:coverage": "npm run test -- --coverage",
     "postinstall": "npx husky install",
     "migrate": "tsx src/db/postgres/migrations/exec.ts",
     "start": "tsx src/server.ts",
