@@ -31,7 +31,7 @@ describe('PostgresUpdateTransactionRepository', () => {
       ...updateTransactionParams,
       user_id: userFixture.id,
     })
-    if (!result) throw new Error('Transação não encontrada')
+    if (!result) throw new TransactionNotFoundError(transactionFixture.id)
     // assert
     expect(result.id).toBe(transactionFixture.id)
     expect(result.user_id).toBe(userFixture.id)

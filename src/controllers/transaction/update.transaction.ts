@@ -27,7 +27,10 @@ export class UpdateTransactionController {
       )
 
       if (!transaction) {
-        return responseHelper.notFound(res, 'Transação não encontrada')
+        return responseHelper.notFound(
+          res,
+          `Transação com ID ${transactionId} não encontrada.`,
+        )
       }
 
       return responseHelper.ok(res, transaction)

@@ -138,7 +138,7 @@ describe('UpdateTransactionController', () => {
     // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: 'Transação não encontrada',
+      message: `Transação com ID ${transactionFixture.id} não encontrada.`,
     })
     expect(result).toBe(response)
   })
