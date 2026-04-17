@@ -273,20 +273,232 @@
           }
         }
       }
+    },
+    "/transactions": {
+      "post": {
+        "summary": "Create a new transaction",
+        "tags": ["Transaction"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateTransactionParams"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Transaction created successfully",
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/UserNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get transactions by user ID",
+        "tags": ["Transaction"],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "userId",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the user to get the transactions"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transactions found successfully",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Transaction"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "$ref": "#/definitions/UserNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
+      "get": {
+        "summary": "Get a transaction by ID",
+        "tags": ["Transaction"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the transaction to get"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction found successfully",
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "schema": {
+              "$ref": "#/definitions/TransactionNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a transaction by ID",
+        "tags": ["Transaction"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the transaction to update"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UpdateTransactionParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction updated successfully",
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "schema": {
+              "$ref": "#/definitions/TransactionNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a transaction by ID",
+        "tags": ["Transaction"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the transaction to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Transaction deleted successfully",
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "schema": {
+              "$ref": "#/definitions/InvalidRequestBodyError"
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "schema": {
+              "$ref": "#/definitions/TransactionNotFoundError"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/InternalServerError"
+            }
+          }
+        }
+      }
     }
   },
   "definitions": {
-    "GetUserByEmailParams": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string",
-          "format": "email",
-          "example": "john.doe@example.com"
-        }
-      },
-      "required": ["email"]
-    },
     "User": {
       "type": "object",
       "properties": {
@@ -315,21 +527,96 @@
       },
       "required": ["id", "first_name", "last_name", "email"]
     },
-    "UserNotFoundError": {
+    "UserBalance": {
       "type": "object",
       "properties": {
-        "message": {
-          "type": "string",
-          "example": "User not found"
+        "total_income": {
+          "type": "number",
+          "example": 1000
+        },
+        "total_expenses": {
+          "type": "number",
+          "example": 1000
+        },
+        "total_investments": {
+          "type": "number",
+          "example": 1000
+        },
+        "balance": {
+          "type": "number",
+          "example": 1000
         }
       }
     },
-    "InvalidRequestBodyError": {
+    "Transaction": {
       "type": "object",
       "properties": {
-        "message": {
+        "id": {
           "type": "string",
-          "example": "Campos inválidos: campos inválidos"
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "user_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["INCOME", "EXPENSE", "INVESTMENT"]
+        },
+        "amount": {
+          "type": "number",
+          "example": 1000
+        }
+      },
+      "required": ["id", "user_id", "name", "type", "amount"]
+    },
+    "CreateTransactionParams": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        "name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["INCOME", "EXPENSE", "INVESTMENT"]
+        },
+        "amount": {
+          "type": "number",
+          "example": 1000
+        }
+      },
+      "required": ["user_id", "name", "type", "amount"]
+    },
+    "GetUserByEmailParams": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "example": "john.doe@example.com"
+        }
+      },
+      "required": ["email"]
+    },
+    "GetUserIdParams": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "example": "123e4567-e89b-12d3-a456-426614174000"
         }
       }
     },
@@ -338,7 +625,16 @@
       "properties": {
         "message": {
           "type": "string",
-          "example": "Email user not found"
+          "example": "Email {email} não encontrado."
+        }
+      }
+    },
+    "TransactionNotFoundError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Transação com ID {transactionId} não encontrada."
         }
       }
     },
@@ -384,12 +680,38 @@
       },
       "required": ["id", "first_name", "last_name", "email"]
     },
+    "UpdateTransactionParams": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "John Doe"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["INCOME", "EXPENSE", "INVESTMENT"]
+        },
+        "amount": {
+          "type": "number",
+          "example": 1000
+        }
+      }
+    },
+    "UserNotFoundError": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "User com ID {id} não encontrado."
+        }
+      }
+    },
     "EmailAlreadyInUseError": {
       "type": "object",
       "properties": {
         "message": {
           "type": "string",
-          "example": "O email já está em uso"
+          "example": "O email {email} já está em uso."
         }
       }
     },
@@ -398,38 +720,16 @@
       "properties": {
         "message": {
           "type": "string",
-          "example": "Internal server error"
+          "example": "Erro ao {action}"
         }
       }
     },
-    "GetUserIdParams": {
+    "InvalidRequestBodyError": {
       "type": "object",
       "properties": {
-        "id": {
+        "message": {
           "type": "string",
-          "format": "uuid",
-          "example": "123e4567-e89b-12d3-a456-426614174000"
-        }
-      }
-    },
-    "UserBalance": {
-      "type": "object",
-      "properties": {
-        "total_income": {
-          "type": "number",
-          "example": 1000
-        },
-        "total_expenses": {
-          "type": "number",
-          "example": 1000
-        },
-        "total_investments": {
-          "type": "number",
-          "example": 1000
-        },
-        "balance": {
-          "type": "number",
-          "example": 1000
+          "example": "Campos inválidos: {fields}"
         }
       }
     }
