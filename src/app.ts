@@ -11,10 +11,7 @@ app.use(express.json())
 app.use(morgan('dev'))
 
 const swaggerDocument = JSON.parse(
-  fs.readFileSync(
-    path.join(import.meta.dirname, '..', 'docs', 'swagger.json'),
-    'utf8',
-  ),
+  fs.readFileSync(path.join(process.cwd(), 'docs', 'swagger.json'), 'utf8'),
 )
 
 app.use(routes)

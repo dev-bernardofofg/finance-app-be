@@ -18,6 +18,9 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
+      - name: Create .env.test file
+        run: echo "DATABASE_URL=postgresql://root:password@localhost:5433/financeapp-test" > .env.test
+
       - name: ESLint
         run: pnpm run eslint:check
 
