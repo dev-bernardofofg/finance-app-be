@@ -18,9 +18,6 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Install dependencies
-        run: pnpm install
-
       - name: ESLint
         run: pnpm run eslint:check
 
