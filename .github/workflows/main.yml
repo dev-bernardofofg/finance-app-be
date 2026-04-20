@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Generate Prisma client
+        run: pnpm prisma generate
+
       - name: Create .env.test file
         run: echo "DATABASE_URL=postgresql://root:password@localhost:5433/financeapp-test" > .env.test
 
