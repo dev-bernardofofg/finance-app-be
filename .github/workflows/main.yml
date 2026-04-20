@@ -8,6 +8,8 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://root:password@localhost:5433/financeapp-test
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -27,7 +29,7 @@ jobs:
         run: pnpm install
 
       - name: Create .env.test file
-        run: echo "DATABASE_URL=postgresql://root:password@localhost:5433/financeapp-test" > .env.test
+        run: echo "DATABASE_URL=$DATABASE_URL" > .env.test
 
       - name: Generate Prisma client
         run: pnpm prisma generate
