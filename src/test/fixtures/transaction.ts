@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.'
+import { faker } from '@faker-js/faker'
 
 const Transaction = {
   user_id: faker.string.uuid(),

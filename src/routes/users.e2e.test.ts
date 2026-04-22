@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.'
+import { faker } from '@faker-js/faker'
 import request from 'supertest'
 import { TransactionType } from '../../generated/prisma/client'
 import { app } from '../app'

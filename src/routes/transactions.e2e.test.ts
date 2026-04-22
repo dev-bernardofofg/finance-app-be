@@ -1,4 +1,4 @@
-import { faker } from '@faker-js/faker/.'
+import { faker } from '@faker-js/faker'
 import request from 'supertest'
 import { app } from '../app'
 import { transactionFixtureWithoutId } from '../test/fixtures/transaction'
@@ -87,7 +87,7 @@ describe('Transactions Routes E2E Tests', () => {
       })
     const transactionId = createTransactionResponse.body.id
 
-    const { user_id: _userId, ...updateBody } = transactionFixtureWithoutId
+    const { user_id: _, ...updateBody } = transactionFixtureWithoutId
     const response = await request(app)
       .put(`/transactions/${transactionId}`)
       .send(updateBody)
@@ -95,7 +95,7 @@ describe('Transactions Routes E2E Tests', () => {
   })
 
   it('PUT /transactions/:id should return 404 when transaction is not found', async () => {
-    const { user_id: _userId, ...updateBody } = transactionFixtureWithoutId
+    const { user_id: _, ...updateBody } = transactionFixtureWithoutId
     const response = await request(app)
       .put(`/transactions/${faker.string.uuid()}`)
       .send(updateBody)
