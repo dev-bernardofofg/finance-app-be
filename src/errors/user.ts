@@ -18,3 +18,10 @@ export class EmailUserNotFoundError extends Error {
     this.name = 'EmailUserNotFoundError'
   }
 }
+
+export class InvalidPasswordError extends Error {
+  constructor() {
+    super('Senha inválida.')
+    this.name = 'InvalidPasswordError'
+  }
+}
