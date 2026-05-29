@@ -5,6 +5,7 @@ import {
   makeGetBalanceUserController,
   makeGetUserByEmailController,
   makeGetUserByIdController,
+  makeLoginUserController,
   makeUpdateUserByIdController,
 } from '../factories/controllers/user'
 
@@ -36,4 +37,8 @@ usersRoutes.get(
     const getBalanceUserController = makeGetBalanceUserController()
     return getBalanceUserController.execute(request, response)
   },
+  usersRoutes.post('/login', async (request: Request, response: Response) => {
+    const loginUserController = makeLoginUserController()
+    return loginUserController.execute(request, response)
+  }),
 )

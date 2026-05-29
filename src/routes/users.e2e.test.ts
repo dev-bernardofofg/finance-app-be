@@ -176,4 +176,59 @@ describe('User Routes E2E Tests', () => {
     )
     expect(response.status).toBe(404)
   })
+
+  it('POST /users/login should return 200 when the user is logged in successfully', async () => {
+    await request(app)
+      .post('/users')
+      .send({ ...userFixtureWithoutId })
+    const response = await request(app).post('/users/login').send({
+      email: userFixtureWithoutId.email,
+      password: userFixtureWithoutId.password,
+    })
+    expect(response.status).toBe(200)
+    const { password: _, ...userWithoutPassword } = userFixtureWithoutId
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        ...userWithoutPassword,
+        tokens: expect.objectContaining({
+          access_token: expect.any(String),
+          refresh_token: expect.any(String),
+        }),
+      }),
+    )
+    expect(response.body).not.toHaveProperty('password')
+  })
+
+  it('POST /users/login should return 401 when the password is incorrect', async () => {
+    await request(app)
+      .post('/users')
+      .send({ ...userFixtureWithoutId })
+    const response = await request(app).post('/users/login').send({
+      email: userFixtureWithoutId.email,
+      password: 'incorrect_password',
+    })
+    expect(response.status).toBe(401)
+  })
+
+  it('POST /users/login should return 401 when the email is not found', async () => {
+    const response = await request(app).post('/users/login').send({
+      email: 'incorrect_email@example.com',
+      password: userFixtureWithoutId.password,
+    })
+    expect(response.status).toBe(401)
+  })
+
+  it('POST /users/login should return 400 when the email is not provided', async () => {
+    const response = await request(app).post('/users/login').send({
+      password: userFixtureWithoutId.password,
+    })
+    expect(response.status).toBe(400)
+  })
+
+  it('POST /users/login should return 400 when the password is not provided', async () => {
+    const response = await request(app).post('/users/login').send({
+      email: userFixtureWithoutId.email,
+    })
+    expect(response.status).toBe(400)
+  })
 })

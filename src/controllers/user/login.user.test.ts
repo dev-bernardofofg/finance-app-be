@@ -38,7 +38,15 @@ describe('LoginUserController', () => {
       userFixture.password,
     )
     expect(response.status).toHaveBeenCalledWith(200)
-    expect(response.json).toHaveBeenCalledWith(userFixture)
+    expect(response.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ...userFixture,
+        tokens: {
+          access_token: expect.any(String),
+          refresh_token: expect.any(String),
+        },
+      }),
+    )
     expect(result).toBe(response)
   })
 })
