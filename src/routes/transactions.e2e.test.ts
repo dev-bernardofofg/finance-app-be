@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
 import request from 'supertest'
-import { app } from '../app'
-import { transactionFixtureWithoutId } from '../test/fixtures/transaction'
-import { userFixtureWithoutId } from '../test/fixtures/user'
+import { app } from '@/app'
+import { transactionFixtureWithoutId } from '@/test/fixtures/transaction'
+import { userFixtureWithoutId } from '@/test/fixtures/user'
 
 describe('Transactions Routes E2E Tests', () => {
   it('POST /transactions should return 201 when transaction is created successfully', async () => {

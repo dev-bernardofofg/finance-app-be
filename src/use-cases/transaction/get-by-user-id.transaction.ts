@@ -1,10 +1,10 @@
-import { UserNotFoundError } from '../../errors/user'
+import { UserNotFoundError } from '@/errors/user'
 import {
   GetTransactionByUserIdParams,
   IPostgresGetTransactionByUserIdRepository,
   IPostgresGetUserByIdRepository,
-} from '../../repositories/postgres'
-import { ITransactionResponse } from '../../types'
+} from '@/repositories/postgres'
+import { ITransactionResponse } from '@/types'
 
 export interface IGetTransactionByUserIdUseCase {
   execute(params: GetTransactionByUserIdParams): Promise<ITransactionResponse[]>

@@ -1,9 +1,9 @@
 import dayjs from 'dayjs'
 import { Prisma } from '../../../../generated/prisma/client'
-import { TransactionNotFoundError } from '../../../errors/transaction'
-import { prisma } from '../../../prisma/prisma'
-import { transactionFixture } from '../../../test/fixtures/transaction'
-import { userFixture } from '../../../test/fixtures/user'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { prisma } from '@/prisma/prisma'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresDeleteTransactionRepository } from './delete.transaction'
 
 describe('PostgresDeleteTransactionRepository', () => {

@@ -1,5 +1,5 @@
-import { toNumberFromDatabase } from '../../../helpers/money'
-import { ITransactionResponse } from '../../../types'
+import { toNumberFromDatabase } from '@/helpers/money'
+import { ITransactionResponse } from '@/types'
 
 type TransactionRow = Omit<ITransactionResponse, 'amount'> & {
   amount: unknown

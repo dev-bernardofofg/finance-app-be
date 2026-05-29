@@ -1,8 +1,8 @@
 import {
   GetTransactionsParams,
   IPostgresGetTransactionsRepository,
-} from '../../repositories/postgres'
-import { ITransactionResponse } from '../../types'
+} from '@/repositories/postgres'
+import { ITransactionResponse } from '@/types'
 
 export interface IGetAllTransactionsUseCase {
   execute(params: GetTransactionsParams): Promise<ITransactionResponse[] | null>

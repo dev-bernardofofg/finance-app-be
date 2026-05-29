@@ -4,7 +4,7 @@ import {
   GetTransactionByIdController,
   GetTransactionByUserIdController,
   UpdateTransactionController,
-} from '../../controllers/transaction'
+} from '@/controllers/transaction'
 import {
   makeCreateTransactionController,
   makeDeleteTransactionController,

@@ -1,10 +1,10 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
-import { updateUserSchema } from '../../types'
-import { IUpdateUserUseCase } from '../../use-cases/user'
-import { HttpResponse, responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
+import { EmailAlreadyInUseError, UserNotFoundError } from '@/errors/user'
+import { updateUserSchema } from '@/types'
+import { IUpdateUserUseCase } from '@/use-cases/user'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
+import { validatorHelpers } from '@/controllers/helpers/validator'
 
 export class UpdateUserController {
   private updateUserUseCase: IUpdateUserUseCase

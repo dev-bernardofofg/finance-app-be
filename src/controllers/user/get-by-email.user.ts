@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { EmailUserNotFoundError } from '../../errors/user'
-import { getEmailUserParamsSchema } from '../../types/index'
-import { IGetUserByEmailUseCase } from '../../use-cases/user/index'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { EmailUserNotFoundError } from '@/errors/user'
+import { getEmailUserParamsSchema } from '@/types/index'
+import { IGetUserByEmailUseCase } from '@/use-cases/user/index'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class GetUserByEmailController {
   private getUserByEmailUseCase: IGetUserByEmailUseCase

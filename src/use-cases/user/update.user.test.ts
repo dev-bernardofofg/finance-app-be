@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
-import { EmailAlreadyInUseError } from '../../errors/user'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { EmailAlreadyInUseError } from '@/errors/user'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { UpdateUserUseCase } from './update.user'
 
 describe('UpdateUserUseCase', () => {

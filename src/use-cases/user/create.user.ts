@@ -1,11 +1,11 @@
-import { IdGeneratorAdapter } from '../../adapters'
-import { PasswordHasherAdapter } from '../../adapters/bcrypt'
-import { EmailAlreadyInUseError } from '../../errors/user'
+import { IdGeneratorAdapter } from '@/adapters'
+import { PasswordHasherAdapter } from '@/adapters/bcrypt'
+import { EmailAlreadyInUseError } from '@/errors/user'
 import {
   IPostgresCreateUserRepository,
   IPostgresGetUserByEmailRepository,
-} from '../../repositories/postgres'
-import { UserResponse } from '../../types'
+} from '@/repositories/postgres'
+import { UserResponse } from '@/types'
 
 interface CreateUserParams {
   first_name: string

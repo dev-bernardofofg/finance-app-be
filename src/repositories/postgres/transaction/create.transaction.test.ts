@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
-import { prisma } from '../../../prisma/prisma'
-import { transactionFixture } from '../../../test/fixtures/transaction'
-import { userFixture } from '../../../test/fixtures/user'
+import { prisma } from '@/prisma/prisma'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresCreateTransactionRepository } from './create.transaction'
 
 describe('PostgresCreateTransactionRepository', () => {

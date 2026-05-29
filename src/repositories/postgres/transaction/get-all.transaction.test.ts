@@ -1,6 +1,6 @@
-import { prisma } from '../../../prisma/prisma'
-import { transactionFixture } from '../../../test/fixtures/transaction'
-import { userFixture } from '../../../test/fixtures/user'
+import { prisma } from '@/prisma/prisma'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresGetTransactionsRepository } from './get-all.transactions'
 
 describe('PostgresGetTransactionsRepository', () => {

@@ -1,7 +1,7 @@
 import { Prisma } from '../../../../generated/prisma/client'
-import { EmailUserNotFoundError } from '../../../errors/user'
-import { prisma } from '../../../prisma/prisma'
-import { UserResponse } from '../../../types'
+import { EmailUserNotFoundError } from '@/errors/user'
+import { prisma } from '@/prisma/prisma'
+import { UserResponse } from '@/types'
 
 export interface IPostgresGetUserByEmailRepository {
   execute(email: string): Promise<UserResponse | null>

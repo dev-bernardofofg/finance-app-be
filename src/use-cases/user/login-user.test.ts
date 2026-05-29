@@ -1,6 +1,6 @@
-import { InvalidCredentialsError } from '../../errors/user'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { InvalidCredentialsError } from '@/errors/user'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { LoginUserUseCase } from './login-user'
 
 describe('LoginUserUseCase', () => {

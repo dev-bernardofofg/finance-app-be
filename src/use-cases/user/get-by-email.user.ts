@@ -1,6 +1,6 @@
-import { EmailUserNotFoundError } from '../../errors/user'
-import { IPostgresGetUserByEmailRepository } from '../../repositories/postgres'
-import { UserResponse } from '../../types'
+import { EmailUserNotFoundError } from '@/errors/user'
+import { IPostgresGetUserByEmailRepository } from '@/repositories/postgres'
+import { UserResponse } from '@/types'
 
 export interface IGetUserByEmailUseCase {
   execute(email: string): Promise<UserResponse>

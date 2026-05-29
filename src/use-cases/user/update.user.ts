@@ -1,11 +1,11 @@
-import { PasswordHasherAdapter } from '../../adapters'
-import { EmailAlreadyInUseError } from '../../errors/user'
+import { PasswordHasherAdapter } from '@/adapters'
+import { EmailAlreadyInUseError } from '@/errors/user'
 import {
   IPostgresGetUserByEmailRepository,
   IPostgresUpdateUserRepository,
   UserFields,
-} from '../../repositories/postgres'
-import { UserResponse } from '../../types'
+} from '@/repositories/postgres'
+import { UserResponse } from '@/types'
 
 export interface IUpdateUserUseCase {
   execute(

@@ -5,7 +5,7 @@ import {
   makeGetTransactionByIdController,
   makeGetTransactionByUserIdController,
   makeUpdateTransactionController,
-} from '../factories/controllers/transaction'
+} from '@/factories/controllers/transaction'
 
 export const transactionsRoutes = Router()
 

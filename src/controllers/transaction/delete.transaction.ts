@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { TransactionNotFoundError } from '../../errors/transaction'
-import { transactionIdParamSchema } from '../../types'
-import { IDeleteTransactionUseCase } from '../../use-cases/transaction/delete.transaction'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { transactionIdParamSchema } from '@/types'
+import { IDeleteTransactionUseCase } from '@/use-cases/transaction/delete.transaction'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class DeleteTransactionController {
   private deleteTransactionUseCase: IDeleteTransactionUseCase

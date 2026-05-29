@@ -1,11 +1,11 @@
-import { IdGeneratorAdapter } from '../../adapters'
+import { IdGeneratorAdapter } from '@/adapters'
 import {
   CreateTransactionController,
   DeleteTransactionController,
   GetTransactionByIdController,
   GetTransactionByUserIdController,
   UpdateTransactionController,
-} from '../../controllers/transaction'
+} from '@/controllers/transaction'
 import {
   PostgresCreateTransactionRepository,
   PostgresDeleteTransactionRepository,
@@ -13,14 +13,14 @@ import {
   PostgresGetTransactionByUserIdRepository,
   PostgresGetUserByIdRepository,
   PostgresUpdateTransactionRepository,
-} from '../../repositories/postgres'
+} from '@/repositories/postgres'
 import {
   CreateTransactionUseCase,
   DeleteTransactionUseCase,
   GetTransactionByIdUseCase,
   GetTransactionByUserIdUseCase,
   UpdateTransactionUseCase,
-} from '../../use-cases/transaction'
+} from '@/use-cases/transaction'
 
 export const makeCreateTransactionController = () => {
   const createTransactionRepository = new PostgresCreateTransactionRepository()

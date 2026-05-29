@@ -1,6 +1,6 @@
 import { LoginUserController } from './login.user'
-import { userFixture } from '../../test/fixtures/user'
-import { makeHttpResponse } from '../../helpers/test'
+import { userFixture } from '@/test/fixtures/user'
+import { makeHttpResponse } from '@/helpers/test'
 
 describe('LoginUserController', () => {
   class LoginUserUseCaseStub {

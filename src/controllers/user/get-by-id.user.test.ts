@@ -1,8 +1,8 @@
 import { faker } from '@faker-js/faker'
-import { UserNotFoundError } from '../../errors/user'
-import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { UserNotFoundError } from '@/errors/user'
+import { makeHttpRequestById, makeHttpResponse } from '@/helpers/test'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { GetUserByIdController } from './get-by-id.user'
 
 describe('GetUserByIdController', () => {

@@ -1,6 +1,6 @@
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { userFixture } from '../../test/fixtures/user'
-import { ITransactionResponse } from '../../types'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
+import { ITransactionResponse } from '@/types'
 import { GetAllTransactionsUseCase } from './get-all.transaction'
 
 describe('GetAllTransactionsUseCase', () => {

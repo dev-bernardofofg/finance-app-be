@@ -10,6 +10,7 @@ const config: Config = {
   moduleFileExtensions: ['ts', 'js', 'json'],
   moduleNameMapper: {
     '^(\\.\\.?\\/.+)\\.js$': '$1',
+    '^@/(.*)$': '<rootDir>/src/$1',
   },
   collectCoverageFrom: ['src/**/*.ts', '!src/**/index.ts'],
   coverageDirectory: 'coverage',

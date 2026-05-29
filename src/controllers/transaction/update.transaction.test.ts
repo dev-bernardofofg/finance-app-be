@@ -1,9 +1,9 @@
 import { Request } from 'express'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
-import { makeHttpResponse } from '../../helpers/test'
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { userFixture } from '../../test/fixtures/user'
-import { ITransactionResponse } from '../../types'
+import { EmailAlreadyInUseError, UserNotFoundError } from '@/errors/user'
+import { makeHttpResponse } from '@/helpers/test'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
+import { ITransactionResponse } from '@/types'
 import { UpdateTransactionController } from './update.transaction'
 
 describe('UpdateTransactionController', () => {

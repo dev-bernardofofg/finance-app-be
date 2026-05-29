@@ -1,5 +1,5 @@
-import { prisma } from '../../../prisma/prisma'
-import { ICreateUserParams, UserResponse } from '../../../types'
+import { prisma } from '@/prisma/prisma'
+import { ICreateUserParams, UserResponse } from '@/types'
 
 export interface IPostgresCreateUserRepository {
   execute(createUserParams: ICreateUserParams): Promise<UserResponse>

@@ -1,6 +1,6 @@
 import { Prisma } from '../../../../generated/prisma/client'
-import { prisma } from '../../../prisma/prisma'
-import { userFixture } from '../../../test/fixtures/user'
+import { prisma } from '@/prisma/prisma'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresUpdateUserRepository } from './update.user'
 
 describe('PostgresUpdateUserRepository', () => {

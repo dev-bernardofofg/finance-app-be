@@ -1,14 +1,14 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { TransactionNotFoundError } from '../../errors/transaction'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { EmailAlreadyInUseError, UserNotFoundError } from '@/errors/user'
 import {
   ITransactionParams,
   transactionIdParamSchema,
   updateTransactionSchema,
-} from '../../types'
-import { IUpdateTransactionUseCase } from '../../use-cases/transaction/update.transaction'
-import { HttpResponse, responseHelper } from '../helpers/http'
+} from '@/types'
+import { IUpdateTransactionUseCase } from '@/use-cases/transaction/update.transaction'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class UpdateTransactionController {
   private updateTransactionUseCase: IUpdateTransactionUseCase

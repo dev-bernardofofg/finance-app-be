@@ -1,5 +1,5 @@
-import { prisma } from '../../../prisma/prisma'
-import { UserResponse } from '../../../types'
+import { prisma } from '@/prisma/prisma'
+import { UserResponse } from '@/types'
 
 export interface GetUserByIdParams {
   id: string

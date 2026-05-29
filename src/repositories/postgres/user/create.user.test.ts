@@ -1,5 +1,5 @@
-import { prisma } from '../../../prisma/prisma'
-import { userFixture } from '../../../test/fixtures/user'
+import { prisma } from '@/prisma/prisma'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresCreateUserRepository } from './create.user'
 
 describe('PostgresCreateUserRepository', () => {

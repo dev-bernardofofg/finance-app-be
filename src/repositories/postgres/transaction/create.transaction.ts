@@ -1,6 +1,6 @@
 import { TransactionType } from '../../../../generated/prisma/enums'
-import { prisma } from '../../../prisma/prisma'
-import { ITransactionParams, ITransactionResponse } from '../../../types'
+import { prisma } from '@/prisma/prisma'
+import { ITransactionParams, ITransactionResponse } from '@/types'
 import { mapTransactionFromDatabase } from './mapper'
 
 export interface IPostgresCreateTransactionRepository {

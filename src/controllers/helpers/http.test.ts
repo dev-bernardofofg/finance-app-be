@@ -1,4 +1,4 @@
-import { makeHttpResponse } from '../../helpers/test'
+import { makeHttpResponse } from '@/helpers/test'
 import { responseHelper } from './http'
 
 describe('responseHelper', () => {

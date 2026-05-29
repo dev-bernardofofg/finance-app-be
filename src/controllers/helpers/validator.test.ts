@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-import { makeHttpResponse } from '../../helpers/test'
+import { makeHttpResponse } from '@/helpers/test'
 import { validatorHelpers } from './validator'
 
 describe('validatorHelpers', () => {

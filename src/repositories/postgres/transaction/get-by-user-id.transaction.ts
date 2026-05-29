@@ -1,5 +1,5 @@
-import { prisma } from '../../../prisma/prisma'
-import { ITransactionResponse } from '../../../types'
+import { prisma } from '@/prisma/prisma'
+import { ITransactionResponse } from '@/types'
 import { mapTransactionFromDatabase } from './mapper'
 
 export interface GetTransactionByUserIdParams {

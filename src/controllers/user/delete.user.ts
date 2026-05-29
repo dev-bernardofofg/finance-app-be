@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { UserNotFoundError } from '../../errors/user'
-import { IDeleteUserUseCase } from '../../use-cases/user'
-import { HttpResponse, responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
+import { UserNotFoundError } from '@/errors/user'
+import { IDeleteUserUseCase } from '@/use-cases/user'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
+import { validatorHelpers } from '@/controllers/helpers/validator'
 
 export class DeleteUserController {
   private deleteUserUseCase: IDeleteUserUseCase

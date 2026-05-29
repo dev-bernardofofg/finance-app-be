@@ -1,8 +1,8 @@
-import { UserNotFoundError } from '../../errors/user'
-import { GetBalanceUserResponse } from '../../repositories/postgres'
-import { balanceFixture } from '../../test/fixtures/balance'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { UserNotFoundError } from '@/errors/user'
+import { GetBalanceUserResponse } from '@/repositories/postgres'
+import { balanceFixture } from '@/test/fixtures/balance'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { GetBalanceUserUseCase } from './get-balance.user'
 
 describe('GetBalanceUserUseCase', () => {

@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { Request } from 'express'
-import { HttpResponse } from '../controllers/helpers/http'
+import { HttpResponse } from '@/controllers/helpers/http'
 
 export const makeHttpResponse = () => {
   const status = jest.fn().mockReturnThis()

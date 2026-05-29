@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker'
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { ITransactionResponse } from '../../types'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { ITransactionResponse } from '@/types'
 import { UpdateTransactionUseCase } from './update.transaction'
 
 describe('UpdateTransactionUseCase', () => {

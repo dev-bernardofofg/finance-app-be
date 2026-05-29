@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { EmailAlreadyInUseError } from '../../errors/user'
-import { createUserSchema } from '../../types'
-import { ICreateUserUseCase } from '../../use-cases/user'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { EmailAlreadyInUseError } from '@/errors/user'
+import { createUserSchema } from '@/types'
+import { ICreateUserUseCase } from '@/use-cases/user'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class CreateUserController {
   private createUserUseCase: ICreateUserUseCase

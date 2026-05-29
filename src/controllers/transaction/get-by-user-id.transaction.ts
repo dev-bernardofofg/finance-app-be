@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { UserNotFoundError } from '../../errors/user'
-import { getTransactionsByUserIdQuerySchema } from '../../types'
-import { IGetTransactionByUserIdUseCase } from '../../use-cases/transaction/get-by-user-id.transaction'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { UserNotFoundError } from '@/errors/user'
+import { getTransactionsByUserIdQuerySchema } from '@/types'
+import { IGetTransactionByUserIdUseCase } from '@/use-cases/transaction/get-by-user-id.transaction'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class GetTransactionByUserIdController {
   private getTransactionByUserIdUseCase: IGetTransactionByUserIdUseCase

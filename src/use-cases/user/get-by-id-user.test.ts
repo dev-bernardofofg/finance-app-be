@@ -1,6 +1,6 @@
-import { UserNotFoundError } from '../../errors/user'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { UserNotFoundError } from '@/errors/user'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { GetUserByIdUseCase } from './get-by-id.user'
 
 describe('GetByIdUserUseCase', () => {

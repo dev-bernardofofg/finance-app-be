@@ -1,6 +1,6 @@
-import { TransactionNotFoundError } from '../../errors/transaction'
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { ITransactionResponse } from '../../types'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { ITransactionResponse } from '@/types'
 import { GetTransactionByIdUseCase } from './get-by-id.transaction'
 
 describe('GetTransactionByIdUseCase', () => {

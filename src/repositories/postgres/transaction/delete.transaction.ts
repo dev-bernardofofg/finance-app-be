@@ -1,7 +1,7 @@
 import { Prisma } from '../../../../generated/prisma/client'
-import { TransactionNotFoundError } from '../../../errors/transaction'
-import { prisma } from '../../../prisma/prisma'
-import { ITransactionResponse } from '../../../types'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { prisma } from '@/prisma/prisma'
+import { ITransactionResponse } from '@/types'
 import { mapTransactionFromDatabase } from './mapper'
 
 export interface IPostgresDeleteTransactionRepository {

@@ -1,7 +1,7 @@
 import { Prisma } from '../../../../generated/prisma/client'
-import { UserNotFoundError } from '../../../errors/user'
-import { prisma } from '../../../prisma/prisma'
-import { UserResponse } from '../../../types'
+import { UserNotFoundError } from '@/errors/user'
+import { prisma } from '@/prisma/prisma'
+import { UserResponse } from '@/types'
 
 export interface UpdateUserParams {
   id: string

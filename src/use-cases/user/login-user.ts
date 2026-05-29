@@ -1,7 +1,7 @@
-import { PasswordComparerAdapter, TokenGeneratorAdapter } from '../../adapters'
-import { InvalidCredentialsError } from '../../errors/user'
-import { IPostgresGetUserByEmailRepository } from '../../repositories/postgres'
-import { UserResponse } from '../../types'
+import { PasswordComparerAdapter, TokenGeneratorAdapter } from '@/adapters'
+import { InvalidCredentialsError } from '@/errors/user'
+import { IPostgresGetUserByEmailRepository } from '@/repositories/postgres'
+import { UserResponse } from '@/types'
 
 export interface ILoginUserUseCase {
   execute(

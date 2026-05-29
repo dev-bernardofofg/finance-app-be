@@ -1,10 +1,10 @@
-import { IdGeneratorAdapter } from '../../adapters'
-import { UserNotFoundError } from '../../errors/user'
+import { IdGeneratorAdapter } from '@/adapters'
+import { UserNotFoundError } from '@/errors/user'
 import {
   IPostgresCreateTransactionRepository,
   IPostgresGetUserByIdRepository,
-} from '../../repositories/postgres'
-import { ITransactionParams, ITransactionResponse } from '../../types'
+} from '@/repositories/postgres'
+import { ITransactionParams, ITransactionResponse } from '@/types'
 
 export interface ICreateTransactionUseCase {
   execute(

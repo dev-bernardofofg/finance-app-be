@@ -1,5 +1,5 @@
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { ITransactionResponse } from '../../types'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { ITransactionResponse } from '@/types'
 import { DeleteTransactionUseCase } from './delete.transaction'
 
 describe('DeleteTransactionUseCase', () => {

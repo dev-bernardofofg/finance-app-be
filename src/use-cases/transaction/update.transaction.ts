@@ -1,5 +1,5 @@
-import { IPostgresUpdateTransactionRepository } from '../../repositories/postgres'
-import { ITransactionParams, ITransactionResponse } from '../../types'
+import { IPostgresUpdateTransactionRepository } from '@/repositories/postgres'
+import { ITransactionParams, ITransactionResponse } from '@/types'
 
 export interface IUpdateTransactionUseCase {
   execute(

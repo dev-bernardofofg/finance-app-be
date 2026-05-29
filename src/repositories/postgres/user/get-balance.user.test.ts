@@ -1,6 +1,6 @@
 import { TransactionType } from '../../../../generated/prisma/enums'
-import { prisma } from '../../../prisma/prisma'
-import { userFixture } from '../../../test/fixtures/user'
+import { prisma } from '@/prisma/prisma'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresGetBalanceUserRepository } from './get-balance.user'
 
 describe('PostgresGetBalanceUserRepository', () => {

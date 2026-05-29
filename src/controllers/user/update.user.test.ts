@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
-import { EmailAlreadyInUseError, UserNotFoundError } from '../../errors/user'
-import { makeHttpResponse } from '../../helpers/test'
-import { UpdateUserParams, UserFields } from '../../repositories/postgres'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { EmailAlreadyInUseError, UserNotFoundError } from '@/errors/user'
+import { makeHttpResponse } from '@/helpers/test'
+import { UpdateUserParams, UserFields } from '@/repositories/postgres'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { UpdateUserController } from './update.user'
 
 describe('UpdateUserController', () => {

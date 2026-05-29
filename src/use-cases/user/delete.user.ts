@@ -1,5 +1,5 @@
-import { IPostgresDeleteUserRepository } from '../../repositories/postgres'
-import { UserResponse } from '../../types'
+import { IPostgresDeleteUserRepository } from '@/repositories/postgres'
+import { UserResponse } from '@/types'
 
 export interface IDeleteUserUseCase {
   execute(userId: string): Promise<UserResponse | null>

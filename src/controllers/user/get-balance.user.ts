@@ -1,10 +1,10 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { UserNotFoundError } from '../../errors/user'
-import { GetUserByIdParams } from '../../repositories/postgres'
-import { getUserIdParamsSchema } from '../../types'
-import { IGetBalanceUserUseCase } from '../../use-cases/user'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { UserNotFoundError } from '@/errors/user'
+import { GetUserByIdParams } from '@/repositories/postgres'
+import { getUserIdParamsSchema } from '@/types'
+import { IGetBalanceUserUseCase } from '@/use-cases/user'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class GetBalanceUserController {
   private getBalanceUserUseCase: IGetBalanceUserUseCase

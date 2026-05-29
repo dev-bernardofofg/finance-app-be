@@ -1,15 +1,15 @@
 import { Request } from 'express'
-import { UserNotFoundError } from '../../errors/user'
-import { makeHttpResponse } from '../../helpers/test'
+import { UserNotFoundError } from '@/errors/user'
+import { makeHttpResponse } from '@/helpers/test'
 import {
   transactionFixture,
   transactionFixtureWithoutId,
-} from '../../test/fixtures/transaction'
+} from '@/test/fixtures/transaction'
 import {
   CreateTransactionParams,
   ITransactionParams,
   ITransactionResponse,
-} from '../../types'
+} from '@/types'
 import { CreateTransactionController } from './create.transaction'
 
 describe('CreateTransactionController', () => {

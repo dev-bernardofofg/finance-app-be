@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { Request } from 'express'
-import { EmailAlreadyInUseError } from '../../errors/user'
-import { makeHttpResponse } from '../../helpers/test'
-import { userFixtureWithoutId } from '../../test/fixtures/user'
-import { CreateUserParams, UserResponse } from '../../types'
+import { EmailAlreadyInUseError } from '@/errors/user'
+import { makeHttpResponse } from '@/helpers/test'
+import { userFixtureWithoutId } from '@/test/fixtures/user'
+import { CreateUserParams, UserResponse } from '@/types'
 import { CreateUserController } from './create.user'
 
 describe('CreateUserController', () => {

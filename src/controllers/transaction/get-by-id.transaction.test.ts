@@ -1,7 +1,7 @@
-import { TransactionNotFoundError } from '../../errors/transaction'
-import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { ITransactionResponse } from '../../types'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { makeHttpRequestById, makeHttpResponse } from '@/helpers/test'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { ITransactionResponse } from '@/types'
 import { GetTransactionByIdController } from './get-by-id.transaction'
 
 describe('GetTransactionByIdController', () => {

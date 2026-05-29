@@ -1,9 +1,9 @@
 import { Request } from 'express'
-import { ILoginUserUseCase } from '../../use-cases/user'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { ILoginUserUseCase } from '@/use-cases/user'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 import { ZodError } from 'zod'
-import { InvalidCredentialsError } from '../../errors/user'
-import { loginUserSchema } from '../../types'
+import { InvalidCredentialsError } from '@/errors/user'
+import { loginUserSchema } from '@/types'
 
 export class LoginUserController {
   private loginUserUseCase: ILoginUserUseCase

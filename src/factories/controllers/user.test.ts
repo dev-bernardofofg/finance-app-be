@@ -5,7 +5,7 @@ import {
   GetUserByEmailController,
   GetUserByIdController,
   UpdateUserController,
-} from '../../controllers'
+} from '@/controllers'
 import {
   makeCreateUserController,
   makeDeleteUserController,

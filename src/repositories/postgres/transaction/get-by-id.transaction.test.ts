@@ -1,7 +1,7 @@
-import { TransactionNotFoundError } from '../../../errors/transaction'
-import { prisma } from '../../../prisma/prisma'
-import { transactionFixture } from '../../../test/fixtures/transaction'
-import { userFixture } from '../../../test/fixtures/user'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { prisma } from '@/prisma/prisma'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
 import { PostgresGetTransactionByIdRepository } from './get-by-id.transaction'
 
 describe('PostgresGetTransactionByIdRepository', () => {

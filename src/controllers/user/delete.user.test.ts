@@ -1,11 +1,11 @@
 import { faker } from '@faker-js/faker'
 import { ZodError } from 'zod'
-import { UserNotFoundError } from '../../errors/user'
-import { makeHttpRequestById } from '../../helpers/test'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
-import { HttpResponse, responseHelper } from '../helpers/http'
-import { validatorHelpers } from '../helpers/validator'
+import { UserNotFoundError } from '@/errors/user'
+import { makeHttpRequestById } from '@/helpers/test'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
+import { validatorHelpers } from '@/controllers/helpers/validator'
 import { DeleteUserController } from './delete.user'
 
 describe('DeleteUserController', () => {

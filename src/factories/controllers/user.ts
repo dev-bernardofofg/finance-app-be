@@ -3,7 +3,7 @@ import {
   PasswordComparerAdapter,
   PasswordHasherAdapter,
   TokenGeneratorAdapter,
-} from '../../adapters'
+} from '@/adapters'
 import {
   CreateUserController,
   DeleteUserController,
@@ -11,8 +11,8 @@ import {
   GetUserByEmailController,
   GetUserByIdController,
   UpdateUserController,
-} from '../../controllers'
-import { LoginUserController } from '../../controllers/user/login.user'
+} from '@/controllers'
+import { LoginUserController } from '@/controllers/user/login.user'
 import {
   PostgresCreateUserRepository,
   PostgresDeleteUserRepository,
@@ -20,7 +20,7 @@ import {
   PostgresGetUserByEmailRepository,
   PostgresGetUserByIdRepository,
   PostgresUpdateUserRepository,
-} from '../../repositories/postgres'
+} from '@/repositories/postgres'
 import {
   CreateUserUseCase,
   DeleteUserUseCase,
@@ -29,7 +29,7 @@ import {
   GetUserByIdUseCase,
   LoginUserUseCase,
   UpdateUserUseCase,
-} from '../../use-cases/user'
+} from '@/use-cases/user'
 
 export const makeGetUserByIdController = () => {
   const getUserByIdRepository = new PostgresGetUserByIdRepository()

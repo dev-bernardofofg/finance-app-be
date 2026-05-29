@@ -1,9 +1,9 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
-import { UserNotFoundError } from '../../errors/user'
-import { createTransactionSchema } from '../../types'
-import { ICreateTransactionUseCase } from '../../use-cases/transaction/create.transaction'
-import { HttpResponse, responseHelper } from '../helpers/http'
+import { UserNotFoundError } from '@/errors/user'
+import { createTransactionSchema } from '@/types'
+import { ICreateTransactionUseCase } from '@/use-cases/transaction/create.transaction'
+import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
 export class CreateTransactionController {
   private createTransactionUseCase: ICreateTransactionUseCase

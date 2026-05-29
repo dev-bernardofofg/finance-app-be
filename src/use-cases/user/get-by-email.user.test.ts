@@ -1,6 +1,6 @@
-import { EmailUserNotFoundError } from '../../errors/user'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { EmailUserNotFoundError } from '@/errors/user'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { GetUserByEmailUseCase } from './get-by-email.user'
 
 describe('GetUserByEmailUseCase', () => {

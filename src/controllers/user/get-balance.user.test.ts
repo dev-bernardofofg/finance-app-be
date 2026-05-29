@@ -1,8 +1,8 @@
-import { UserNotFoundError } from '../../errors/user'
-import { makeHttpRequestById, makeHttpResponse } from '../../helpers/test'
-import { GetBalanceUserResponse } from '../../repositories/postgres/user/get-balance.user'
-import { balanceFixture } from '../../test/fixtures/balance'
-import { userFixture } from '../../test/fixtures/user'
+import { UserNotFoundError } from '@/errors/user'
+import { makeHttpRequestById, makeHttpResponse } from '@/helpers/test'
+import { GetBalanceUserResponse } from '@/repositories/postgres/user/get-balance.user'
+import { balanceFixture } from '@/test/fixtures/balance'
+import { userFixture } from '@/test/fixtures/user'
 import { GetBalanceUserController } from './get-balance.user'
 describe('GetBalanceUserController', () => {
   class GetBalanceUserUseCaseStub {

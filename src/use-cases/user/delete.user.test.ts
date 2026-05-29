@@ -1,5 +1,5 @@
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { DeleteUserUseCase } from './delete.user'
 
 describe('DeleteUserUseCase', () => {

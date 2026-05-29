@@ -1,8 +1,8 @@
-import { UserNotFoundError } from '../../errors/user'
-import { idFixture } from '../../test/fixtures/id'
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { userFixture } from '../../test/fixtures/user'
-import { ITransactionResponse } from '../../types'
+import { UserNotFoundError } from '@/errors/user'
+import { idFixture } from '@/test/fixtures/id'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { userFixture } from '@/test/fixtures/user'
+import { ITransactionResponse } from '@/types'
 import { CreateTransactionUseCase } from './create.transaction'
 
 describe('CreateTransactionUseCase', () => {

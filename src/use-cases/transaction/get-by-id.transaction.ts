@@ -1,6 +1,6 @@
-import { TransactionNotFoundError } from '../../errors/transaction'
-import { IPostgresGetTransactionByIdRepository } from '../../repositories/postgres'
-import { ITransactionResponse } from '../../types'
+import { TransactionNotFoundError } from '@/errors/transaction'
+import { IPostgresGetTransactionByIdRepository } from '@/repositories/postgres'
+import { ITransactionResponse } from '@/types'
 
 export interface IGetTransactionByIdUseCase {
   execute(transactionId: string): Promise<ITransactionResponse | null>

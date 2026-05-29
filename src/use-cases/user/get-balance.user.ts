@@ -1,9 +1,9 @@
-import { UserNotFoundError } from '../../errors/user'
-import { IPostgresGetUserByIdRepository } from '../../repositories/postgres'
+import { UserNotFoundError } from '@/errors/user'
+import { IPostgresGetUserByIdRepository } from '@/repositories/postgres'
 import {
   GetBalanceUserResponse,
   IGetBalanceUserRepository,
-} from '../../repositories/postgres/user/get-balance.user'
+} from '@/repositories/postgres/user/get-balance.user'
 
 export interface IGetBalanceUserUseCase {
   execute(id: string): Promise<GetBalanceUserResponse>

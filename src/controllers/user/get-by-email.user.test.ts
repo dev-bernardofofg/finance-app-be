@@ -1,7 +1,7 @@
-import { EmailUserNotFoundError } from '../../errors/user'
-import { makeHttpResponse } from '../../helpers/test'
-import { userFixture } from '../../test/fixtures/user'
-import { UserResponse } from '../../types'
+import { EmailUserNotFoundError } from '@/errors/user'
+import { makeHttpResponse } from '@/helpers/test'
+import { userFixture } from '@/test/fixtures/user'
+import { UserResponse } from '@/types'
 import { GetUserByEmailController } from './get-by-email.user'
 
 describe('GetUserByEmailController', () => {

@@ -1,8 +1,8 @@
-import { UserNotFoundError } from '../../errors/user'
-import { makeHttpResponse } from '../../helpers/test'
-import { GetTransactionByUserIdParams } from '../../repositories/postgres'
-import { transactionFixture } from '../../test/fixtures/transaction'
-import { ITransactionResponse } from '../../types'
+import { UserNotFoundError } from '@/errors/user'
+import { makeHttpResponse } from '@/helpers/test'
+import { GetTransactionByUserIdParams } from '@/repositories/postgres'
+import { transactionFixture } from '@/test/fixtures/transaction'
+import { ITransactionResponse } from '@/types'
 import { GetTransactionByUserIdController } from './get-by-user-id.transaction'
 
 describe('GetTransactionByUserIdController', () => {
