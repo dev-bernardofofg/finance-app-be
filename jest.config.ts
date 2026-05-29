@@ -18,6 +18,7 @@ const config: Config = {
   globalSetup: '<rootDir>/jest.global-setup.ts',
   setupFilesAfterEnv: ['<rootDir>/jest.setup.after.env.ts'],
   maxWorkers: 1,
+  restoreMocks: true,
   // forceExit: true,
 }
 
