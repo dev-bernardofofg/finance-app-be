@@ -25,3 +25,10 @@ export class InvalidPasswordError extends Error {
     this.name = 'InvalidPasswordError'
   }
 }
+
+export class InvalidCredentialsError extends Error {
+  constructor() {
+    super('Credenciais inválidas.')
+    this.name = 'InvalidCredentialsError'
+  }
+}

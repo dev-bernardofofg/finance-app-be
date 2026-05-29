@@ -1,5 +1,5 @@
 import { PasswordComparerAdapter, TokenGeneratorAdapter } from '../../adapters'
-import { EmailUserNotFoundError, InvalidPasswordError } from '../../errors/user'
+import { InvalidCredentialsError } from '../../errors/user'
 import { IPostgresGetUserByEmailRepository } from '../../repositories/postgres'
 
 export class LoginUserUseCase {
@@ -19,7 +19,7 @@ export class LoginUserUseCase {
     const user = await this.getUserByEmailRepository.execute(email)
 
     if (!user) {
-      throw new EmailUserNotFoundError(email)
+      throw new InvalidCredentialsError()
     }
 
     const isPasswordValid = await this.passwordComparerAdapter.execute(
@@ -28,13 +28,15 @@ export class LoginUserUseCase {
     )
 
     if (!isPasswordValid) {
-      throw new InvalidPasswordError()
+      throw new InvalidCredentialsError()
     }
 
     const tokens = await this.tokenGeneratorAdapter.execute(user.id)
 
+    const { password: _, ...userWithoutPassword } = user
+
     return {
-      ...user,
+      ...userWithoutPassword,
       tokens,
     }
   }
