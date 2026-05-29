@@ -78,11 +78,13 @@ export const makeCreateUserController = () => {
   const getUserByEmailRepository = new PostgresGetUserByEmailRepository()
   const passwordHasherAdapter = new PasswordHasherAdapter()
   const idGeneratorAdapter = new IdGeneratorAdapter()
+  const tokenGeneratorAdapter = new TokenGeneratorAdapter()
   const createUserUseCase = new CreateUserUseCase(
     createUserRepository,
     getUserByEmailRepository,
     passwordHasherAdapter,
     idGeneratorAdapter,
+    tokenGeneratorAdapter,
   )
   const createUserController = new CreateUserController(createUserUseCase)
 

@@ -27,6 +27,14 @@ describe('CreateUserUseCase', () => {
     })
   }
 
+  class TokenGeneratorAdapterStub {
+    execute = jest.fn(async () => {
+      return {
+        access_token: 'access-token',
+        refresh_token: 'refresh-token',
+      }
+    })
+  }
   const makeHttpRequest = () => userFixture
 
   const makeSut = () => {
@@ -34,12 +42,13 @@ describe('CreateUserUseCase', () => {
     const createUserRepository = new CreateUserRepositoryStub()
     const passwordHasherAdapter = new PasswordHasherAdapterStub()
     const idGeneratorAdapter = new IdGeneratorAdapterStub()
-
+    const tokenGeneratorAdapter = new TokenGeneratorAdapterStub()
     const sut = new CreateUserUseCase(
       createUserRepository,
       getUserByEmailRepository,
       passwordHasherAdapter,
       idGeneratorAdapter,
+      tokenGeneratorAdapter,
     )
 
     return { sut, getUserByEmailRepository }
@@ -54,6 +63,8 @@ describe('CreateUserUseCase', () => {
 
     // assert
     expect(result).toBeTruthy()
+    expect(result.tokens.access_token).toBeDefined()
+    expect(result.tokens.refresh_token).toBeDefined()
   })
 
   it('should throw an EmailAlreadyInUseError if GetUserByEmailRepository returns a user', async () => {
