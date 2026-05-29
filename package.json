@@ -12,7 +12,8 @@
     "start": "tsx src/server.ts",
     "dev": "nodemon",
     "eslint:check": "eslint src",
-    "prettier:check": "prettier --check src"
+    "prettier:check": "prettier --check src",
+    "lint:fix": "eslint src --fix && prettier --write src"
   },
   "keywords": [],
   "author": "",

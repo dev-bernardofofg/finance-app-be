@@ -1,3 +1,7 @@
 {
-  "*.{js,mjs,cjs,ts,mts,cts}": ["npx eslint", "npx prettier --write"]
+  "*.{js,mjs,cjs,ts,mts,cts}": [
+    "eslint --fix --max-warnings 0 --no-warn-ignored",
+    "prettier --write"
+  ],
+  "*.{json,md,yml,yaml}": ["prettier --write"]
 }
