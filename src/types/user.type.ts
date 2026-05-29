@@ -55,12 +55,12 @@ export const getEmailUserParamsSchema = z.object({
 
 export const loginUserSchema = z.object({
   email: z
-    .string()
+    .string('O email é obrigatório')
     .email('O email não é válido')
     .trim()
     .min(1, 'O email é obrigatório'),
   password: z
-    .string()
+    .string('A senha é obrigatória')
     .trim()
     .min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })

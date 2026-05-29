@@ -2,7 +2,7 @@ import { Request } from 'express'
 import { ILoginUserUseCase } from '@/use-cases/user'
 import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 import { ZodError } from 'zod'
-import { InvalidCredentialsError } from '@/errors/user'
+import { EmailUserNotFoundError, InvalidCredentialsError } from '@/errors/user'
 import { loginUserSchema } from '@/types'
 
 export class LoginUserController {
@@ -21,6 +21,9 @@ export class LoginUserController {
     } catch (error) {
       if (error instanceof ZodError) {
         return responseHelper.badRequest(res, error.issues[0].message)
+      }
+      if (error instanceof EmailUserNotFoundError) {
+        return responseHelper.notFound(res, error.message)
       }
       if (error instanceof InvalidCredentialsError) {
         return responseHelper.unauthorized(res, error.message)
