@@ -3,12 +3,12 @@ import {
   makeCreateUserController,
   makeDeleteUserController,
   makeGetBalanceUserController,
-  makeGetUserByEmailController,
   makeGetUserByIdController,
   makeLoginUserController,
   makeUpdateUserByIdController,
 } from '@/factories/controllers/user'
 import { authMiddleware } from '@/middlewares/auth'
+import { AuthenticatedRequest } from '@/types'
 
 export const usersRoutes = Router()
 
@@ -20,40 +20,68 @@ usersRoutes.get(
   '/',
   authMiddleware,
   async (request: Request, response: Response) => {
-    const getUserByEmailController = makeGetUserByEmailController()
-    return getUserByEmailController.execute(request, response)
-  },
-)
-usersRoutes.get(
-  '/:id',
-  authMiddleware,
-  async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
     const getUserByIdController = makeGetUserByIdController()
-    return getUserByIdController.execute(request, response)
+    return getUserByIdController.execute(
+      {
+        ...request,
+        params: {
+          id: userId,
+        },
+      },
+      response,
+    )
   },
 )
 usersRoutes.patch(
-  '/:id',
+  '/',
   authMiddleware,
   async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
     const updateUserByIdController = makeUpdateUserByIdController()
-    return updateUserByIdController.execute(request, response)
+    return updateUserByIdController.execute(
+      {
+        ...request,
+        params: {
+          id: userId,
+        },
+      },
+      response,
+    )
   },
 )
 usersRoutes.delete(
-  '/:id',
+  '/',
   authMiddleware,
   async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
     const deleteUserController = makeDeleteUserController()
-    return deleteUserController.execute(request, response)
+    return deleteUserController.execute(
+      {
+        ...request,
+        params: {
+          id: userId,
+        },
+      },
+      response,
+    )
   },
 )
 usersRoutes.get(
-  '/:id/balance',
+  '/balance',
   authMiddleware,
   async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
     const getBalanceUserController = makeGetBalanceUserController()
-    return getBalanceUserController.execute(request, response)
+    return getBalanceUserController.execute(
+      {
+        ...request,
+        params: {
+          id: userId,
+        },
+      },
+      response,
+    )
   },
 )
 

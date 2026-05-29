@@ -1,9 +1,17 @@
 import { faker } from '@faker-js/faker'
 import request from 'supertest'
 import { TransactionType } from '../../generated/prisma/client'
+import { TokenGeneratorAdapter } from '@/adapters/token-generator'
 import { app } from '@/app'
 import { transactionFixtureWithoutId } from '@/test/fixtures/transaction'
 import { userFixtureWithoutId } from '@/test/fixtures/user'
+
+const tokenForMissingUser = async () => {
+  const { access_token } = await new TokenGeneratorAdapter().execute(
+    faker.string.uuid(),
+  )
+  return access_token
+}
 
 describe('User Routes E2E Tests', () => {
   it('POST /users should return 201 when user is created successfully', async () => {
@@ -39,7 +47,7 @@ describe('User Routes E2E Tests', () => {
     expect(status).toBe(409)
   })
 
-  it('GET /users/:id should return 200 when the user is found', async () => {
+  it('GET /users should return 200 when the user is found', async () => {
     const { body } = await request(app)
       .post('/users')
       .send({
@@ -47,7 +55,7 @@ describe('User Routes E2E Tests', () => {
       })
     const userId = body.id
     const { body: responseBody, status: responseStatus } = await request(app)
-      .get(`/users/${userId}`)
+      .get('/users')
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
     expect(responseStatus).toBe(200)
     expect(responseBody).toEqual(
@@ -60,28 +68,22 @@ describe('User Routes E2E Tests', () => {
     )
   })
 
-  it('GET /users/:id should return 404 when the user is not found', async () => {
-    const { body } = await request(app)
-      .post('/users')
-      .send({
-        ...userFixtureWithoutId,
-      })
-
+  it('GET /users should return 404 when the user is not found', async () => {
+    const accessToken = await tokenForMissingUser()
     const { status } = await request(app)
-      .get(`/users/${faker.string.uuid()}`)
-      .set('Authorization', `Bearer ${body.tokens.access_token}`)
+      .get('/users')
+      .set('Authorization', `Bearer ${accessToken}`)
     expect(status).toBe(404)
   })
 
-  it('PATCH /users/:id should return 200 when the user is updated successfully', async () => {
+  it('PATCH /users should return 200 when the user is updated successfully', async () => {
     const { body } = await request(app)
       .post('/users')
       .send({
         ...userFixtureWithoutId,
       })
-    const userId = body.id
     const { status: responseStatus } = await request(app)
-      .patch(`/users/${userId}`)
+      .patch('/users')
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
       .send({
         ...userFixtureWithoutId,
@@ -89,15 +91,14 @@ describe('User Routes E2E Tests', () => {
     expect(responseStatus).toBe(200)
   })
 
-  it('PATCH /users/:id should return 400 when the sent data is invalid', async () => {
+  it('PATCH /users should return 400 when the sent data is invalid', async () => {
     const { body } = await request(app)
       .post('/users')
       .send({
         ...userFixtureWithoutId,
       })
-    const userId = body.id
     const { status: responseStatus } = await request(app)
-      .patch(`/users/${userId}`)
+      .patch('/users')
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
       .send({
         email: 'invalid-email',
@@ -105,15 +106,11 @@ describe('User Routes E2E Tests', () => {
     expect(responseStatus).toBe(400)
   })
 
-  it('PATCH /users/:id should return 404 when the user is not found', async () => {
-    const { body } = await request(app)
-      .post('/users')
-      .send({
-        ...userFixtureWithoutId,
-      })
+  it('PATCH /users should return 404 when the user is not found', async () => {
+    const accessToken = await tokenForMissingUser()
     const { status: responseStatus } = await request(app)
-      .patch(`/users/${faker.string.uuid()}`)
-      .set('Authorization', `Bearer ${body.tokens.access_token}`)
+      .patch('/users')
+      .set('Authorization', `Bearer ${accessToken}`)
       .send({ first_name: faker.person.firstName() })
     expect(responseStatus).toBe(404)
   })
@@ -124,22 +121,17 @@ describe('User Routes E2E Tests', () => {
       .send({
         ...userFixtureWithoutId,
       })
-    const userId = body.id
     const { status: responseStatus } = await request(app)
-      .delete(`/users/${userId}`)
+      .delete(`/users`)
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
     expect(responseStatus).toBe(200)
   })
 
-  it('DELETE /users/:id should return 404 when the user is not found', async () => {
-    const { body } = await request(app)
-      .post('/users')
-      .send({
-        ...userFixtureWithoutId,
-      })
+  it('DELETE /users should return 404 when the user is not found', async () => {
+    const accessToken = await tokenForMissingUser()
     const { status: responseStatus } = await request(app)
-      .delete(`/users/${faker.string.uuid()}`)
-      .set('Authorization', `Bearer ${body.tokens.access_token}`)
+      .delete('/users')
+      .set('Authorization', `Bearer ${accessToken}`)
     expect(responseStatus).toBe(404)
   })
 
@@ -159,7 +151,7 @@ describe('User Routes E2E Tests', () => {
         type: TransactionType.INCOME,
       })
     const { status: responseStatus } = await request(app)
-      .delete(`/users/${userId}`)
+      .delete(`/users`)
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
     expect(responseStatus).toBe(200)
   })
@@ -201,7 +193,7 @@ describe('User Routes E2E Tests', () => {
       })
 
     const { body: responseBody, status: responseStatus } = await request(app)
-      .get(`/users/${userId}/balance`)
+      .get(`/users/balance`)
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
     expect(responseStatus).toBe(200)
     expect(responseBody).toEqual({
@@ -212,16 +204,11 @@ describe('User Routes E2E Tests', () => {
     })
   })
 
-  it('GET /users/balance/:id should return 404 when the user is not found', async () => {
-    const { body } = await request(app)
-      .post('/users')
-      .send({
-        ...userFixtureWithoutId,
-      })
-
+  it('GET /users/balance should return 404 when the user is not found', async () => {
+    const accessToken = await tokenForMissingUser()
     const { status: responseStatus } = await request(app)
-      .get(`/users/${faker.string.uuid()}/balance`)
-      .set('Authorization', `Bearer ${body.tokens.access_token}`)
+      .get('/users/balance')
+      .set('Authorization', `Bearer ${accessToken}`)
     expect(responseStatus).toBe(404)
   })
 
