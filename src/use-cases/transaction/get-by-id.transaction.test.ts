@@ -21,7 +21,10 @@ describe('GetTransactionByIdUseCase', () => {
     const { sut } = makeSut()
 
     // act
-    const result = await sut.execute(transactionFixture.id)
+    const result = await sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
 
     // assert
     expect(result).toEqual(transactionFixture)
@@ -32,7 +35,10 @@ describe('GetTransactionByIdUseCase', () => {
     const { sut, getTransactionByIdRepository } = makeSut()
     getTransactionByIdRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const promise = sut.execute(transactionFixture.id)
+    const promise = sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
     // assert
     await expect(promise).rejects.toThrow(TransactionNotFoundError)
     expect(getTransactionByIdRepository.execute).toHaveBeenCalledWith({
@@ -40,12 +46,21 @@ describe('GetTransactionByIdUseCase', () => {
     })
   })
 
+  it('should throw a TransactionNotFoundError when transaction belongs to another user', async () => {
+    // arrange
+    const { sut } = makeSut()
+    // act
+    const promise = sut.execute(transactionFixture.id, 'other-user-id')
+    // assert
+    await expect(promise).rejects.toThrow(TransactionNotFoundError)
+  })
+
   it('should call GetTransactionByIdRepository with the correct parameters', async () => {
     // arrange
     const { sut, getTransactionByIdRepository } = makeSut()
     const executeSpy = jest.spyOn(getTransactionByIdRepository, 'execute')
     // act
-    await sut.execute(transactionFixture.id)
+    await sut.execute(transactionFixture.id, transactionFixture.user_id)
     // assert
     expect(executeSpy).toHaveBeenCalledWith({
       transactionId: transactionFixture.id,
@@ -57,7 +72,10 @@ describe('GetTransactionByIdUseCase', () => {
     const { sut, getTransactionByIdRepository } = makeSut()
     getTransactionByIdRepository.execute.mockRejectedValueOnce(new Error())
     // act
-    const result = sut.execute(transactionFixture.id)
+    const result = sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
     // assert
     await expect(result).rejects.toThrow(Error)
     expect(getTransactionByIdRepository.execute).toHaveBeenCalledWith({

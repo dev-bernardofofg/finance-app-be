@@ -51,8 +51,11 @@ export const makeGetTransactionByIdController = () => {
 
 export const makeUpdateTransactionController = () => {
   const updateTransactionRepository = new PostgresUpdateTransactionRepository()
+  const getTransactionByIdRepository =
+    new PostgresGetTransactionByIdRepository()
   const updateTransactionUseCase = new UpdateTransactionUseCase(
     updateTransactionRepository,
+    getTransactionByIdRepository,
   )
   const updateTransactionController = new UpdateTransactionController(
     updateTransactionUseCase,
@@ -62,8 +65,11 @@ export const makeUpdateTransactionController = () => {
 
 export const makeDeleteTransactionController = () => {
   const deleteTransactionRepository = new PostgresDeleteTransactionRepository()
+  const getTransactionByIdRepository =
+    new PostgresGetTransactionByIdRepository()
   const deleteTransactionUseCase = new DeleteTransactionUseCase(
     deleteTransactionRepository,
+    getTransactionByIdRepository,
   )
   const deleteTransactionController = new DeleteTransactionController(
     deleteTransactionUseCase,

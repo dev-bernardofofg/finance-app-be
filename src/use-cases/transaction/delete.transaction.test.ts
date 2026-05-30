@@ -1,3 +1,4 @@
+import { TransactionNotFoundError } from '@/errors/transaction'
 import { transactionFixture } from '@/test/fixtures/transaction'
 import { ITransactionResponse } from '@/types'
 import { DeleteTransactionUseCase } from './delete.transaction'
@@ -8,56 +9,75 @@ describe('DeleteTransactionUseCase', () => {
       async (): Promise<ITransactionResponse> => transactionFixture,
     )
   }
+  class GetTransactionByIdRepositoryStub {
+    execute = jest.fn(
+      async (): Promise<ITransactionResponse | null> => transactionFixture,
+    )
+  }
   const makeSut = () => {
     const deleteTransactionRepository = new DeleteTransactionRepositoryStub()
-    const sut = new DeleteTransactionUseCase(deleteTransactionRepository)
-    return { sut, deleteTransactionRepository }
+    const getTransactionByIdRepository = new GetTransactionByIdRepositoryStub()
+    const sut = new DeleteTransactionUseCase(
+      deleteTransactionRepository,
+      getTransactionByIdRepository,
+    )
+    return { sut, deleteTransactionRepository, getTransactionByIdRepository }
   }
 
   it('should delete a transaction', async () => {
-    // arrange
     const { sut } = makeSut()
-
-    // act
-    const result = await sut.execute(transactionFixture.id)
-
-    // assert
+    const result = await sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
     expect(result).toEqual(transactionFixture)
   })
 
-  it('should return null when the transaction is not found', async () => {
-    // arrange
+  it('should return null when the transaction is not found in repo step', async () => {
     const { sut, deleteTransactionRepository } = makeSut()
     deleteTransactionRepository.execute.mockResolvedValueOnce(null as never)
-    // act
-    const result = await sut.execute(transactionFixture.id)
-
-    // assert
+    const result = await sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
     expect(deleteTransactionRepository.execute).toHaveBeenCalledWith(
       transactionFixture.id,
     )
     expect(result).toEqual(null)
   })
 
+  it('should throw TransactionNotFoundError when transaction does not exist', async () => {
+    const { sut, getTransactionByIdRepository } = makeSut()
+    getTransactionByIdRepository.execute.mockResolvedValueOnce(null)
+    const promise = sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
+    await expect(promise).rejects.toThrow(TransactionNotFoundError)
+  })
+
+  it('should throw TransactionNotFoundError when transaction belongs to another user', async () => {
+    const { sut } = makeSut()
+    const promise = sut.execute(transactionFixture.id, 'other-user-id')
+    await expect(promise).rejects.toThrow(TransactionNotFoundError)
+  })
+
   it('should call DeleteTransactionRepository with the correct parameters', async () => {
-    // arrange
     const { sut, deleteTransactionRepository } = makeSut()
     const executeSpy = jest.spyOn(deleteTransactionRepository, 'execute')
-    // act
-    await sut.execute(transactionFixture.id)
-    // assert
+    await sut.execute(transactionFixture.id, transactionFixture.user_id)
     expect(executeSpy).toHaveBeenCalledWith(transactionFixture.id)
   })
 
-  it('should call DeleteTransactionRepository throws', async () => {
-    // arrange
+  it('should propagate when DeleteTransactionRepository throws', async () => {
     const { sut, deleteTransactionRepository } = makeSut()
     jest
       .spyOn(deleteTransactionRepository, 'execute')
       .mockRejectedValueOnce(new Error())
-    // act
-    const promise = sut.execute(transactionFixture.id)
-    // assert
+    const promise = sut.execute(
+      transactionFixture.id,
+      transactionFixture.user_id,
+    )
     await expect(promise).rejects.toThrow(Error)
   })
 })

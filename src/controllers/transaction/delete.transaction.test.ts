@@ -98,6 +98,9 @@ describe('DeleteTransactionController', () => {
     await sut.execute(httpRequest, response)
 
     // assert
-    expect(executeSpy).toHaveBeenCalledWith(httpRequest.params.id)
+    expect(executeSpy).toHaveBeenCalledWith(
+      httpRequest.params.id,
+      httpRequest.params.userId,
+    )
   })
 })

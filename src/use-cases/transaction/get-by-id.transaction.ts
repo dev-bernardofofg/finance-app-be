@@ -3,7 +3,10 @@ import { IPostgresGetTransactionByIdRepository } from '@/repositories/postgres'
 import { ITransactionResponse } from '@/types'
 
 export interface IGetTransactionByIdUseCase {
-  execute(transactionId: string): Promise<ITransactionResponse | null>
+  execute(
+    transactionId: string,
+    userId: string,
+  ): Promise<ITransactionResponse | null>
 }
 
 export class GetTransactionByIdUseCase implements IGetTransactionByIdUseCase {
@@ -13,12 +16,15 @@ export class GetTransactionByIdUseCase implements IGetTransactionByIdUseCase {
   ) {
     this.getTransactionByIdRepository = getTransactionByIdRepository
   }
-  async execute(transactionId: string): Promise<ITransactionResponse | null> {
+  async execute(
+    transactionId: string,
+    userId: string,
+  ): Promise<ITransactionResponse | null> {
     const transaction = await this.getTransactionByIdRepository.execute({
       transactionId,
     })
 
-    if (!transaction) {
+    if (!transaction || transaction.user_id !== userId) {
       throw new TransactionNotFoundError(transactionId)
     }
 

@@ -15,8 +15,11 @@ export class GetTransactionByIdController {
       const { id: transactionId } = await transactionIdParamSchema.parseAsync(
         req.params,
       )
-      const transaction =
-        await this.getTransactionByIdUseCase.execute(transactionId)
+      const userId = req.params.userId
+      const transaction = await this.getTransactionByIdUseCase.execute(
+        transactionId,
+        userId,
+      )
       return responseHelper.ok(res, transaction)
     } catch (error) {
       if (error instanceof ZodError) {
