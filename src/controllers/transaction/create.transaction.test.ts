@@ -6,7 +6,7 @@ import {
   transactionFixtureWithoutId,
 } from '@/test/fixtures/transaction'
 import {
-  CreateTransactionParams,
+  CreateTransactionInput,
   ITransactionParams,
   ITransactionResponse,
 } from '@/types'
@@ -26,38 +26,28 @@ describe('CreateTransactionController', () => {
     return { sut, createTransactionUseCaseStub }
   }
 
-  const makeHttpRequest = (body?: Partial<CreateTransactionParams>) =>
-    ({
-      body: {
-        ...transactionFixtureWithoutId,
-        ...body,
-      },
-    }) as Request
+  const makeHttpRequest = (body?: Partial<CreateTransactionInput>) => {
+    const { user_id: _userId, ...rest } = transactionFixtureWithoutId
+    return {
+      body: { ...rest, ...body },
+      params: { userId: transactionFixture.user_id },
+    } as unknown as Request
+  }
 
   it('should return 201 when the transaction is created successfully', async () => {
-    // arrange
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
-
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(201)
     expect(result).toBe(response)
   })
 
   it('should return 400 when the sent data is invalid', async () => {
-    // arrange
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest({ amount: 0 })
     const { response } = makeHttpResponse()
-
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
       message: 'O valor da transação em centavos deve ser maior que 0',
@@ -65,33 +55,11 @@ describe('CreateTransactionController', () => {
     expect(result).toBe(response)
   })
 
-  it('should return 400 when missing user_id', async () => {
-    // arrange
-    const { sut } = makeSut()
-    const httpRequest = makeHttpRequest({ user_id: undefined })
-    const { response } = makeHttpResponse()
-
-    // act
-    const result = await sut.execute(httpRequest, response)
-
-    // assert
-    expect(response.status).toHaveBeenCalledWith(400)
-    expect(response.json).toHaveBeenCalledWith({
-      message: 'O ID do usuário é obrigatório',
-    })
-    expect(result).toBe(response)
-  })
-
   it('should return 400 when name is missing', async () => {
-    // arrange
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest({ name: undefined })
     const { response } = makeHttpResponse()
-
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
       message: 'O nome da transação é obrigatório',
@@ -100,15 +68,10 @@ describe('CreateTransactionController', () => {
   })
 
   it('should return 400 when type is missing', async () => {
-    // arrange
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest({ type: undefined })
     const { response } = makeHttpResponse()
-
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
       message:
@@ -118,15 +81,10 @@ describe('CreateTransactionController', () => {
   })
 
   it('should return 400 when date is missing', async () => {
-    // arrange
     const { sut } = makeSut()
     const httpRequest = makeHttpRequest({ date: undefined })
     const { response } = makeHttpResponse()
-
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
       message: 'A data da transação é obrigatória',
@@ -135,20 +93,16 @@ describe('CreateTransactionController', () => {
   })
 
   it('should return 404 when the user is not found', async () => {
-    // arrange
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
-    const userId = httpRequest.body.user_id
+    const userId = httpRequest.params.userId
 
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(
       new UserNotFoundError(userId),
     )
 
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
       message: `Usuário com ID ${userId} não encontrado.`,
@@ -157,17 +111,13 @@ describe('CreateTransactionController', () => {
   })
 
   it('should return 500 when an unexpected error occurs', async () => {
-    // arrange
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
 
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
-    // act
     const result = await sut.execute(httpRequest, response)
-
-    // assert
     expect(response.status).toHaveBeenCalledWith(500)
     expect(response.json).toHaveBeenCalledWith({
       message: 'Erro ao criar transação',
@@ -176,16 +126,16 @@ describe('CreateTransactionController', () => {
   })
 
   it('should call CreateTransactionUseCase with the correct parameters', async () => {
-    // arrange
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
     const executeSpy = jest.spyOn(createTransactionUseCaseStub, 'execute')
 
-    // act
     await sut.execute(httpRequest, response)
 
-    // assert
-    expect(executeSpy).toHaveBeenCalledWith(httpRequest.body)
+    expect(executeSpy).toHaveBeenCalledWith({
+      ...httpRequest.body,
+      user_id: httpRequest.params.userId,
+    })
   })
 })

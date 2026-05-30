@@ -6,43 +6,76 @@ import {
   makeGetTransactionByUserIdController,
   makeUpdateTransactionController,
 } from '@/factories/controllers/transaction'
+import { authMiddleware } from '@/middlewares/auth'
+import { AuthenticatedRequest } from '@/types'
 
 export const transactionsRoutes = Router()
 
-transactionsRoutes.post('/', async (request: Request, response: Response) => {
-  const createTransactionController = makeCreateTransactionController()
-  return createTransactionController.execute(request, response)
-})
-transactionsRoutes.get(
-  '/user/:userId',
+transactionsRoutes.post(
+  '/',
+  authMiddleware,
   async (request: Request, response: Response) => {
-    const getTransactionByUserIdController =
-      makeGetTransactionByUserIdController()
-    return getTransactionByUserIdController.execute(
-      { query: { userId: request.params.userId } },
+    const { userId } = request as AuthenticatedRequest
+    const createTransactionController = makeCreateTransactionController()
+    return createTransactionController.execute(
+      { ...request, params: { ...request.params, userId } },
       response,
     )
   },
 )
 
-transactionsRoutes.get('/:id', async (request: Request, response: Response) => {
-  const getTransactionByIdController = makeGetTransactionByIdController()
-  return getTransactionByIdController.execute(request, response)
-})
-transactionsRoutes.put('/:id', async (request: Request, response: Response) => {
-  const updateTransactionController = makeUpdateTransactionController()
-  return updateTransactionController.execute(request, response)
-})
+transactionsRoutes.get(
+  '/',
+  authMiddleware,
+  async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
+    const getTransactionByUserIdController =
+      makeGetTransactionByUserIdController()
+    return getTransactionByUserIdController.execute(
+      {
+        ...request,
+        params: { userId },
+      },
+      response,
+    )
+  },
+)
+
+transactionsRoutes.get(
+  '/:id',
+  authMiddleware,
+  async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
+    const getTransactionByIdController = makeGetTransactionByIdController()
+    return getTransactionByIdController.execute(
+      { ...request, params: { ...request.params, userId } },
+      response,
+    )
+  },
+)
+
+transactionsRoutes.put(
+  '/:id',
+  authMiddleware,
+  async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
+    const updateTransactionController = makeUpdateTransactionController()
+    return updateTransactionController.execute(
+      { ...request, params: { ...request.params, userId } },
+      response,
+    )
+  },
+)
 
 transactionsRoutes.delete(
   '/:id',
+  authMiddleware,
   async (request: Request, response: Response) => {
+    const { userId } = request as AuthenticatedRequest
     const deleteTransactionController = makeDeleteTransactionController()
-    return deleteTransactionController.execute(request, response)
+    return deleteTransactionController.execute(
+      { ...request, params: { ...request.params, userId } },
+      response,
+    )
   },
 )
-transactionsRoutes.get('/', async (request: Request, response: Response) => {
-  const getTransactionByUserIdController =
-    makeGetTransactionByUserIdController()
-  return getTransactionByUserIdController.execute(request, response)
-})

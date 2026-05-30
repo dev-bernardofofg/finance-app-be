@@ -1,7 +1,7 @@
 import { Request } from 'express'
 import { ZodError } from 'zod'
 import { UserNotFoundError } from '@/errors/user'
-import { createTransactionSchema } from '@/types'
+import { createTransactionInputSchema } from '@/types'
 import { ICreateTransactionUseCase } from '@/use-cases/transaction/create.transaction'
 import { HttpResponse, responseHelper } from '@/controllers/helpers/http'
 
@@ -11,10 +11,14 @@ export class CreateTransactionController {
     this.createTransactionUseCase = createTransactionUseCase
   }
 
-  async execute(req: Request, res: HttpResponse) {
+  async execute(req: Pick<Request, 'body' | 'params'>, res: HttpResponse) {
     try {
-      const params = await createTransactionSchema.parseAsync(req.body)
-      const transaction = await this.createTransactionUseCase.execute(params)
+      const input = await createTransactionInputSchema.parseAsync(req.body)
+      const userId = req.params.userId
+      const transaction = await this.createTransactionUseCase.execute({
+        ...input,
+        user_id: userId,
+      })
       return responseHelper.created(res, transaction)
     } catch (error) {
       if (error instanceof ZodError) {

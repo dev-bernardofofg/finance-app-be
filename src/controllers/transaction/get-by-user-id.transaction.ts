@@ -10,10 +10,10 @@ export class GetTransactionByUserIdController {
   constructor(getTransactionByUserIdUseCase: IGetTransactionByUserIdUseCase) {
     this.getTransactionByUserIdUseCase = getTransactionByUserIdUseCase
   }
-  async execute(req: Pick<Request, 'query'>, res: HttpResponse) {
+  async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
     try {
       const { userId } = await getTransactionsByUserIdQuerySchema.parseAsync(
-        req.query,
+        req.params,
       )
 
       const transactions = await this.getTransactionByUserIdUseCase.execute({

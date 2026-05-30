@@ -18,15 +18,7 @@ export interface ITransactionResponse {
   date: string | Date
 }
 
-export const createTransactionSchema = z.object({
-  user_id: z
-    .string({ error: 'O ID do usuário é obrigatório' })
-    .min(1, {
-      error: 'O ID do usuário é obrigatório',
-    })
-    .uuid({
-      error: 'O ID do usuário deve ser um UUID válido',
-    }),
+export const createTransactionInputSchema = z.object({
   name: z
     .string({ error: 'O nome da transação é obrigatório' })
     .min(1, {
@@ -61,10 +53,12 @@ export const transactionIdParamSchema = z.object({
     .uuid({ error: 'O ID da transação deve ser um UUID válido' }),
 })
 
-export type CreateTransactionParams = z.infer<typeof createTransactionSchema>
+export type CreateTransactionInput = z.infer<
+  typeof createTransactionInputSchema
+>
 
 export const updateTransactionSchema = z.strictObject(
-  createTransactionSchema.omit({ user_id: true }).partial().shape,
+  createTransactionInputSchema.partial().shape,
   {
     error: (issue) => {
       if (issue.code === 'unrecognized_keys') {

@@ -1,6 +1,5 @@
 import { UserNotFoundError } from '@/errors/user'
 import { makeHttpResponse } from '@/helpers/test'
-import { GetTransactionByUserIdParams } from '@/repositories/postgres'
 import { transactionFixture } from '@/test/fixtures/transaction'
 import { ITransactionResponse } from '@/types'
 import { GetTransactionByUserIdController } from './get-by-user-id.transaction'
@@ -8,9 +7,7 @@ import { GetTransactionByUserIdController } from './get-by-user-id.transaction'
 describe('GetTransactionByUserIdController', () => {
   class GetTransactionByUserIdUseCaseStub {
     execute = jest.fn(
-      async (
-        _params: GetTransactionByUserIdParams,
-      ): Promise<ITransactionResponse[]> => [transactionFixture],
+      async (): Promise<ITransactionResponse[]> => [transactionFixture],
     )
   }
 
@@ -24,7 +21,7 @@ describe('GetTransactionByUserIdController', () => {
   }
 
   const makeHttpRequest = (userId: string) => ({
-    query: { userId },
+    params: { userId },
   })
 
   it('should return 200 when the transactions are found successfully', async () => {
@@ -109,7 +106,7 @@ describe('GetTransactionByUserIdController', () => {
 
     // assert
     expect(getTransactionByUserIdUseCaseStub.execute).toHaveBeenCalledWith({
-      userId: httpRequest.query.userId,
+      userId: httpRequest.params.userId,
     })
   })
 

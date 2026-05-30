@@ -1,17 +1,10 @@
 import { faker } from '@faker-js/faker'
 import request from 'supertest'
 import { TransactionType } from '../../generated/prisma/client'
-import { TokenGeneratorAdapter } from '@/adapters/token-generator'
 import { app } from '@/app'
 import { transactionFixtureWithoutId } from '@/test/fixtures/transaction'
 import { userFixtureWithoutId } from '@/test/fixtures/user'
-
-const tokenForMissingUser = async () => {
-  const { access_token } = await new TokenGeneratorAdapter().execute(
-    faker.string.uuid(),
-  )
-  return access_token
-}
+import { tokenForMissingUser } from '@/routes/helpers'
 
 describe('User Routes E2E Tests', () => {
   it('POST /users should return 201 when user is created successfully', async () => {
