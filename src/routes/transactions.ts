@@ -18,7 +18,7 @@ transactionsRoutes.post(
     const { userId } = request as AuthenticatedRequest
     const createTransactionController = makeCreateTransactionController()
     return createTransactionController.execute(
-      { ...request, params: { ...request.params, userId } },
+      { ...request, params: { userId }, body: { ...request.body } },
       response,
     )
   },
@@ -61,7 +61,11 @@ transactionsRoutes.put(
     const { userId } = request as AuthenticatedRequest
     const updateTransactionController = makeUpdateTransactionController()
     return updateTransactionController.execute(
-      { ...request, params: { ...request.params, userId } },
+      {
+        ...request,
+        params: { userId, id: request.params.id },
+        body: { ...request.body },
+      },
       response,
     )
   },
