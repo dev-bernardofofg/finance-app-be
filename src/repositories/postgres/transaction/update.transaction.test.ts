@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker'
-import dayjs from 'dayjs'
 import { Prisma } from '../../../../generated/prisma/client'
 import { TransactionNotFoundError } from '@/errors/transaction'
 import { prisma } from '@/prisma/prisma'
@@ -38,14 +37,8 @@ describe('PostgresUpdateTransactionRepository', () => {
     expect(result.name).toBe(updateTransactionParams.name)
     expect(result.type).toBe(updateTransactionParams.type)
     expect(result.amount).toBe(updateTransactionParams.amount)
-    expect(dayjs(result.date).daysInMonth()).toBe(
-      dayjs(updateTransactionParams.date).daysInMonth(),
-    )
-    expect(dayjs(result.date).year()).toBe(
-      dayjs(updateTransactionParams.date).year(),
-    )
-    expect(dayjs(result.date).month()).toBe(
-      dayjs(updateTransactionParams.date).month(),
+    expect(new Date(result.date).toISOString().slice(0, 10)).toBe(
+      updateTransactionParams.date.slice(0, 10),
     )
   })
 
