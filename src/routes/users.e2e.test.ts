@@ -262,3 +262,21 @@ describe('User Routes E2E Tests', () => {
     expect(response.status).toBe(400)
   })
 })
+
+it('POST /users/refresh-token should return 200 when the refresh token is valid', async () => {
+  const { body } = await request(app)
+    .post('/users')
+    .send({ ...userFixtureWithoutId, refresh_token: faker.string.uuid() })
+
+  const { body: responseBody, status: responseStatus } = await request(app)
+    .post('/users/refresh-token')
+    .send({ refreshToken: body.tokens.refresh_token })
+
+  expect(responseStatus).toBe(200)
+  expect(responseBody).toEqual(
+    expect.objectContaining({
+      access_token: expect.any(String),
+      refresh_token: expect.any(String),
+    }),
+  )
+})
