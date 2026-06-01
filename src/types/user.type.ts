@@ -64,3 +64,10 @@ export const loginUserSchema = z.object({
     .trim()
     .min(6, 'A senha deve ter pelo menos 6 caracteres'),
 })
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z
+    .string('O refresh token é obrigatório')
+    .trim()
+    .min(1, 'O refresh token é obrigatório'),
+})

@@ -2,6 +2,12 @@ import { TokenGeneratorAdapter } from '@/adapters'
 import { TokenVerifyAdapter } from '@/adapters/token-verify'
 import { UnauthorizedError } from '@/errors/user'
 
+export interface IRefreshTokenUseCase {
+  execute(
+    refreshToken: string,
+  ): Promise<{ access_token: string; refresh_token: string }>
+}
+
 export class RefreshTokenUseCase {
   private tokenGeneratorAdapter: TokenGeneratorAdapter
   private tokenVerifyAdapter: TokenVerifyAdapter
