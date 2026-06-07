@@ -30,7 +30,7 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
     expect(receivedDate).toBe(expectedDate)
   })
 
-  it('should call Prisma with correct parameters', async () => {
+  it('should call GetUserByIdRepository without date parameters', async () => {
     // arrange
     const sut = new PostgresGetTransactionByUserIdRepository()
     const prismaSpy = jest.spyOn(prisma.transaction, 'findMany')
