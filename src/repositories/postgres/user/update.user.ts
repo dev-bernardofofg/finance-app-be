@@ -15,19 +15,19 @@ export type UserFields = Omit<UpdateUserParams, 'id'>
 
 export interface IPostgresUpdateUserRepository {
   execute(
-    userId: string,
+    user_id: string,
     updateUserParams: UserFields,
   ): Promise<UserResponse | null>
 }
 
 export class PostgresUpdateUserRepository implements IPostgresUpdateUserRepository {
   async execute(
-    userId: string,
+    user_id: string,
     updateUserParams: UserFields,
   ): Promise<UserResponse | null> {
     try {
       return await prisma.user.update({
-        where: { id: userId },
+        where: { id: user_id },
         data: updateUserParams,
       })
     } catch (error) {
@@ -35,7 +35,7 @@ export class PostgresUpdateUserRepository implements IPostgresUpdateUserReposito
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        throw new UserNotFoundError(userId)
+        throw new UserNotFoundError(user_id)
       }
       throw error
     }

@@ -14,16 +14,16 @@ export class UpdateUserController {
   async execute(req: Pick<Request, 'params' | 'body'>, res: HttpResponse) {
     try {
       const params = await updateUserSchema.parseAsync(req.body)
-      const userId = req.params.id ?? ''
+      const user_id = req.params.id ?? ''
 
-      if (!userId) {
+      if (!user_id) {
         return responseHelper.badRequest(res, 'O ID do usuário é obrigatório')
       }
 
-      const invalidIdResponse = validatorHelpers.idIsValid(userId, res)
+      const invalidIdResponse = validatorHelpers.idIsValid(user_id, res)
       if (invalidIdResponse) return invalidIdResponse
 
-      const updatedUser = await this.updateUserUseCase.execute(userId, params)
+      const updatedUser = await this.updateUserUseCase.execute(user_id, params)
 
       return responseHelper.ok(res, updatedUser)
     } catch (error) {

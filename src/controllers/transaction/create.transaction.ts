@@ -14,10 +14,10 @@ export class CreateTransactionController {
   async execute(req: Pick<Request, 'body' | 'params'>, res: HttpResponse) {
     try {
       const input = await createTransactionInputSchema.parseAsync(req.body)
-      const userId = req.params.userId
+      const user_id = req.params.user_id
       const transaction = await this.createTransactionUseCase.execute({
         ...input,
-        user_id: userId,
+        user_id: user_id,
       })
       return responseHelper.created(res, transaction)
     } catch (error) {

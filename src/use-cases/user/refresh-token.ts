@@ -30,9 +30,8 @@ export class RefreshTokenUseCase {
         throw new UnauthorizedError()
       }
 
-      return this.tokenGeneratorAdapter.execute(decodedToken.userId)
-    } catch (error) {
-      console.error(error)
+      return this.tokenGeneratorAdapter.execute(decodedToken.user_id)
+    } catch {
       throw new UnauthorizedError()
     }
   }

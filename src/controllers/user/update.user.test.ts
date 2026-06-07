@@ -10,10 +10,10 @@ describe('UpdateUserController', () => {
   class UpdateUserUseCaseStub {
     execute = jest.fn(
       async (
-        userId: string,
+        user_id: string,
         updateUserParams: UserFields,
       ): Promise<UserResponse> => ({
-        id: userId,
+        id: user_id,
         first_name: updateUserParams.first_name ?? '',
         last_name: updateUserParams.last_name ?? '',
         email: updateUserParams.email ?? '',

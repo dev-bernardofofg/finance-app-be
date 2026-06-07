@@ -8,7 +8,7 @@ import { ITransactionResponse } from '@/types'
 export interface IDeleteTransactionUseCase {
   execute(
     transactionId: string,
-    userId: string,
+    user_id: string,
   ): Promise<ITransactionResponse | null>
 }
 
@@ -24,12 +24,12 @@ export class DeleteTransactionUseCase implements IDeleteTransactionUseCase {
   }
   async execute(
     transactionId: string,
-    userId: string,
+    user_id: string,
   ): Promise<ITransactionResponse | null> {
     const existing = await this.getTransactionByIdRepository.execute({
       transactionId,
     })
-    if (!existing || existing.user_id !== userId) {
+    if (!existing || existing.user_id !== user_id) {
       throw new TransactionNotFoundError(transactionId)
     }
 

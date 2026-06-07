@@ -46,14 +46,14 @@ describe('User Routes E2E Tests', () => {
       .send({
         ...userFixtureWithoutId,
       })
-    const userId = body.id
+    const user_id = body.id
     const { body: responseBody, status: responseStatus } = await request(app)
       .get('/users')
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
     expect(responseStatus).toBe(200)
     expect(responseBody).toEqual(
       expect.objectContaining({
-        id: userId,
+        id: user_id,
         first_name: userFixtureWithoutId.first_name,
         last_name: userFixtureWithoutId.last_name,
         email: userFixtureWithoutId.email,
@@ -134,13 +134,13 @@ describe('User Routes E2E Tests', () => {
       .send({
         ...userFixtureWithoutId,
       })
-    const userId = body.id
+    const user_id = body.id
     await request(app)
       .post('/transactions')
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
       .send({
         ...transactionFixtureWithoutId,
-        user_id: userId,
+        user_id: user_id,
         type: TransactionType.INCOME,
       })
     const { status: responseStatus } = await request(app)
@@ -155,14 +155,14 @@ describe('User Routes E2E Tests', () => {
       .send({
         ...userFixtureWithoutId,
       })
-    const userId = body.id
+    const user_id = body.id
 
     await request(app)
       .post('/transactions')
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
       .send({
         ...transactionFixtureWithoutId,
-        user_id: userId,
+        user_id: user_id,
         type: TransactionType.INCOME,
         amount: 100,
       })
@@ -171,7 +171,7 @@ describe('User Routes E2E Tests', () => {
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
       .send({
         ...transactionFixtureWithoutId,
-        user_id: userId,
+        user_id: user_id,
         type: TransactionType.EXPENSE,
         amount: 100,
       })
@@ -180,7 +180,7 @@ describe('User Routes E2E Tests', () => {
       .set('Authorization', `Bearer ${body.tokens.access_token}`)
       .send({
         ...transactionFixtureWithoutId,
-        user_id: userId,
+        user_id: user_id,
         type: TransactionType.INVESTMENT,
         amount: 100,
       })

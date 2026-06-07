@@ -4,15 +4,15 @@ import { prisma } from '@/prisma/prisma'
 import { UserResponse } from '@/types'
 
 export interface IPostgresDeleteUserRepository {
-  execute(userId: string): Promise<UserResponse | null>
+  execute(user_id: string): Promise<UserResponse | null>
 }
 
 export class PostgresDeleteUserRepository implements IPostgresDeleteUserRepository {
-  async execute(userId: string): Promise<UserResponse | null> {
+  async execute(user_id: string): Promise<UserResponse | null> {
     try {
       const deletedUser = await prisma.user.delete({
         where: {
-          id: userId,
+          id: user_id,
         },
       })
       return deletedUser
@@ -21,7 +21,7 @@ export class PostgresDeleteUserRepository implements IPostgresDeleteUserReposito
         error instanceof Prisma.PrismaClientKnownRequestError &&
         error.code === 'P2025'
       ) {
-        throw new UserNotFoundError(userId)
+        throw new UserNotFoundError(user_id)
       }
       throw error
     }

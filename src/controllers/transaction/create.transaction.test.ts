@@ -30,7 +30,7 @@ describe('CreateTransactionController', () => {
     const { user_id: _userId, ...rest } = transactionFixtureWithoutId
     return {
       body: { ...rest, ...body },
-      params: { userId: transactionFixture.user_id },
+      params: { user_id: transactionFixture.user_id },
     } as unknown as Request
   }
 
@@ -96,16 +96,16 @@ describe('CreateTransactionController', () => {
     const { sut, createTransactionUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest()
     const { response } = makeHttpResponse()
-    const userId = httpRequest.params.userId
+    const user_id = httpRequest.params.user_id
 
     createTransactionUseCaseStub.execute.mockRejectedValueOnce(
-      new UserNotFoundError(userId),
+      new UserNotFoundError(user_id),
     )
 
     const result = await sut.execute(httpRequest, response)
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: `Usuário com ID ${userId} não encontrado.`,
+      message: `Usuário com ID ${user_id} não encontrado.`,
     })
     expect(result).toBe(response)
   })
@@ -135,7 +135,7 @@ describe('CreateTransactionController', () => {
 
     expect(executeSpy).toHaveBeenCalledWith({
       ...httpRequest.body,
-      user_id: httpRequest.params.userId,
+      user_id: httpRequest.params.user_id,
     })
   })
 })

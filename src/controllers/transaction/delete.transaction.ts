@@ -15,10 +15,10 @@ export class DeleteTransactionController {
       const { id: transactionId } = await transactionIdParamSchema.parseAsync(
         req.params,
       )
-      const userId = req.params.userId
+      const user_id = req.params.user_id
       const transaction = await this.deleteTransactionUseCase.execute(
         transactionId,
-        userId,
+        user_id,
       )
 
       return responseHelper.ok(res, transaction)

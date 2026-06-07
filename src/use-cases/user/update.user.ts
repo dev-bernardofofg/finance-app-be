@@ -9,7 +9,7 @@ import { UserResponse } from '@/types'
 
 export interface IUpdateUserUseCase {
   execute(
-    userId: string,
+    user_id: string,
     updateUserParams: UserFields,
   ): Promise<UserResponse | null>
 }
@@ -26,13 +26,13 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
     this.updateUserRepository = updateUserRepository
     this.passwordHasherAdapter = passwordHasherAdapter
   }
-  async execute(userId: string, updateUserParams: UserFields) {
+  async execute(user_id: string, updateUserParams: UserFields) {
     if (updateUserParams.email) {
       const userWithEmail = await this.getUserByEmailRepository.execute(
         updateUserParams.email,
       )
 
-      if (userWithEmail && userWithEmail.id !== userId) {
+      if (userWithEmail && userWithEmail.id !== user_id) {
         throw new EmailAlreadyInUseError(updateUserParams.email)
       }
     }
@@ -44,7 +44,7 @@ export class UpdateUserUseCase implements IUpdateUserUseCase {
     }
 
     const updatedUser = await this.updateUserRepository.execute(
-      userId,
+      user_id,
       updateUserParams,
     )
 

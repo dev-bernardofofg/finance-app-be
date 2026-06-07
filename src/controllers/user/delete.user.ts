@@ -12,12 +12,12 @@ export class DeleteUserController {
   }
   async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
     try {
-      const userId = req.params.id
+      const user_id = req.params.id
 
-      const invalidIdResponse = validatorHelpers.idIsValid(userId, res)
+      const invalidIdResponse = validatorHelpers.idIsValid(user_id, res)
       if (invalidIdResponse) return invalidIdResponse
 
-      const user = await this.deleteUserUseCase.execute(userId)
+      const user = await this.deleteUserUseCase.execute(user_id)
 
       return responseHelper.ok(res, user)
     } catch (error) {

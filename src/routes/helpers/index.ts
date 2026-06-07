@@ -20,7 +20,7 @@ export const createUserAndGetToken = async () => {
       password: faker.internet.password({ length: 6 }),
     })
   return {
-    userId: body.id as string,
+    user_id: body.id as string,
     accessToken: body.tokens.access_token as string,
   }
 }

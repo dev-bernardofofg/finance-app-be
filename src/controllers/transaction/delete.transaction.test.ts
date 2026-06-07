@@ -100,7 +100,7 @@ describe('DeleteTransactionController', () => {
     // assert
     expect(executeSpy).toHaveBeenCalledWith(
       httpRequest.params.id,
-      httpRequest.params.userId,
+      httpRequest.params.user_id,
     )
   })
 })

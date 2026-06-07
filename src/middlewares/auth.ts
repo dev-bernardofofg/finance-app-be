@@ -20,11 +20,11 @@ export const authMiddleware = (
       { algorithms: ['HS256'] },
     ) as JwtPayload
 
-    if (!decoded?.userId) {
+    if (!decoded?.user_id) {
       return responseHelper.unauthorized(res, 'Token de acesso inválido')
     }
 
-    req.userId = decoded.userId
+    req.user_id = decoded.user_id
     next()
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Token inválido'

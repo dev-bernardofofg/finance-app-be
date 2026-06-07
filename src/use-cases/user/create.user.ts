@@ -45,17 +45,17 @@ export class CreateUserUseCase implements ICreateUserUseCase {
     if (user) {
       throw new EmailAlreadyInUseError(createUserParams.email)
     }
-    const userId = await this.idGeneratorAdapter.execute()
+    const user_id = await this.idGeneratorAdapter.execute()
     const hashedPassword = await this.passwordHasherAdapter.execute(
       createUserParams.password,
     )
 
     const { access_token, refresh_token } =
-      await this.tokenGeneratorAdapter.execute(userId)
+      await this.tokenGeneratorAdapter.execute(user_id)
 
     const createdUser = await this.createUserRepository.execute({
       ...createUserParams,
-      id: userId,
+      id: user_id,
       password: hashedPassword,
     })
 

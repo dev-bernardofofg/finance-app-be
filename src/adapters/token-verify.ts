@@ -10,6 +10,6 @@ export class TokenVerifyAdapter {
     token,
     secret = process.env.JWT_SECRET as string,
   }: TokenVerifyAdapterProps) {
-    return jwt.verify(token, secret) as { userId: string }
+    return jwt.verify(token, secret) as { user_id: string }
   }
 }

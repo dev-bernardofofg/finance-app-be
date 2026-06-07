@@ -70,19 +70,19 @@ describe('DeleteUserController', () => {
   it('should return 404 when user is not found', async () => {
     // arranged
     const { sut, deleteUserUseCaseStub } = makeSut()
-    const userId = faker.string.uuid()
-    const httpRequest = makeHttpRequestById({ id: userId })
+    const user_id = faker.string.uuid()
+    const httpRequest = makeHttpRequestById({ id: user_id })
     const { response } = makeHttpResponse()
     // act
     deleteUserUseCaseStub.execute.mockRejectedValueOnce(
-      new UserNotFoundError(userId),
+      new UserNotFoundError(user_id),
     )
 
     const result = await sut.execute(httpRequest, response)
 
     expect(response.status).toHaveBeenCalledWith(404)
     expect(response.json).toHaveBeenCalledWith({
-      message: `Usuário com ID ${userId} não encontrado.`,
+      message: `Usuário com ID ${user_id} não encontrado.`,
     })
     expect(result).toBe(response)
   })

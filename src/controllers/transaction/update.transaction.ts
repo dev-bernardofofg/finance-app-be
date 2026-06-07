@@ -21,10 +21,10 @@ export class UpdateTransactionController {
         req.params,
       )
       const body = await updateTransactionSchema.parseAsync(req.body)
-      const userId = req.params.userId
+      const user_id = req.params.user_id
       const transaction = await this.updateTransactionUseCase.execute(
         transactionId,
-        userId,
+        user_id,
         { ...body } as ITransactionParams,
       )
 

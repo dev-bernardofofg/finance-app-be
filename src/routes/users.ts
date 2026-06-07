@@ -21,13 +21,13 @@ usersRoutes.get(
   '/',
   authMiddleware,
   async (request: Request, response: Response) => {
-    const { userId } = request as AuthenticatedRequest
+    const { user_id } = request as AuthenticatedRequest
     const getUserByIdController = makeGetUserByIdController()
     return getUserByIdController.execute(
       {
         ...request,
         params: {
-          id: userId,
+          id: user_id,
         },
       },
       response,
@@ -38,13 +38,13 @@ usersRoutes.patch(
   '/',
   authMiddleware,
   async (request: Request, response: Response) => {
-    const { userId } = request as AuthenticatedRequest
+    const { user_id } = request as AuthenticatedRequest
     const updateUserByIdController = makeUpdateUserByIdController()
     return updateUserByIdController.execute(
       {
         ...request,
         params: {
-          id: userId,
+          id: user_id,
         },
       },
       response,
@@ -55,13 +55,13 @@ usersRoutes.delete(
   '/',
   authMiddleware,
   async (request: Request, response: Response) => {
-    const { userId } = request as AuthenticatedRequest
+    const { user_id } = request as AuthenticatedRequest
     const deleteUserController = makeDeleteUserController()
     return deleteUserController.execute(
       {
         ...request,
         params: {
-          id: userId,
+          id: user_id,
         },
       },
       response,
@@ -72,13 +72,13 @@ usersRoutes.get(
   '/balance',
   authMiddleware,
   async (request: Request, response: Response) => {
-    const { userId } = request as AuthenticatedRequest
+    const { user_id } = request as AuthenticatedRequest
     const getBalanceUserController = makeGetBalanceUserController()
     return getBalanceUserController.execute(
       {
         ...request,
         params: {
-          id: userId,
+          id: user_id,
         },
       },
       response,

@@ -3,7 +3,7 @@ import { RefreshTokenUseCase } from './refresh-token'
 
 describe('RefreshTokenUseCase', () => {
   class TokenVerifyAdapterStub {
-    execute = jest.fn((): { userId: string } => ({ userId: 'user-id' }))
+    execute = jest.fn((): { user_id: string } => ({ user_id: 'user-id' }))
   }
 
   class TokenGeneratorAdapterStub {

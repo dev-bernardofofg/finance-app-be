@@ -5,7 +5,7 @@ import { ITransactionResponse } from '@/types'
 export interface IGetTransactionByIdUseCase {
   execute(
     transactionId: string,
-    userId: string,
+    user_id: string,
   ): Promise<ITransactionResponse | null>
 }
 
@@ -18,13 +18,13 @@ export class GetTransactionByIdUseCase implements IGetTransactionByIdUseCase {
   }
   async execute(
     transactionId: string,
-    userId: string,
+    user_id: string,
   ): Promise<ITransactionResponse | null> {
     const transaction = await this.getTransactionByIdRepository.execute({
       transactionId,
     })
 
-    if (!transaction || transaction.user_id !== userId) {
+    if (!transaction || transaction.user_id !== user_id) {
       throw new TransactionNotFoundError(transactionId)
     }
 

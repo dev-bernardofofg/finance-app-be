@@ -30,7 +30,7 @@ describe('DeleteUserUseCase', () => {
     expect(result).toEqual(userFixture)
   })
 
-  it('should call DeleteUserRepository with correct userId', async () => {
+  it('should call DeleteUserRepository with correct user_id', async () => {
     // arrange
     const { sut, deleteUserRepository } = makeSut()
     deleteUserRepository.execute.mockResolvedValueOnce(userFixture)
