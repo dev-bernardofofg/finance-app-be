@@ -31,11 +31,11 @@ describe('GetTransactionByUserIdUseCase', () => {
     const { sut, getTransactionByUserIdRepository, getUserByIdRepository } =
       makeSut()
     // act
-    const result = await sut.execute({ userId: transactionFixture.user_id })
+    const result = await sut.execute({ user_id: transactionFixture.user_id })
     // assert
-    expect(getTransactionByUserIdRepository.execute).toHaveBeenCalledWith(
-      transactionFixture.user_id,
-    )
+    expect(getTransactionByUserIdRepository.execute).toHaveBeenCalledWith({
+      user_id: transactionFixture.user_id,
+    })
     expect(getUserByIdRepository.execute).toHaveBeenCalledWith({
       id: transactionFixture.user_id,
     })
@@ -47,7 +47,7 @@ describe('GetTransactionByUserIdUseCase', () => {
     const { sut, getUserByIdRepository } = makeSut()
     getUserByIdRepository.execute.mockResolvedValueOnce(null as never)
     // act
-    const promise = sut.execute({ userId: transactionFixture.user_id })
+    const promise = sut.execute({ user_id: transactionFixture.user_id })
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
   })
@@ -57,9 +57,9 @@ describe('GetTransactionByUserIdUseCase', () => {
     const { sut, getTransactionByUserIdRepository } = makeSut()
     const executeSpy = jest.spyOn(getTransactionByUserIdRepository, 'execute')
     // act
-    await sut.execute({ userId: userFixture.id })
+    await sut.execute({ user_id: userFixture.id })
     // assert
-    expect(executeSpy).toHaveBeenCalledWith(userFixture.id)
+    expect(executeSpy).toHaveBeenCalledWith({ user_id: userFixture.id })
   })
 
   it('should call GetUserByIdRepository with the correct parameters', async () => {
@@ -67,7 +67,7 @@ describe('GetTransactionByUserIdUseCase', () => {
     const { sut, getUserByIdRepository } = makeSut()
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
     // act
-    await sut.execute({ userId: userFixture.id })
+    await sut.execute({ user_id: userFixture.id })
     // assert
     expect(executeSpy).toHaveBeenCalledWith({ id: userFixture.id })
   })
@@ -79,7 +79,7 @@ describe('GetTransactionByUserIdUseCase', () => {
     getTransactionByUserIdRepository.execute.mockRejectedValueOnce(new Error())
     getUserByIdRepository.execute.mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute({ userId: userFixture.id })
+    const promise = sut.execute({ user_id: userFixture.id })
     // assert
     await expect(promise).rejects.toThrow(Error)
   })

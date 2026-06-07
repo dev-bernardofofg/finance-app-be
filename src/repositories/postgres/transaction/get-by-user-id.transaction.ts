@@ -3,18 +3,26 @@ import { ITransactionResponse } from '@/types'
 import { mapTransactionFromDatabase } from './mapper'
 
 export interface GetTransactionByUserIdParams {
-  userId: string
+  user_id: string
+  from_date?: string
+  to_date?: string
 }
 
 export interface IPostgresGetTransactionByUserIdRepository {
-  execute(userId: string): Promise<ITransactionResponse[]>
+  execute(params: GetTransactionByUserIdParams): Promise<ITransactionResponse[]>
 }
 
 export class PostgresGetTransactionByUserIdRepository implements IPostgresGetTransactionByUserIdRepository {
-  async execute(userId: string): Promise<ITransactionResponse[]> {
+  async execute(
+    params: GetTransactionByUserIdParams,
+  ): Promise<ITransactionResponse[]> {
     const transactions = await prisma.transaction.findMany({
       where: {
-        user_id: userId,
+        user_id: params.user_id,
+        date: {
+          gte: params.from_date,
+          lte: params.to_date,
+        },
       },
     })
     return transactions.map((transaction) =>

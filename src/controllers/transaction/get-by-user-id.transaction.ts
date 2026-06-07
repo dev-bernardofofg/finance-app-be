@@ -12,12 +12,13 @@ export class GetTransactionByUserIdController {
   }
   async execute(req: Pick<Request, 'params'>, res: HttpResponse) {
     try {
-      const { userId } = await getTransactionsByUserIdQuerySchema.parseAsync(
-        req.params,
-      )
+      const { user_id, from_date, to_date } =
+        await getTransactionsByUserIdQuerySchema.parseAsync(req.params)
 
       const transactions = await this.getTransactionByUserIdUseCase.execute({
-        userId,
+        user_id,
+        from_date,
+        to_date,
       })
 
       if (!transactions) {

@@ -20,8 +20,8 @@ describe('GetTransactionByUserIdController', () => {
     return { sut, getTransactionByUserIdUseCaseStub }
   }
 
-  const makeHttpRequest = (userId: string) => ({
-    params: { userId },
+  const makeHttpRequest = (user_id: string) => ({
+    params: { user_id },
   })
 
   it('should return 200 when the transactions are found successfully', async () => {
@@ -50,7 +50,7 @@ describe('GetTransactionByUserIdController', () => {
     // assert
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
-      message: 'O campo userId deve ser um UUID válido',
+      message: 'O campo user_id deve ser um UUID válido',
     })
     expect(result).toBe(response)
   })
@@ -95,7 +95,7 @@ describe('GetTransactionByUserIdController', () => {
     expect(result).toBe(response)
   })
 
-  it('should call GetUserIdUseCase with the correct userId', async () => {
+  it('should call GetUserIdUseCase with the correct user_id', async () => {
     // arrange
     const { sut, getTransactionByUserIdUseCaseStub } = makeSut()
     const httpRequest = makeHttpRequest(transactionFixture.user_id)
@@ -106,7 +106,7 @@ describe('GetTransactionByUserIdController', () => {
 
     // assert
     expect(getTransactionByUserIdUseCaseStub.execute).toHaveBeenCalledWith({
-      userId: httpRequest.params.userId,
+      user_id: httpRequest.params.user_id,
     })
   })
 
@@ -123,7 +123,7 @@ describe('GetTransactionByUserIdController', () => {
     expect(getTransactionByUserIdUseCaseStub.execute).not.toHaveBeenCalled()
     expect(response.status).toHaveBeenCalledWith(400)
     expect(response.json).toHaveBeenCalledWith({
-      message: 'O campo userId deve ser um UUID válido',
+      message: 'O campo user_id deve ser um UUID válido',
     })
   })
 

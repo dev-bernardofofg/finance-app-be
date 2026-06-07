@@ -23,12 +23,14 @@ export class GetTransactionByUserIdUseCase implements IGetTransactionByUserIdUse
   async execute(
     params: GetTransactionByUserIdParams,
   ): Promise<ITransactionResponse[]> {
-    const user = await this.getUserByIdRepository.execute({ id: params.userId })
+    const user = await this.getUserByIdRepository.execute({
+      id: params.user_id,
+    })
 
     if (!user) {
-      throw new UserNotFoundError(params.userId)
+      throw new UserNotFoundError(params.user_id)
     }
 
-    return await this.getTransactionByUserIdRepository.execute(params.userId)
+    return await this.getTransactionByUserIdRepository.execute(params)
   }
 }

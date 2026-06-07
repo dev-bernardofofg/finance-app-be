@@ -111,6 +111,7 @@ describe('Transactions Routes E2E Tests', () => {
     const response = await request(app)
       .get('/transactions')
       .set('Authorization', `Bearer ${accessToken}`)
+
     expect(response.status).toBe(200)
   })
 

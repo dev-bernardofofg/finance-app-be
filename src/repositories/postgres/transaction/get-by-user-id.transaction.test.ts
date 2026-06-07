@@ -17,7 +17,7 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
     })
     const sut = new PostgresGetTransactionByUserIdRepository()
     // act
-    const result = await sut.execute(userFixture.id)
+    const result = await sut.execute({ user_id: userFixture.id })
     // assert
     expect(result).toHaveLength(1)
     expect(result[0].id).toBe(transactionFixture.id)
@@ -35,10 +35,13 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
     const sut = new PostgresGetTransactionByUserIdRepository()
     const prismaSpy = jest.spyOn(prisma.transaction, 'findMany')
     // act
-    await sut.execute(userFixture.id)
+    await sut.execute({ user_id: userFixture.id })
     // assert
     expect(prismaSpy).toHaveBeenCalledWith({
-      where: { user_id: userFixture.id },
+      where: {
+        user_id: userFixture.id,
+        date: { gte: undefined, lte: undefined },
+      },
     })
   })
 
@@ -49,7 +52,7 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
       .spyOn(prisma.transaction, 'findMany')
       .mockRejectedValueOnce(new Error())
     // act
-    const promise = sut.execute(userFixture.id)
+    const promise = sut.execute({ user_id: userFixture.id })
     // assert
     await expect(promise).rejects.toThrow()
   })
