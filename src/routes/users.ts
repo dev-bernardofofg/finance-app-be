@@ -80,6 +80,10 @@ usersRoutes.get(
         params: {
           id: user_id,
         },
+        query: {
+          from_date: request.query.from_date,
+          to_date: request.query.to_date,
+        },
       },
       response,
     )
