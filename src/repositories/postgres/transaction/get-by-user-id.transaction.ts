@@ -4,8 +4,8 @@ import { mapTransactionFromDatabase } from './mapper'
 
 export interface GetTransactionByUserIdParams {
   user_id: string
-  from_date?: string
-  to_date?: string
+  from_date?: string | Date
+  to_date?: string | Date
 }
 
 export interface IPostgresGetTransactionByUserIdRepository {
@@ -20,8 +20,8 @@ export class PostgresGetTransactionByUserIdRepository implements IPostgresGetTra
       where: {
         user_id: params.user_id,
         date: {
-          gte: params.from_date,
-          lte: params.to_date,
+          gte: params.from_date ? new Date(params.from_date) : undefined,
+          lte: params.to_date ? new Date(params.to_date) : undefined,
         },
       },
     })
