@@ -1,7 +1,7 @@
 import { dateHelpers } from '@/helpers/date'
 import { TransactionType } from '../../../../generated/prisma/enums'
-import { toNumberFromDatabase } from '@/helpers/money'
 import { prisma } from '@/prisma/prisma'
+import { Prisma } from '../../../../generated/prisma/client'
 
 export interface GetBalanceUserParams {
   id: string
@@ -14,6 +14,9 @@ export interface GetBalanceUserResponse {
   total_expenses: number
   total_investments: number
   balance: number
+  earning_percentage: number
+  investment_percentage: number
+  expenses_percentage: number
 }
 
 export interface IGetBalanceUserRepository {
@@ -49,15 +52,31 @@ export class PostgresGetBalanceUserRepository implements IGetBalanceUserReposito
       }),
     ])
 
-    const totalIncome = toNumberFromDatabase(income._sum.amount)
-    const totalExpenses = toNumberFromDatabase(expense._sum.amount)
-    const totalInvestments = toNumberFromDatabase(investment._sum.amount)
+    const _totalIncome = new Prisma.Decimal(income._sum.amount ?? 0)
+    const _totalExpenses = new Prisma.Decimal(expense._sum.amount ?? 0)
+    const _totalInvestments = new Prisma.Decimal(investment._sum.amount ?? 0)
+
+    const balance = _totalIncome.minus(_totalExpenses).minus(_totalInvestments)
+
+    const total = _totalIncome.plus(_totalExpenses).plus(_totalInvestments)
+
+    const getPercentage = (amount: Prisma.Decimal, base: Prisma.Decimal) => {
+      if (base.isZero()) return 0
+      return amount.div(base).mul(100).floor().toNumber()
+    }
+
+    const earningPercentage = getPercentage(_totalIncome, total)
+    const investmentPercentage = getPercentage(_totalInvestments, total)
+    const expensesPercentage = getPercentage(_totalExpenses, total)
 
     return {
-      total_income: totalIncome,
-      total_expenses: totalExpenses,
-      total_investments: totalInvestments,
-      balance: totalIncome - totalExpenses - totalInvestments,
+      total_income: _totalIncome.toNumber(),
+      total_expenses: _totalExpenses.toNumber(),
+      total_investments: _totalInvestments.toNumber(),
+      balance: balance.toNumber(),
+      earning_percentage: earningPercentage,
+      investment_percentage: investmentPercentage,
+      expenses_percentage: expensesPercentage,
     }
   }
 }

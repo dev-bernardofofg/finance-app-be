@@ -194,6 +194,9 @@ describe('User Routes E2E Tests', () => {
       total_expenses: 100,
       total_investments: 100,
       balance: -100,
+      earning_percentage: 33,
+      investment_percentage: 33,
+      expenses_percentage: 33,
     })
   })
 
