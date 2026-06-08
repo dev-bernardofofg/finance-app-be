@@ -260,6 +260,18 @@
       "get": {
         "summary": "Get the balance of the authenticated user",
         "tags": ["User"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "The ID of the transaction to get"
+          }
+        ],
         "responses": {
           "200": {
             "description": "User balance found successfully",
