@@ -1,6 +1,5 @@
 import { prisma } from '@/prisma/prisma'
 import { ITransactionResponse } from '@/types'
-import { mapTransactionFromDatabase } from './mapper'
 
 export interface GetTransactionsParams {
   user_id: string
@@ -19,11 +18,9 @@ export class PostgresGetTransactionsRepository implements IPostgresGetTransactio
         user_id: params.user_id,
       },
     })
-    return transactions.map((transaction) =>
-      mapTransactionFromDatabase({
-        ...transaction,
-        date: transaction.date.toISOString(),
-      }),
-    )
+    return transactions.map((transaction) => ({
+      ...transaction,
+      date: transaction.date.toISOString(),
+    }))
   }
 }

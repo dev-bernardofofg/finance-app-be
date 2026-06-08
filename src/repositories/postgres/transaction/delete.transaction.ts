@@ -2,7 +2,6 @@ import { Prisma } from '../../../../generated/prisma/client'
 import { TransactionNotFoundError } from '@/errors/transaction'
 import { prisma } from '@/prisma/prisma'
 import { ITransactionResponse } from '@/types'
-import { mapTransactionFromDatabase } from './mapper'
 
 export interface IPostgresDeleteTransactionRepository {
   execute(transactionId: string): Promise<ITransactionResponse | null>
@@ -16,10 +15,10 @@ export class PostgresDeleteTransactionRepository implements IPostgresDeleteTrans
           id: transactionId,
         },
       })
-      return mapTransactionFromDatabase({
+      return {
         ...deletedTransaction,
         date: deletedTransaction.date.toISOString(),
-      })
+      }
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

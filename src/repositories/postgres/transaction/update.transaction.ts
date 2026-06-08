@@ -2,7 +2,6 @@ import { Prisma } from '../../../../generated/prisma/client'
 import { TransactionNotFoundError } from '@/errors/transaction'
 import { prisma } from '@/prisma/prisma'
 import { ITransactionParams, ITransactionResponse } from '@/types'
-import { mapTransactionFromDatabase } from './mapper'
 
 export interface IPostgresUpdateTransactionRepository {
   execute(
@@ -23,10 +22,10 @@ export class PostgresUpdateTransactionRepository implements IPostgresUpdateTrans
         },
         data: updateTransactionParams,
       })
-      return mapTransactionFromDatabase({
+      return {
         ...updatedTransaction,
         date: updatedTransaction.date.toISOString(),
-      })
+      }
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&

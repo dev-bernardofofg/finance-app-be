@@ -1,6 +1,5 @@
 import { prisma } from '@/prisma/prisma'
 import { ITransactionResponse } from '@/types'
-import { mapTransactionFromDatabase } from './mapper'
 import { dateHelpers } from '@/helpers/date'
 
 export interface GetTransactionByUserIdParams {
@@ -23,11 +22,9 @@ export class PostgresGetTransactionByUserIdRepository implements IPostgresGetTra
         date: dateHelpers.getDateRange(params.from_date, params.to_date),
       },
     })
-    return transactions.map((transaction) =>
-      mapTransactionFromDatabase({
-        ...transaction,
-        date: transaction.date.toISOString(),
-      }),
-    )
+    return transactions.map((transaction) => ({
+      ...transaction,
+      date: transaction.date.toISOString(),
+    }))
   }
 }
