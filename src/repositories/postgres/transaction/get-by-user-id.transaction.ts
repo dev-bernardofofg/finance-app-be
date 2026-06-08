@@ -1,6 +1,7 @@
 import { prisma } from '@/prisma/prisma'
 import { ITransactionResponse } from '@/types'
 import { mapTransactionFromDatabase } from './mapper'
+import { dateHelpers } from '@/helpers/date'
 
 export interface GetTransactionByUserIdParams {
   user_id: string
@@ -19,10 +20,7 @@ export class PostgresGetTransactionByUserIdRepository implements IPostgresGetTra
     const transactions = await prisma.transaction.findMany({
       where: {
         user_id: params.user_id,
-        date: {
-          gte: params.from_date ? new Date(params.from_date) : undefined,
-          lte: params.to_date ? new Date(params.to_date) : undefined,
-        },
+        date: dateHelpers.getDateRange(params.from_date, params.to_date),
       },
     })
     return transactions.map((transaction) =>

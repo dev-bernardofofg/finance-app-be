@@ -29,20 +29,13 @@ transactionsRoutes.get(
   authMiddleware,
   async (request: Request, response: Response) => {
     const { user_id } = request as AuthenticatedRequest
-    const { from_date, to_date } = request.query as {
-      from_date?: string
-      to_date?: string
-    }
     const getTransactionByUserIdController =
       makeGetTransactionByUserIdController()
     return getTransactionByUserIdController.execute(
       {
         ...request,
-        params: {
-          user_id,
-          from_date: from_date as string,
-          to_date: to_date as string,
-        },
+        params: { user_id },
+        query: request.query,
       },
       response,
     )

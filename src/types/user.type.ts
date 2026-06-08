@@ -49,6 +49,33 @@ export const getUserIdParamsSchema = z.object({
     .uuid('O ID não é válido. Por favor, informe um ID válido.'),
 })
 
+export const getBalanceUserQuerySchema = z
+  .object({
+    from_date: z.iso
+      .datetime({ error: 'A data de início deve ser uma data válida' })
+      .optional(),
+    to_date: z.iso
+      .datetime({ error: 'A data de fim deve ser uma data válida' })
+      .optional(),
+  })
+  .refine((data) => !(data.from_date && !data.to_date), {
+    error: 'A data de fim é obrigatória quando a data de início é informada',
+    path: ['to_date'],
+  })
+  .refine((data) => !(data.to_date && !data.from_date), {
+    error: 'A data de início é obrigatória quando a data de fim é informada',
+    path: ['from_date'],
+  })
+  .refine(
+    (data) =>
+      !(data.from_date && data.to_date) ||
+      new Date(data.from_date) <= new Date(data.to_date),
+    {
+      error: 'A data de início não pode ser maior que a data de fim',
+      path: ['from_date'],
+    },
+  )
+
 export const getEmailUserParamsSchema = z.object({
   email: z.string().email('O email não é válido').optional(),
 })

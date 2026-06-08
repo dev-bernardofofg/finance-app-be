@@ -1,9 +1,12 @@
+import { dateHelpers } from '@/helpers/date'
 import { TransactionType } from '../../../../generated/prisma/enums'
 import { toNumberFromDatabase } from '@/helpers/money'
 import { prisma } from '@/prisma/prisma'
 
 export interface GetBalanceUserParams {
   id: string
+  from_date?: string | Date
+  to_date?: string | Date
 }
 
 export interface GetBalanceUserResponse {
@@ -21,15 +24,27 @@ export class PostgresGetBalanceUserRepository implements IGetBalanceUserReposito
   async execute(params: GetBalanceUserParams): Promise<GetBalanceUserResponse> {
     const [income, expense, investment] = await Promise.all([
       prisma.transaction.aggregate({
-        where: { user_id: params.id, type: TransactionType.INCOME },
+        where: {
+          user_id: params.id,
+          type: TransactionType.INCOME,
+          date: dateHelpers.getDateRange(params.from_date, params.to_date),
+        },
         _sum: { amount: true },
       }),
       prisma.transaction.aggregate({
-        where: { user_id: params.id, type: TransactionType.EXPENSE },
+        where: {
+          user_id: params.id,
+          type: TransactionType.EXPENSE,
+          date: dateHelpers.getDateRange(params.from_date, params.to_date),
+        },
         _sum: { amount: true },
       }),
       prisma.transaction.aggregate({
-        where: { user_id: params.id, type: TransactionType.INVESTMENT },
+        where: {
+          user_id: params.id,
+          type: TransactionType.INVESTMENT,
+          date: dateHelpers.getDateRange(params.from_date, params.to_date),
+        },
         _sum: { amount: true },
       }),
     ])

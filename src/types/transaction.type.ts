@@ -66,12 +66,15 @@ export const updateTransactionSchema = z.strictObject(
 
 export type UpdateTransactionParams = z.infer<typeof updateTransactionSchema>
 
+export const getTransactionsByUserIdParamsSchema = z.object({
+  user_id: z
+    .string({ error: 'O campo user_id é obrigatório' })
+    .min(1, { error: 'O campo user_id é obrigatório' })
+    .uuid({ error: 'O campo user_id deve ser um UUID válido' }),
+})
+
 export const getTransactionsByUserIdQuerySchema = z
   .object({
-    user_id: z
-      .string({ error: 'O campo user_id é obrigatório' })
-      .min(1, { error: 'O campo user_id é obrigatório' })
-      .uuid({ error: 'O campo user_id deve ser um UUID válido' }),
     from_date: z.iso
       .datetime({ error: 'A data de início deve ser uma data válida' })
       .optional(),
