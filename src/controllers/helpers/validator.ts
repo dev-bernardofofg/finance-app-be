@@ -1,4 +1,4 @@
-import { isUUID } from 'validator'
+import isUUID from 'validator/lib/isUUID.js'
 import { HttpResponse, responseHelper } from './http'
 
 export const validatorHelpers = {
