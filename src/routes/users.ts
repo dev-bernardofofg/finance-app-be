@@ -17,8 +17,9 @@ usersRoutes.post('/', async (request: Request, response: Response) => {
   const getCreateUserController = makeCreateUserController()
   return getCreateUserController.execute(request, response)
 })
+
 usersRoutes.get(
-  '/',
+  '/me',
   authMiddleware,
   async (request: Request, response: Response) => {
     const { user_id } = request as AuthenticatedRequest
@@ -34,8 +35,9 @@ usersRoutes.get(
     )
   },
 )
+
 usersRoutes.patch(
-  '/',
+  '/me',
   authMiddleware,
   async (request: Request, response: Response) => {
     const { user_id } = request as AuthenticatedRequest
@@ -51,8 +53,9 @@ usersRoutes.patch(
     )
   },
 )
+
 usersRoutes.delete(
-  '/',
+  '/me',
   authMiddleware,
   async (request: Request, response: Response) => {
     const { user_id } = request as AuthenticatedRequest
@@ -68,8 +71,9 @@ usersRoutes.delete(
     )
   },
 )
+
 usersRoutes.get(
-  '/balance',
+  '/me/balance',
   authMiddleware,
   async (request: Request, response: Response) => {
     const { user_id } = request as AuthenticatedRequest
