@@ -32,7 +32,7 @@ describe('GetBalanceUserUseCase', () => {
     getUserByIdRepository.execute.mockResolvedValueOnce(userFixture)
 
     // act
-    const balance = await sut.execute(userFixture.id)
+    const balance = await sut.execute({ id: userFixture.id })
 
     // assert
     expect(getUserByIdRepository.execute).toHaveBeenCalledWith({
@@ -50,7 +50,7 @@ describe('GetBalanceUserUseCase', () => {
     getUserByIdRepository.execute.mockResolvedValueOnce(null as never)
 
     // act
-    const promise = sut.execute(userFixture.id)
+    const promise = sut.execute({ id: userFixture.id })
 
     // assert
     await expect(promise).rejects.toThrow(UserNotFoundError)
@@ -62,7 +62,7 @@ describe('GetBalanceUserUseCase', () => {
     const executeSpy = jest.spyOn(getUserByIdRepository, 'execute')
 
     // act
-    await sut.execute(userFixture.id)
+    await sut.execute({ id: userFixture.id })
 
     // assert
     expect(executeSpy).toHaveBeenCalledWith({ id: userFixture.id })
@@ -74,7 +74,7 @@ describe('GetBalanceUserUseCase', () => {
     const executeSpy = jest.spyOn(getBalanceUserUseCaseStub, 'execute')
 
     // act
-    await sut.execute(userFixture.id)
+    await sut.execute({ id: userFixture.id })
 
     // assert
     expect(executeSpy).toHaveBeenCalledWith({ id: userFixture.id })
@@ -86,7 +86,7 @@ describe('GetBalanceUserUseCase', () => {
     getBalanceUserUseCaseStub.execute.mockRejectedValueOnce(new Error())
 
     // act
-    const promise = sut.execute(userFixture.id)
+    const promise = sut.execute({ id: userFixture.id })
 
     // assert
     await expect(promise).rejects.toThrow(Error)

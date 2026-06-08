@@ -20,8 +20,12 @@ describe('GetTransactionByUserIdController', () => {
     return { sut, getTransactionByUserIdUseCaseStub }
   }
 
-  const makeHttpRequest = (user_id: string) => ({
+  const makeHttpRequest = (
+    user_id: string,
+    query: { from_date?: string; to_date?: string } = {},
+  ) => ({
     params: { user_id },
+    query,
   })
 
   it('should return 200 when the transactions are found successfully', async () => {

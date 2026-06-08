@@ -10,11 +10,15 @@ export const makeHttpResponse = () => {
   return { response }
 }
 
-export const makeHttpRequestById = (params?: {
-  id?: string
-}): Pick<Request, 'params'> => ({
+export const makeHttpRequestById = (
+  params?: {
+    id?: string
+  },
+  query?: Record<string, string>,
+): Pick<Request, 'params' | 'query'> => ({
   params: {
     id: faker.string.uuid(),
     ...params,
   } as Record<string, string>,
+  query: query ?? {},
 })

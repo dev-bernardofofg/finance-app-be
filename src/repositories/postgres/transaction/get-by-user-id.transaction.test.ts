@@ -40,7 +40,6 @@ describe('PostgresGetTransactionByUserIdRepository', () => {
     expect(prismaSpy).toHaveBeenCalledWith({
       where: {
         user_id: userFixture.id,
-        date: { gte: undefined, lte: undefined },
       },
     })
   })
